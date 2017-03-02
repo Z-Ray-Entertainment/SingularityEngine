@@ -1,1 +1,0 @@
-java -Djava.library.path="%cd%\win32" -jar %cd%\SingularityEngine.jar
