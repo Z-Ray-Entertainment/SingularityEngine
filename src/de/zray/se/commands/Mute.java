@@ -6,8 +6,8 @@
 package de.zray.se.commands;
 
 import de.zray.se.MainThread;
-import de.zray.se.script.AbstractCommand;
-import de.zray.se.script.Parameter;
+import de.zray.coretex.AbstractCommand;
+import de.zray.coretex.Parameter;
 import java.util.List;
 
 /**

@@ -7,8 +7,8 @@ package de.zray.se;
 
 import de.zray.se.commands.Mute;
 import de.zray.se.logger.SELogger;
-import de.zray.se.script.Console;
-import de.zray.se.script.exceptions.DublicateCommandException;
+import de.zray.coretex.Console;
+import de.zray.coretex.exceptions.DublicateCommandException;
 import java.io.IOException;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.ContextAttribs;
