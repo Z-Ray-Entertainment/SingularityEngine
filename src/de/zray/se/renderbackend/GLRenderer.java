@@ -103,7 +103,7 @@ public class GLRenderer implements RenderBackend{
     }
 
     @Override
-    public void renderWorld(SEWorld world) {
+    public void renderWorld(float delta) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwSwapBuffers(window);
         glfwPollEvents();
