@@ -5,9 +5,9 @@
  */
 package de.zray.se.commands;
 
+import de.zray.coretex.AbstractCommand;
+import de.zray.coretex.Parameter;
 import de.zray.se.MainThread;
-import de.zray.se.script.AbstractCommand;
-import de.zray.se.script.Parameter;
 import java.util.List;
 
 /**
@@ -15,15 +15,16 @@ import java.util.List;
  * @author Vortex Acherontic
  */
 public class Mute extends AbstractCommand{
+    private MainThread mainThread;
 
-    public Mute() {
+    public Mute(MainThread mainThread) {
         super("togglemute", null);
+        this.mainThread = this.mainThread;
     }
 
     @Override
     public String action(List<Parameter> params) {
-        MainThread.getCurrentWorld().getAudioModule().setBGMMuted(!MainThread.getCurrentWorld().getAudioModule().isBGMMuted());
+        mainThread.getCurrentWorld().getAudioModule().setBGMMuted(!mainThread.getCurrentWorld().getAudioModule().isBGMMuted());
         return "Music muted";
     }
-    
 }

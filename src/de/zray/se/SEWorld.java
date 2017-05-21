@@ -14,10 +14,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import org.lwjgl.Sys;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
 
 /**
  *
@@ -33,7 +29,7 @@ public class SEWorld {
     private final List<GUI> guis = new LinkedList<>();
     private final List<Integer> pressedKeysLastTime = new LinkedList<>();
     private final List<Integer> pressedKeysThisTime = new LinkedList<>();
-    private long lastTime = (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    //private long lastTime = (Sys.getTime() * 1000) / Sys.getTimerResolution();
     private float delta = 0;
     private final int currentGUI = 0;
     
@@ -53,7 +49,7 @@ public class SEWorld {
     
     public void act() throws IOException{
         update();
-        render();
+        //render();
         pollInputs();
         pollSounds();
     }
@@ -104,7 +100,7 @@ public class SEWorld {
     }
     
     private void pollKeyboardInput(){
-        while(Keyboard.next()){
+        /*while(Keyboard.next()){
             if(Keyboard.getEventKeyState()){
                 int key = Keyboard.getEventKey();
                 inputManager.keyTiped(key);
@@ -133,11 +129,11 @@ public class SEWorld {
         }
         pressedKeysLastTime.clear();
         pressedKeysLastTime.addAll(pressedKeysThisTime);
-        pressedKeysThisTime.clear();
+        pressedKeysThisTime.clear();*/
     }
     
     private void pollMouseInput(){
-        int x = Mouse.getX();
+        /*int x = Mouse.getX();
         int y = Display.getHeight()-Mouse.getY();
         
         inputManager.mouseMoved(x, y);
@@ -163,7 +159,7 @@ public class SEWorld {
         glModule.render();
         if(guis.size() > 0 && currentGUI <= guis.size()-1){
             guis.get(currentGUI).render();
-        }
+        }*/
     }
     
     private void update(){
@@ -208,8 +204,8 @@ public class SEWorld {
     }
     
     private void updateDelta(){
-        long currentTime = (Sys.getTime() * 1000) / Sys.getTimerResolution();
+        /*long currentTime = (Sys.getTime() * 1000) / Sys.getTimerResolution();
         delta = currentTime - lastTime; //Delta in Milliseconds
-        lastTime = currentTime;
+        lastTime = currentTime;*/
     }
 }
