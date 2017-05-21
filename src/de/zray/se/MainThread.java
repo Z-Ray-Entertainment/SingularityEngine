@@ -20,13 +20,18 @@ public class MainThread {
         this.backend = backend;
     }
     
-    public void loop(SEWorld world) throws IOException{
-        currentWorld = world;
+    public void switchWorld(SEWorld world){
+        this.currentWorld = world;
+    }
+    
+    public void loop() throws IOException{
         if(!backend.isInited()){
             backend.init();
         }
-        world.act();
-        backend.renderWorld(world);
+        if(currentWorld != null){
+            currentWorld.act();
+        }
+        backend.renderWorld(currentWorld.getDeltaInMS());
     }
     
     public void shutdown(){

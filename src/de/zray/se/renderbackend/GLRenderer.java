@@ -6,6 +6,7 @@
 package de.zray.se.renderbackend;
 
 import de.zray.se.SEWorld;
+import de.zray.se.Settings;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
 
@@ -103,15 +104,9 @@ public class GLRenderer implements RenderBackend{
 
     @Override
     public void renderWorld(SEWorld world) {
-        while ( !glfwWindowShouldClose(window) ) {
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-                glfwSwapBuffers(window); // swap the color buffers
-
-                // Poll for window events. The key callback above will only be
-                // invoked during this call.
-                glfwPollEvents();
-        }
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
     @Override

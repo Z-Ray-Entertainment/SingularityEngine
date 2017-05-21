@@ -20,7 +20,6 @@ import java.util.Objects;
  * @author vortex
  */
 public class SEWorld {
-    private final SEGLModule glModule;
     private final SEAIModule aiModule;
     private final SEBulletModule bullettModule;
     private final SEAudioModule audioModule;
@@ -29,20 +28,18 @@ public class SEWorld {
     private final List<GUI> guis = new LinkedList<>();
     private final List<Integer> pressedKeysLastTime = new LinkedList<>();
     private final List<Integer> pressedKeysThisTime = new LinkedList<>();
-    //private long lastTime = (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    private long lastTime = -1;
     private float delta = 0;
     private final int currentGUI = 0;
     
     public SEWorld(SEGLModule glModule, SEAIModule aiModule, SEBulletModule bulletModule, SEAudioModule audioModule){
         this.aiModule = aiModule;
-        this.glModule = glModule;
         this.bullettModule = bulletModule;
         this.audioModule = audioModule;
     }
     
     public SEWorld(){
         aiModule = new SEAIModule(this);
-        glModule = new SEGLModule(this);
         bullettModule = new SEBulletModule(this);
         audioModule = new SEAudioModule(this);
     }
@@ -69,10 +66,6 @@ public class SEWorld {
     
     public SEAudioModule getAudioModule(){
         return audioModule;
-    }
-    
-    public SEGLModule getGLModule(){
-        return glModule;
     }
     
     public SEAIModule getAIModule(){
@@ -163,7 +156,6 @@ public class SEWorld {
     }
     
     private void update(){
-        glModule.update(getDeltaInS());
         aiModule.update(getDeltaInS());
         bullettModule.update(getDeltaInS());
         if(guis.size() > 0 && currentGUI <= guis.size()-1){
@@ -180,7 +172,6 @@ public class SEWorld {
             }
         }
         this.actors.add(actor);
-        glModule.addSEMesh(actor.getSEMesh());
         aiModule.addAI(actor.getSEAI());
         
         return this.actors.size()-1;

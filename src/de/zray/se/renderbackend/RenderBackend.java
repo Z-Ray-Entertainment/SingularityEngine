@@ -14,7 +14,7 @@ import de.zray.se.SEWorld;
 public interface RenderBackend {
     public abstract void init();
     public abstract boolean isInited();
-    public abstract void renderWorld(SEWorld world);
+    public abstract void renderWorld(float delta);
     public abstract void shutdown();
     public abstract boolean closeRequested();
 }
