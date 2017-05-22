@@ -17,4 +17,5 @@ public interface RenderBackend {
     public abstract boolean closeRequested();
     public abstract boolean isReady();
     public abstract void backendSwitchRequested();
+    public abstract float getAspectRatio();
 }

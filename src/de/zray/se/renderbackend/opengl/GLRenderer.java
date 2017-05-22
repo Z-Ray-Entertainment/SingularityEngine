@@ -6,6 +6,8 @@
 package de.zray.se.renderbackend.opengl;
 
 import de.zray.se.Settings;
+import de.zray.se.grapics.Camera;
+import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
@@ -15,10 +17,7 @@ import java.nio.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.opengl.GL;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -28,40 +27,45 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class GLRenderer implements RenderBackend{
     private long window = -1;
+    private float aspectRatio = 1;
     private final String windowTitle = Settings.get().title+" "+Settings.get().version;
-    private final int windowW = Settings.get().window.resX;
-    private final int windowH = Settings.get().window.resY;
+    private int windowW = Settings.get().window.resX;
+    private int windowH = Settings.get().window.resY;
 
     @Override
     public void init() {
         GLFWErrorCallback.createPrint(System.err).set();
-        if ( !glfwInit() )
-                throw new IllegalStateException("Unable to initialize GLFW");
-        glfwDefaultWindowHints(); // optional, the current window hints are already the default
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+        if ( !glfwInit() ){
+            SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Unable to initialize GLFW"}, true);
+        }
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         window = glfwCreateWindow(windowW, windowH, windowTitle, NULL, NULL);
-        if ( window == NULL )
-                throw new RuntimeException("Failed to create the GLFW window");
+        if ( window == NULL ){
+            SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Failed to create the GLFW window"}, true);
+        }
 
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
                 if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                         glfwSetWindowShouldClose(window, true);
         });
 
+        glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
+            @Override
+            public void invoke(long window, int width, int height) {
+                aspectRatio = (float) width/ (float) height;
+                windowW = width;
+                windowH = height;
+            }
+        });
+        
         try ( MemoryStack stack = stackPush() ) {
-                IntBuffer pWidth = stack.mallocInt(1); // int*
-                IntBuffer pHeight = stack.mallocInt(1); // int*
-
-                // Get the window size passed to glfwCreateWindow
-                glfwGetWindowSize(window, pWidth, pHeight);
-
-                // Get the resolution of the primary monitor
-                GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
-                // Center the window
-                glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2);
-        } // the stack frame is popped automatically
+            IntBuffer pWidth = stack.mallocInt(1);
+            IntBuffer pHeight = stack.mallocInt(1);
+            glfwGetWindowSize(window, pWidth, pHeight);
+            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            glfwSetWindowPos(window, (vidmode.width() - pWidth.get(0)) / 2, (vidmode.height() - pHeight.get(0)) / 2);
+        }
 
         glfwMakeContextCurrent(window);
         glfwSwapInterval(0);
@@ -103,5 +107,46 @@ public class GLRenderer implements RenderBackend{
     @Override
     public void backendSwitchRequested() {
         //Do nothing
+    }
+
+    @Override
+    public float getAspectRatio() {
+        return aspectRatio;
+    }
+    
+    private void applyCamera(Camera cam){
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        switch (cam.getCameraMode()) {
+            case ORTHOGRAPHIC:
+                glOrtho(0, windowW, windowH, 0, cam.getNear(), cam.getFar());
+                break;
+            case PERSPECTIVE:
+                //glPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
+                break;
+        }
+        if (cam.getViewMode() == Camera.ViewMode.THIRDPERSON) {
+            glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
+            applyRotations(cam);
+        } else {
+            applyRotations(cam);
+            glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
+        }
+        glMatrixMode(GL_MODELVIEW);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glLoadIdentity();
+    }
+    
+    private void applyRotations(Camera cam) {
+        if (!cam.getRotationLocks()[0]) {
+            glRotated(cam.getRotation().x, 1, 0, 0);
+        }
+        if (!cam.getRotationLocks()[1]) {
+            glRotated(cam.getRotation().y, 0, 1, 0);
+        }
+        if (!cam.getRotationLocks()[2]) {
+            glRotated(cam.getRotation().z, 0, 0, 1);
+        }
+
     }
 }
