@@ -5,6 +5,7 @@
  */
 package de.zray.se;
 
+import de.zray.se.ai.SEAIModule;
 import de.zray.se.grapics.Camera;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author vortex
  */
 public class SEWorld {
+    private SEAIModule aiModule;
     private List<SEActor> actors = new LinkedList<>();
     private List<Camera> views = new LinkedList<>();
     private double delta = 0, timeBeforeAct, fpsUpdate = 0;
@@ -64,5 +66,13 @@ public class SEWorld {
             countedFrames = 0;
             fpsUpdate = 0;
         }
+    }
+    
+    public SEAIModule getAIModule(){
+        return aiModule;
+    }
+    
+    public void setAIModule(SEAIModule aiModule){
+        this.aiModule = aiModule;
     }
 }
