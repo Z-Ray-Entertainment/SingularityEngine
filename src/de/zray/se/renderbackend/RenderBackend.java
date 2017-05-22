@@ -16,4 +16,5 @@ public interface RenderBackend {
     public abstract void shutdown();
     public abstract boolean closeRequested();
     public abstract boolean isReady();
+    public abstract void backendSwitchRequested();
 }
