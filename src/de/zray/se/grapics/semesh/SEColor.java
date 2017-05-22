@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se.grapics.material;
+package de.zray.se.grapics.semesh;
 
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;

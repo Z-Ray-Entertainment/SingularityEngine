@@ -25,13 +25,20 @@ public class MainThread {
     }
     
     public void loop() throws IOException{
-        if(!backend.isInited()){
-            backend.init();
-        }
-        if(currentWorld != null){
-            currentWorld.act();
-        }
-        backend.renderWorld(currentWorld.getDeltaInMS());
+        Thread loop = new Thread(() -> {
+            while(!backend.closeRequested()){
+                if(!backend.isInited()){
+                    backend.init();
+                }
+                if(currentWorld != null){
+                    currentWorld.act();
+                }
+                if(backend.isReady()){
+                    backend.renderWorld(currentWorld.getDelta());
+                }
+            }
+        });
+        loop.start();
     }
     
     public void shutdown(){

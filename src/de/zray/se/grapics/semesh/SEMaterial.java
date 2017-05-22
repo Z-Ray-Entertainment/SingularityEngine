@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se.grapics.material;
+package de.zray.se.grapics.semesh;
 
 import de.zray.se.grapics.texturemanager.SETexture;
 import de.zray.se.grapics.texturemanager.TextureManager;
@@ -62,9 +62,9 @@ public class SEMaterial {
             glDisable(GL_LIGHTING);
         }
         if(lighted){
-            glMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse.colorData);
-            glMaterial(GL_FRONT_AND_BACK, GL_SPECULAR, specular.colorData);
-            glMaterial(GL_FRONT_AND_BACK, GL_AMBIENT, ambient.colorData);
+            //glMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse.colorData);
+            //glMaterial(GL_FRONT_AND_BACK, GL_SPECULAR, specular.colorData);
+            //glMaterial(GL_FRONT_AND_BACK, GL_AMBIENT, ambient.colorData);
         }
         else{
             diffuse.getColorData().rewind();

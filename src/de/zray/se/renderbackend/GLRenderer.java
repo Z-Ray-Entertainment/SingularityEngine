@@ -78,7 +78,7 @@ public class GLRenderer implements RenderBackend{
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
         // Enable v-sync
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
         // Make the window visible
         glfwShowWindow(window);
@@ -103,7 +103,7 @@ public class GLRenderer implements RenderBackend{
     }
 
     @Override
-    public void renderWorld(float delta) {
+    public void renderWorld(double delta) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -120,5 +120,10 @@ public class GLRenderer implements RenderBackend{
     @Override
     public boolean closeRequested() {
         return glfwWindowShouldClose(window);
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
     }
 }

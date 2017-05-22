@@ -22,5 +22,5 @@ public abstract class SEAI {
         aiMod.addAI(this);
     }
     
-    public abstract void act(float delta);
+    public abstract void act(double delta);
 }

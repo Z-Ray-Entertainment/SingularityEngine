@@ -9,18 +9,16 @@ import de.zray.se.MainThread;
 import de.zray.se.SEUtils;
 import de.zray.se.Settings;
 import de.zray.se.grapics.Camera;
-import de.zray.se.grapics.material.SEMaterial;
 import de.zray.se.grapics.semesh.vbo.AbstractVBO;
 import de.zray.se.grapics.semesh.vbo.SolidVBO;
 import de.zray.se.grapics.semesh.vbo.WiredVBO;
 import de.zray.se.logger.SELogger;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import javax.vecmath.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.util.vector.Vector3f;
 
 /**
  *
@@ -30,6 +28,7 @@ public class SEMesh{
     public static enum RenderMode{DIRECT, DISPLAY_LIST, VBO}
     public static enum DisplayMode{SOLID, WIRED, DOTS};
     
+    private int renderData = -1;
     private RenderMode renderMode = RenderMode.DIRECT;
     private DisplayMode displayMode = DisplayMode.SOLID;
     private List<SEVertex> vertecies = new LinkedList<>();
@@ -59,6 +58,10 @@ public class SEMesh{
         orientation = new SEOriantation();
         this.bb = new BoundingBox(vertecies);
         this.direction = new Vector3f(0, 0, -1);
+    }
+    
+    public void setRenderData(int index){
+        this.renderData = index;
     }
     
     public void printMeshData(){
@@ -259,11 +262,12 @@ public class SEMesh{
     }
     
     public boolean inView(){
-        Camera cam = MainThread.getCurrentWorld().getGLModule().getCurrentCamera();
+        /*Camera cam = MainThread.getCurrentWorld().getGLModule().getCurrentCamera();
         Vector3f posCam = new Vector3f(cam.getPosition().x, cam.getPosition().y, cam.getPosition().z);
         Vector3f posMesh = orientation.getPositionVec();
         float dist = SEUtils.getLenght(SEUtils.getVector(posMesh, posCam));
-        return (renderDist == -1 || dist < renderDist);
+        return (renderDist == -1 || dist < renderDist);*/
+        return true;
     }
     
     public void render() throws IOException{
