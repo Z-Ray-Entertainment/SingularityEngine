@@ -10,10 +10,6 @@ import de.zray.se.Settings;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.newdawn.slick.openal.Audio;
-import org.newdawn.slick.openal.AudioLoader;
-import org.newdawn.slick.openal.SoundStore;
-import org.newdawn.slick.util.ResourceLoader;
 
 /**
  *
@@ -29,7 +25,8 @@ public class Playlist {
     private LoopMode loopMode = LoopMode.LOOP_ALL;
    
     public int addTrack(Audio track){
-        int freeSlot = getFreeSlot();
+        
+        /*int freeSlot = getFreeSlot();
         if(freeSlot == -1){
             clips.add(track);
             return clips.size()-1;
@@ -37,11 +34,12 @@ public class Playlist {
         else{
             clips.set(freeSlot, track);
                 return freeSlot;
-        }
+        }*/
+        return -1;
     }
     
     public int addTrack(String file) throws IOException{
-        int freeSlot = getFreeSlot();
+        /*int freeSlot = getFreeSlot();
         Audio track = AudioLoader.getStreamingAudio(new SEUtils().getSuffix(file).toUpperCase(), ResourceLoader.getResource(file));
         if(freeSlot == -1){
             clips.add(track);
@@ -58,12 +56,12 @@ public class Playlist {
             if(clips.get(i) == null){
                 return i;
             }
-        }
+        }*/
         return -1;
     }
     
     public boolean isPlaying(){
-        return isPlaying && SoundStore.get().isMusicPlaying();
+        return false;
     }
     
     public void stop(){
@@ -95,12 +93,12 @@ public class Playlist {
     }
     
     private void play(){
-        isPlaying = true;
+        /*isPlaying = true;
         if(loopMode == LoopMode.LOOP_ONE.LOOP_ONE){
             clips.get(currentClip).playAsMusic(Settings.get().sound.volume, Settings.get().sound.pitch, true);
         }
         else{
             clips.get(currentClip).playAsMusic(Settings.get().sound.volume, Settings.get().sound.pitch, false);
-        }
+        }*/
     }
 }

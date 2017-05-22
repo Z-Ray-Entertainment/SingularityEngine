@@ -30,11 +30,15 @@ public class SEWorld {
     }
     
     public void addSEActor(SEActor actor){
-        
+        actors.add(actor);
     }
     
     public SEActor getNextActor(){
         return null;
+    }
+    
+    public Camera getCurrentCamera(){
+        return views.get(currentCamera);
     }
     
     public void act(){

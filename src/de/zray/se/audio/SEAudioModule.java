@@ -6,104 +6,72 @@
 package de.zray.se.audio;
 
 import de.zray.se.SEModule;
-import de.zray.se.SEUtils;
 import de.zray.se.SEWorld;
-import de.zray.se.Settings;
-import java.io.IOException;
-import java.util.ArrayList;
+import de.zray.se.logger.SELogger;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.util.List;
-import org.newdawn.slick.openal.Audio;
-import org.newdawn.slick.openal.AudioLoader;
-import org.newdawn.slick.openal.SoundStore;
-import org.newdawn.slick.util.ResourceLoader;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALC10;
+import static org.lwjgl.openal.ALC10.*;
+import static org.lwjgl.openal.ALC11.*;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALUtil;
+import static org.lwjgl.openal.EXTThreadLocalContext.alcSetThreadContext;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 /**
  *
  * @author Vortex Acherontic
  */
 public class SEAudioModule extends SEModule{
-    private Playlist playlist;
-    private List<Audio> sfx = new ArrayList<>();
-    private float lastVolume = Settings.get().sound.volume;
-    
-    public SEAudioModule(SEWorld parrent){
+    private long audioDevice, context;
+;
+
+    public SEAudioModule(SEWorld parrent) {
         super(parrent);
-    }
-    
-    public  SEAudioModule(SEWorld parrent, Playlist playlist){
-        super(parrent);
-        this.playlist = playlist;
-    }
-    
-    public void setPlaylist(Playlist playlist){
-        this.playlist = playlist;
-    }
-    
-    public void playSoundEffect(String sfx) throws IOException{
-        Audio sfxFile = AudioLoader.getStreamingAudio(new SEUtils().getSuffix(sfx).toUpperCase(), ResourceLoader.getResource(sfx));
-        playSoundEffect(sfxFile);
-    }
-    
-    public void playSoundEffect(Audio sfx){
-       this.sfx.add(sfx);
-        playSFX(this.sfx.size()-1, 0, 0, 0);
-    }
-    
-    private void playSFX(int sfx, float x, float y, float z){
-        this.sfx.get(sfx).playAsSoundEffect(Settings.get().sound.sfxVolume, Settings.get().sound.sfxPitch, false, x, y, z);
-    }
-    
-    public void poll(){
-        if(playlist != null){
-            if(!playlist.isPlaying()){
-                playlist.nextTrack();
-            }
+        
+        audioDevice = ALC10.alcOpenDevice((ByteBuffer) null);
+        if(audioDevice == NULL){
+            SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Failed to open the default audio device."}, true);
         }
-        if(sfx.size() > 0){
-            for(int i = 0; i < sfx.size(); i++){
-                if(sfx.get(i) != null && !sfx.get(i).isPlaying()){
-                    sfx.set(i, null);
-                    if(i == sfx.size()-1){
-                        sfx.remove(i);
-                    }
+        
+        ALCCapabilities deviceCaps = ALC.createCapabilities(audioDevice);
+        SELogger.get().dispatchMsg(this, SELogger.SELogType.INFO, new String[]{"OpenALC10: " + deviceCaps.OpenALC10, "OpenALC11: " + deviceCaps.OpenALC11, "caps.ALC_EXT_EFX = " + deviceCaps.ALC_EXT_EFX}, false);
+        
+        if (deviceCaps.OpenALC11) {
+            List<String> devices = ALUtil.getStringList(NULL, ALC_ALL_DEVICES_SPECIFIER);
+            if (devices == null) {
+                SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"No AL devices found!"}, true);
+            } else {
+                for (int i = 0; i < devices.size(); i++) {
+                    System.out.println(i + ": " + devices.get(i));
                 }
             }
         }
-        SoundStore.get().poll(0);
-    }
-    
-    public void playBGM(boolean enabled){
-        if(!enabled){
-            SoundStore.get().pauseLoop();
-        }
-        else{
-            SoundStore.get().restartLoop();
-        }
-    }
-    
-    public void setBGMMuted(boolean muted){
-        if(muted){
-            Settings.get().sound.volume = 0;
-            SoundStore.get().setMusicVolume(Settings.get().sound.volume);
-        }
-        else{
-            Settings.get().sound.volume = lastVolume;
-            SoundStore.get().setMusicVolume(Settings.get().sound.volume);
-        }
-    }
-    
-    public boolean isBGMMuted(){
-        return (Settings.get().sound.volume == 0);
-    }   
 
-    
-    public Playlist getBGMPlayList(){
-        return playlist;
+        String defaultDeviceSpecifier = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+        System.out.println("Default device: " + defaultDeviceSpecifier);
+
+        context = alcCreateContext(audioDevice, (IntBuffer)null);
+        alcSetThreadContext(context);
+        AL.createCapabilities(deviceCaps);
+
+        System.out.println("ALC_FREQUENCY: " + alcGetInteger(audioDevice, ALC_FREQUENCY) + "Hz");
+        System.out.println("ALC_REFRESH: " + alcGetInteger(audioDevice, ALC_REFRESH) + "Hz");
+        System.out.println("ALC_SYNC: " + (alcGetInteger(audioDevice, ALC_SYNC) == ALC_TRUE));
+        System.out.println("ALC_MONO_SOURCES: " + alcGetInteger(audioDevice, ALC_MONO_SOURCES));
+        System.out.println("ALC_STEREO_SOURCES: " + alcGetInteger(audioDevice, ALC_STEREO_SOURCES));
     }
+    
 
     @Override
     public boolean shutdown() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        alcMakeContextCurrent(NULL);
+        alcDestroyContext(context);
+        alcCloseDevice(audioDevice);
+        return true;
     }
 
     @Override
