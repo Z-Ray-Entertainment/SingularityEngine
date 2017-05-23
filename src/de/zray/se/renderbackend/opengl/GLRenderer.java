@@ -108,11 +108,6 @@ public class GLRenderer implements RenderBackend{
     public void backendSwitchRequested() {
         //Do nothing
     }
-
-    @Override
-    public float getAspectRatio() {
-        return aspectRatio;
-    }
     
     private void applyCamera(Camera cam){
         glMatrixMode(GL_PROJECTION);
@@ -148,5 +143,15 @@ public class GLRenderer implements RenderBackend{
             glRotated(cam.getRotation().z, 0, 0, 1);
         }
 
+    }
+
+    @Override
+    public int getWidth() {
+        return windowW;
+    }
+
+    @Override
+    public int getHeight() {
+        return windowH;
     }
 }

@@ -12,9 +12,9 @@ import de.zray.se.SEWorld;
  *
  * @author vortex
  */
-public class SEBulletModule extends SEModule{
+public class SEBulletWorld extends SEModule{
 
-    public SEBulletModule(SEWorld parrent){
+    public SEBulletWorld(SEWorld parrent){
         super(parrent);
     }
     

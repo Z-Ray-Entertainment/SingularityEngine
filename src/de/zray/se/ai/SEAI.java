@@ -16,7 +16,7 @@ public abstract class SEAI {
     public SEActor parrentActor;
     public SEWorld parrentWorld;
     
-    public SEAI(SEWorld world, SEActor actor, SEAIModule aiMod){
+    public SEAI(SEWorld world, SEActor actor, SEAIWorld aiMod){
         this.parrentWorld = world;
         this.parrentActor = actor;
         aiMod.addAI(this);

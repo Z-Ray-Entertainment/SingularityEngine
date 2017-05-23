@@ -14,10 +14,10 @@ import java.util.List;
  *
  * @author vortex
  */
-public class SEAIModule extends SEModule{
+public class SEAIWorld extends SEModule{
     private List<SEAI> ais = new LinkedList<>();
 
-    public SEAIModule(SEWorld parrent){
+    public SEAIWorld(SEWorld parrent){
         super(parrent);
     }
     
