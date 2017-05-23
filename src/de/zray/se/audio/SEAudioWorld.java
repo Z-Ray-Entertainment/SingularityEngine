@@ -20,12 +20,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
 import static org.lwjgl.openal.AL10.alBufferData;
@@ -53,8 +50,10 @@ import sun.nio.ch.IOUtil;
  */
 public class SEAudioWorld extends SEModule{
 
-    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private ByteBuffer resizeBuffer(ByteBuffer buffer, int i) {
+        ByteBuffer newbuf = BufferUtils.createByteBuffer(buffer.capacity()*i);
+        newbuf.put(buffer);
+        return newbuf;
     }
     private long audioDevice, context;
 
@@ -87,11 +86,13 @@ public class SEAudioWorld extends SEModule{
         alcSetThreadContext(context);
         AL.createCapabilities(deviceCaps);
 
-        System.out.println("ALC_FREQUENCY: " + alcGetInteger(audioDevice, ALC_FREQUENCY) + "Hz");
-        System.out.println("ALC_REFRESH: " + alcGetInteger(audioDevice, ALC_REFRESH) + "Hz");
-        System.out.println("ALC_SYNC: " + (alcGetInteger(audioDevice, ALC_SYNC) == ALC_TRUE));
-        System.out.println("ALC_MONO_SOURCES: " + alcGetInteger(audioDevice, ALC_MONO_SOURCES));
-        System.out.println("ALC_STEREO_SOURCES: " + alcGetInteger(audioDevice, ALC_STEREO_SOURCES));
+        SELogger.get().dispatchMsg(this, SELogger.SELogType.INFO, new String[]{
+            "ALC_FREQUENCY: " + alcGetInteger(audioDevice, ALC_FREQUENCY) + "Hz",
+            "ALC_REFRESH: " + alcGetInteger(audioDevice, ALC_REFRESH) + "Hz",
+            "ALC_SYNC: " + (alcGetInteger(audioDevice, ALC_SYNC) == ALC_TRUE),
+            "ALC_MONO_SOURCES: " + alcGetInteger(audioDevice, ALC_MONO_SOURCES),
+            "ALC_STEREO_SOURCES: " + alcGetInteger(audioDevice, ALC_STEREO_SOURCES)
+        }, false);
     }
     
     public AudioSource loadAudioFile(String file){
@@ -133,7 +134,7 @@ public class SEAudioWorld extends SEModule{
         }
     }
     
-    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+    public ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
 
         Path path = Paths.get(resource);

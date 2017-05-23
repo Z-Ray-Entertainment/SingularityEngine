@@ -8,6 +8,7 @@ package de.zray.se.audio;
 import java.nio.ShortBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.vecmath.Vector3d;
 import static org.lwjgl.openal.AL10.AL_BUFFER;
 import static org.lwjgl.openal.AL10.AL_LOOPING;
 import static org.lwjgl.openal.AL10.AL_TRUE;
@@ -41,6 +42,10 @@ public class AudioSource {
             alSourcei(alSource, AL_LOOPING, AL_TRUE);
         }
         alSourcePlay(alSource);
+    }
+    
+    public void playAsSound(Vector3d pos){
+        
     }
     
     public boolean isPlaying(){
