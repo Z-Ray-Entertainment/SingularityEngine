@@ -17,6 +17,7 @@ import static org.lwjgl.openal.AL10.alSource3f;
 import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourcei;
+import org.lwjgl.openal.ALC10;
 
 /**
  *
@@ -25,8 +26,9 @@ import static org.lwjgl.openal.AL10.alSourcei;
 public class AudioSource {
     private int bufferID, alSource;
     private long duration;
+    private Vector3f pos = new Vector3f(0, 0, 0);
     
-    public AudioSource(int bufferID, int alSource, ShortBuffer pcm){
+    public AudioSource(int bufferID, int alSource){
         this.alSource = alSource;
         this.bufferID = bufferID;
     }
@@ -37,17 +39,24 @@ public class AudioSource {
     
     public void playAsMusic(boolean loop){
         alSourcei(alSource, AL_BUFFER, bufferID);
-
         if(loop){
             alSourcei(alSource, AL_LOOPING, AL_TRUE);
         }
         alSourcePlay(alSource);
     }
     
-    public void playAsSound(Vector3f pos){
+    public void playAsSound(boolean loop){
         alSourcei(alSource, AL_BUFFER, bufferID);
         alSource3f(alSource, AL_POSITION, pos.x, pos.y, pos.z);
+        if(loop){
+            alSourcei(alSource, AL_LOOPING, AL_TRUE);
+        }
         alSourcePlay(alSource);
+    }
+    
+    public void setPosition(Vector3f position){
+        this.pos = position;
+        alSource3f(alSource, AL_POSITION, pos.x, pos.y, pos.z);
     }
     
     public boolean isPlaying(){

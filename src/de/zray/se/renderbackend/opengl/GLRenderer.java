@@ -31,6 +31,7 @@ public class GLRenderer implements RenderBackend{
     private final String windowTitle = Settings.get().title+" "+Settings.get().version;
     private int windowW = Settings.get().window.resX;
     private int windowH = Settings.get().window.resY;
+    private boolean closeRequested = false;
 
     @Override
     public boolean init() {
@@ -50,6 +51,7 @@ public class GLRenderer implements RenderBackend{
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ){
                     glfwSetWindowShouldClose(window, true);
+                    closeRequested = true;
             }
         });
 
@@ -101,7 +103,7 @@ public class GLRenderer implements RenderBackend{
 
     @Override
     public boolean closeRequested() {
-        return glfwWindowShouldClose(window);
+        return closeRequested;
     }
 
     @Override

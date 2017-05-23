@@ -19,6 +19,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.LinkedList;
 import java.util.List;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.BufferUtils.createByteBuffer;
@@ -49,7 +50,9 @@ import sun.nio.ch.IOUtil;
  * @author Vortex Acherontic
  */
 public class SEAudioWorld extends SEModule{
-
+    private List<AudioSource> sources = new LinkedList<>();
+    
+    
     private ByteBuffer resizeBuffer(ByteBuffer buffer, int i) {
         ByteBuffer newbuf = BufferUtils.createByteBuffer(buffer.capacity()*i);
         newbuf.put(buffer);
@@ -102,7 +105,9 @@ public class SEAudioWorld extends SEModule{
         STBVorbisInfo info = STBVorbisInfo.malloc();
         pcm = readVorbis(file, 32 * 1024, info);
         alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
-        return new AudioSource(buffer, source, pcm);
+        AudioSource audioSource = new AudioSource(buffer, source);
+        sources.add(audioSource);
+        return audioSource;
     }
 
     private ShortBuffer readVorbis(String file, int bufferSize, STBVorbisInfo info){
@@ -170,6 +175,9 @@ public class SEAudioWorld extends SEModule{
     
     @Override
     public boolean shutdown() {
+        sources.forEach((tmp) -> {
+            tmp.delete();
+        });        
         alcMakeContextCurrent(NULL);
         alcDestroyContext(context);
         alcCloseDevice(audioDevice);
