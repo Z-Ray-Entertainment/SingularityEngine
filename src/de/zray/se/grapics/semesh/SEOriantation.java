@@ -5,17 +5,16 @@
  */
 package de.zray.se.grapics.semesh;
 
-import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.util.vector.Vector3f;
+import javax.vecmath.Vector3d;
 
 /**
  *
  * @author vortex
  */
 public class SEOriantation {
-    private Vector3f pos = new Vector3f(0, 0, 0), memPos;
-    private Vector3f rot = new Vector3f(0, 0, 0), memRot;
-    private Vector3f scl = new Vector3f(0, 0, 0), memScl;
+    private Vector3d pos = new Vector3d(0, 0, 0), memPos;
+    private Vector3d rot = new Vector3d(0, 0, 0), memRot;
+    private Vector3d scl = new Vector3d(0, 0, 0), memScl;
     private boolean wasChanged = false;
     
     public SEOriantation(){
@@ -40,11 +39,6 @@ public class SEOriantation {
     
     public void apply(){
         chaged();
-        glTranslatef(pos.x, pos.y, pos.z);
-        glRotatef(rot.x, 1, 0, 0);
-        glRotatef(rot.y, 0, 1, 0);
-        glRotatef(rot.z, 0, 0, 1);
-        glScalef(scl.x, scl.y, scl.z);
     }
     
     private void chaged(){
@@ -90,30 +84,30 @@ public class SEOriantation {
         memScl.z = scl.z;
     }
     
-    public float[] getPosition(){
-        return new float[]{pos.x, pos.y, pos.z};
+    public double[] getPosition(){
+        return new double[]{pos.x, pos.y, pos.z};
     }
     
-    public Vector3f getPositionVec(){
+    public Vector3d getPositionVec(){
         return pos;
     }
     
-    public void setPosition(float x, float y, float z){
-        pos = new Vector3f(x, y, z);
+    public void setPosition(double x, double y, double z){
+        pos = new Vector3d(x, y, z);
     }
     
-    public void setRotation(float x, float y, float z){
-        rot = new Vector3f(x, y, z);
+    public void setRotation(double x, double y, double z){
+        rot = new Vector3d(x, y, z);
     }
     
-    public void setScale(float x, float y, float z){
-        scl = new Vector3f(x, y, z);
+    public void setScale(double x, double y, double z){
+        scl = new Vector3d(x, y, z);
     }
     
-    private void initOrientation(float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
-        pos = new Vector3f(posX, posY, posZ);
-        rot = new Vector3f(rotX, rotY, rotZ);
-        scl = new Vector3f(scaleX, scaleY, scaleZ);
+    private void initOrientation(double posX, double posY, double posZ, double rotX, double rotY, double rotZ, double scaleX, double scaleY, double scaleZ){
+        pos = new Vector3d(posX, posY, posZ);
+        rot = new Vector3d(rotX, rotY, rotZ);
+        scl = new Vector3d(scaleX, scaleY, scaleZ);
         memPos = pos;
         memRot = rot;
         memScl = scl;

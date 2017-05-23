@@ -6,7 +6,7 @@
 package de.zray.se.grapics.shapes;
 
 import de.zray.se.generators.VoronoiCracle;
-import de.zray.se.grapics.material.SEMaterial;
+import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.grapics.semesh.SENormal;
@@ -14,7 +14,7 @@ import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
 import java.util.ArrayList;
 import java.util.List;
-import org.lwjgl.util.vector.Vector3f;
+import javax.vecmath.Vector3f;
 
 /**
  *
@@ -108,7 +108,7 @@ public class IcoSphere implements SEMeshProvider{
     
     private SENormal calcNormal(SEVertex v){
         Vector3f n = new Vector3f(v.vX, v.vY, v.vZ);
-        n.normalise();
+        n.normalize();
         return new SENormal(n.x, n.y, n.z);
     }
     

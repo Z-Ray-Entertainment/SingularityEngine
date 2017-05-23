@@ -6,8 +6,9 @@
 package de.zray.se.grapics.semesh;
 
 import java.util.List;
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.util.vector.Vector3f;
 
 /**
  *
@@ -15,7 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
  */
 public class BoundingBox {
     float xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = 0, zmax = 0;
-    Vector3f v1, v2, v3, v4, v5, v6, v7, v8;
+    Vector3d v1, v2, v3, v4, v5, v6, v7, v8;
     SEMesh cube;
     SEOriantation ori = new SEOriantation(0, 0, 0);
     
@@ -54,14 +55,14 @@ public class BoundingBox {
     }
     
     private void buildBB(){
-        v1 = new Vector3f(xmin, ymin, zmin);
-        v2 = new Vector3f(xmax, ymin, zmin);
-        v3 = new Vector3f(xmax, ymin, zmax);
-        v4 = new Vector3f(xmin, ymin, zmax);
-        v5 = new Vector3f(xmin, ymax, zmin);
-        v6 = new Vector3f(xmax, ymax, zmin);
-        v7 = new Vector3f(xmax, ymax, zmax);
-        v8 = new Vector3f(xmin, ymax, zmax);
+        v1 = new Vector3d(xmin, ymin, zmin);
+        v2 = new Vector3d(xmax, ymin, zmin);
+        v3 = new Vector3d(xmax, ymin, zmax);
+        v4 = new Vector3d(xmin, ymin, zmax);
+        v5 = new Vector3d(xmin, ymax, zmin);
+        v6 = new Vector3d(xmax, ymax, zmin);
+        v7 = new Vector3d(xmax, ymax, zmax);
+        v8 = new Vector3d(xmin, ymax, zmax);
     }
     
     public void setOrientation(SEOriantation ori){
@@ -73,15 +74,15 @@ public class BoundingBox {
         return false;
     }
   
-    public boolean inside(Vector3f point, SEOriantation vecOri){
+    public boolean inside(Vector3d point, SEOriantation vecOri){
         return realInside(point, vecOri);
     }
     
-    public boolean inside(Vector3f point){
+    public boolean inside(Vector3d point){
         return realInside(point, new SEOriantation());
     }
     
-    private boolean realInside(Vector3f point, SEOriantation vecOri){
+    private boolean realInside(Vector3d point, SEOriantation vecOri){
         if(point.x+vecOri.getPositionVec().x >= xmin+ori.getPositionVec().x && point.x < xmax+ori.getPositionVec().x){
             return true;
         }
@@ -95,7 +96,7 @@ public class BoundingBox {
     }
     
     public void debug(){
-        glDisable(GL_TEXTURE);
+        /*glDisable(GL_TEXTURE);
         glDisable(GL_TEXTURE_2D);
         glColor4f(0, 1, 0, 0);
         glBegin(GL_LINES);
@@ -161,6 +162,6 @@ public class BoundingBox {
         
         glVertex3f(v7.x, v7.y, v7.z);
         glVertex3f(v8.x, v8.y, v8.z);
-        glEnd();
+        glEnd();*/
     }
 }

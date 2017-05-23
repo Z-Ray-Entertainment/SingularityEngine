@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import org.lwjgl.util.vector.Vector3f;
+import javax.vecmath.Vector3d;
 
 /**
  *
@@ -74,7 +74,7 @@ public class DistancePatch {
     }
     
     public boolean fits(SEOriantation objOri){
-        Vector3f pivot = objOri.getPositionVec();
+        Vector3d pivot = objOri.getPositionVec();
         return distanceBB.inside(pivot, objOri);
     }
     

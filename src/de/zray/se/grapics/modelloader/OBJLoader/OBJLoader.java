@@ -5,7 +5,7 @@
  */
 package de.zray.se.grapics.modelloader.OBJLoader;
 
-import de.zray.se.grapics.material.SEMaterial;
+import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.modelloader.LoaderModule;
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;

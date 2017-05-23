@@ -5,8 +5,9 @@
  */
 package de.zray.se;
 
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+import javax.vecmath.Vector2d;
+import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3f;
 
 /**
  *
@@ -34,5 +35,9 @@ public class SEUtils {
     
     public static Vector2f calcCoordinates(float radius, float angle){
         return new Vector2f((float) (radius*Math.cos(angle)), (float) (radius*Math.sin(angle)));
+    }
+    
+    public static Vector2d calcCoordinates(double radius, double angle){
+        return new Vector2d(radius*Math.cos(angle), radius*Math.sin(angle));
     }
 }

@@ -6,10 +6,7 @@
 package de.zray.se.grapics.texturemanager;
 
 import de.zray.se.logger.SELogger;
-import java.io.FileInputStream;
 import java.io.IOException;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureLoader;
 
 /**
  *
@@ -17,7 +14,7 @@ import org.newdawn.slick.opengl.TextureLoader;
  */
 public class SETexture {
     private String file = "", ext = ".file";
-    private Texture texture;
+    //private Texture texture;
     private boolean used = false;
     
     public SETexture(String file){
@@ -31,7 +28,7 @@ public class SETexture {
     
     public void load() throws IOException{
         SELogger.get().dispatchMsg("SETexture", SELogger.SELogType.INFO, new String[]{"Loading Texture "+file}, false);
-        texture = TextureLoader.getTexture(ext, new FileInputStream(file));
+        //texture = TextureLoader.getTexture(ext, new FileInputStream(file));
     }
     
     public String getFile(){
@@ -39,8 +36,8 @@ public class SETexture {
     }
     
     public void release(){
-        texture.release();
-        texture = null;
+        //texture.release();
+        //texture = null;
     }
     
     public void unuse(){
@@ -52,10 +49,10 @@ public class SETexture {
     }
     
     public void bind() throws IOException{
-        if(texture == null){
+        /*if(texture == null){
             load();
         }
         used = true;
-        texture.bind();
+        texture.bind();*/
     }
 }
