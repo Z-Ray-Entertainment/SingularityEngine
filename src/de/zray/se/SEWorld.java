@@ -17,7 +17,7 @@ import java.util.List;
  */
 public abstract class SEWorld {
     private SEAIWorld aiWorld;
-    private SEBulletWorld bulettWorld;
+    private SEBulletWorld bulletWorld;
     private List<SEActor> actors = new LinkedList<>();
     private List<Camera> views = new LinkedList<>();
     private double delta = 0, timeBeforeAct, fpsUpdate = 0;
