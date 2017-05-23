@@ -33,21 +33,24 @@ public class GLRenderer implements RenderBackend{
     private int windowH = Settings.get().window.resY;
 
     @Override
-    public void init() {
+    public boolean init() {
         GLFWErrorCallback.createPrint(System.err).set();
         if ( !glfwInit() ){
             SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Unable to initialize GLFW"}, true);
+            return false;
         }
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         window = glfwCreateWindow(windowW, windowH, windowTitle, NULL, NULL);
         if ( window == NULL ){
             SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Failed to create the GLFW window"}, true);
+            return false;
         }
 
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-                if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                        glfwSetWindowShouldClose(window, true);
+            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ){
+                    glfwSetWindowShouldClose(window, true);
+            }
         });
 
         glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
@@ -72,6 +75,8 @@ public class GLRenderer implements RenderBackend{
         glfwShowWindow(window);
         GL.createCapabilities();
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        
+        return true;
     }
 
     @Override

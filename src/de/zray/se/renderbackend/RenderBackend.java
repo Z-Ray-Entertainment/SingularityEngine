@@ -19,7 +19,17 @@ public interface RenderBackend {
      * can handle in here, such as rezising windows or what ever ist important
      * to your Backend.
      */
-    public abstract void init();
+    
+    /**
+     * Initialize the Renderbackend and all its context.
+     * @return true if init was sucdsessfull
+     */
+    public abstract boolean init();
+    
+    /**
+     * Refenrece if the Backend was already inited.
+     * @return tru if backend is initialized
+     */
     public abstract boolean isInited();
     public abstract void renderWorld(double delta);
     public abstract void shutdown();
