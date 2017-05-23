@@ -6,14 +6,14 @@
 package de.zray.se.audio;
 
 import java.nio.ShortBuffer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 import static org.lwjgl.openal.AL10.AL_BUFFER;
 import static org.lwjgl.openal.AL10.AL_LOOPING;
+import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_TRUE;
 import static org.lwjgl.openal.AL10.alDeleteBuffers;
 import static org.lwjgl.openal.AL10.alDeleteSources;
+import static org.lwjgl.openal.AL10.alSource3f;
 import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourcei;
@@ -44,8 +44,10 @@ public class AudioSource {
         alSourcePlay(alSource);
     }
     
-    public void playAsSound(Vector3d pos){
-        
+    public void playAsSound(Vector3f pos){
+        alSourcei(alSource, AL_BUFFER, bufferID);
+        alSource3f(alSource, AL_POSITION, pos.x, pos.y, pos.z);
+        alSourcePlay(alSource);
     }
     
     public boolean isPlaying(){
