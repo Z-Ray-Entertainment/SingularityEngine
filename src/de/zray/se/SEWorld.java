@@ -6,6 +6,7 @@
 package de.zray.se;
 
 import de.zray.se.ai.SEAIWorld;
+import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.grapics.Camera;
 import de.zray.se.physics.SEBulletWorld;
 import java.util.LinkedList;
@@ -18,49 +19,50 @@ import java.util.List;
 public abstract class SEWorld {
     private SEAIWorld aiWorld;
     private SEBulletWorld bulletWorld;
+    private SEAudioWorld audioWorld;
     private List<SEActor> actors = new LinkedList<>();
     private List<Camera> views = new LinkedList<>();
     private double delta = 0, timeBeforeAct, fpsUpdate = 0;
     private int currentCamera = -1, fps = 0, countedFrames;
     
-    public double getDelta(){
+    public final double getDelta(){
         return delta;
     }
     
-    public void updateDelta(){
+    public final void updateDelta(){
         delta =  getTimeInSec() - timeBeforeAct;
         timeBeforeAct = getTimeInSec();
         calcFPS(delta);
     }
     
-    public void addSEActor(SEActor actor){
+    public final void addSEActor(SEActor actor){
         actors.add(actor);
     }
     
-    public SEActor getNextActor(){
-        return null;
+    public final List<SEActor> getActors(){
+        return actors;
     }
     
-    public Camera getCurrentCamera(){
+    public final Camera getCurrentCamera(){
         return views.get(currentCamera);
     }
     
-    public void act(){
+    public final void act(){
         actors.forEach((actor) -> {
             actor.getSEAI().act(delta);
         });
         updateDelta();
     }
     
-    public double getTimeInSec(){
+    public final double getTimeInSec(){
         return System.nanoTime()*Math.pow(10, -9);
     }
     
-    public int getFPS(){
+    public final int getFPS(){
         return fps;
     }
     
-    private void calcFPS(double delta){
+    private final void calcFPS(double delta){
         fpsUpdate += delta;
         countedFrames++;
         if(fpsUpdate >= 1){
@@ -70,12 +72,28 @@ public abstract class SEWorld {
         }
     }
     
-    public SEAIWorld getAIWorld(){
+    public final SEAIWorld getAIWorld(){
         return aiWorld;
     }
     
-    public void setAIWorld(SEAIWorld aiWorld){
+    public final void setAIWorld(SEAIWorld aiWorld){
         this.aiWorld = aiWorld;
+    }
+    
+    public final void setBulletWorld(SEBulletWorld bullet){
+        this.bulletWorld = bullet;
+    }
+    
+    public final SEBulletWorld getBulletWorld(){
+        return bulletWorld;
+    }
+    
+    public final void setAudioWorld(SEAudioWorld audio){
+        this.audioWorld = audio;
+    }
+    
+    public final SEAudioWorld getAudioWorld(){
+        return audioWorld;
     }
     
     public abstract void init();
