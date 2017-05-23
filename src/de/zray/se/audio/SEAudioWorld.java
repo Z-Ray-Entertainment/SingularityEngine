@@ -9,15 +9,26 @@ import de.zray.se.SEModule;
 import de.zray.se.SEWorld;
 import de.zray.se.logger.SELogger;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.BufferUtils;
+import static org.lwjgl.BufferUtils.createByteBuffer;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
+import static org.lwjgl.openal.AL10.alBufferData;
 import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alGenSources;
 import static org.lwjgl.openal.ALC.createCapabilities;
@@ -34,12 +45,17 @@ import static org.lwjgl.stb.STBVorbis.stb_vorbis_open_memory;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_stream_length_in_samples;
 import org.lwjgl.stb.STBVorbisInfo;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import sun.nio.ch.IOUtil;
 
 /**
  *
  * @author Vortex Acherontic
  */
 public class SEAudioWorld extends SEModule{
+
+    private static ByteBuffer resizeBuffer(ByteBuffer buffer, int i) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     private long audioDevice, context;
 
     public SEAudioWorld(SEWorld parrent) {
@@ -79,42 +95,77 @@ public class SEAudioWorld extends SEModule{
     }
     
     public AudioSource loadAudioFile(String file){
-        try{
-            int buffer = alGenBuffers();
-            int source = alGenSources();
-            ShortBuffer pcm;
-            STBVorbisInfo info = STBVorbisInfo.malloc();
-            pcm = readVorbis(file, 32 * 1024, info);
-            alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
-            return new AudioSource(buffer, source, pcm, 5000); //Need to be changed, 5000 is default lenght of audio file
-        }
-        catch(Exception e){
-            return null;
-        }
+        int buffer = alGenBuffers();
+        int source = alGenSources();
+        ShortBuffer pcm;
+        STBVorbisInfo info = STBVorbisInfo.malloc();
+        pcm = readVorbis(file, 32 * 1024, info);
+        alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
+        return new AudioSource(buffer, source, pcm);
     }
 
     private ShortBuffer readVorbis(String file, int bufferSize, STBVorbisInfo info){
-        ByteBuffer vorbis = BufferUtils.createByteBuffer(bufferSize);
+        try {
+            ByteBuffer vorbis = ioResourceToByteBuffer(file, bufferSize);
+            IntBuffer error   = BufferUtils.createIntBuffer(1);
+            long      decoder = stb_vorbis_open_memory(vorbis, error, null);
+            if (decoder == NULL) {
+                SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Failed to open Ogg Vorbis file. Error: " + error.get(0)}, true);
+                return null;
+            }
 
-        IntBuffer error   = BufferUtils.createIntBuffer(1);
-        long      decoder = stb_vorbis_open_memory(vorbis, error, null);
-        if (decoder == NULL) {
-            throw new RuntimeException("Failed to open Ogg Vorbis file. Error: " + error.get(0));
+            stb_vorbis_get_info(decoder, info);
+
+            int channels = info.channels();
+
+            int lengthSamples = stb_vorbis_stream_length_in_samples(decoder);
+
+            ShortBuffer pcm = BufferUtils.createShortBuffer(lengthSamples);
+
+            pcm.limit(stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm) * channels);
+            stb_vorbis_close(decoder);
+
+            return pcm;
+        } 
+        catch (IOException ex) {
+            SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Failed to open Ogg Vorbis file. Error: " + ex.getMessage()}, true);
+            return null;
+        }
+    }
+    
+    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+        ByteBuffer buffer;
+
+        Path path = Paths.get(resource);
+        if (Files.isReadable(path)) {
+            try (SeekableByteChannel fc = Files.newByteChannel(path)) {
+                buffer = BufferUtils.createByteBuffer((int)fc.size() + 1);
+                while (fc.read(buffer) != -1) {
+                    ;
+                }
+            }
+        } else {
+            try (
+                InputStream source = IOUtil.class.getClassLoader().getResourceAsStream(resource);
+                ReadableByteChannel rbc = Channels.newChannel(source)
+            ) {
+                buffer = createByteBuffer(bufferSize);
+
+                while (true) {
+                    int bytes = rbc.read(buffer);
+                    if (bytes == -1) {
+                        break;
+                    }
+                    if (buffer.remaining() == 0) {
+                        buffer = resizeBuffer(buffer, buffer.capacity() * 2);
+                    }
+                }
+            }
         }
 
-        stb_vorbis_get_info(decoder, info);
-
-        int channels = info.channels();
-
-        int lengthSamples = stb_vorbis_stream_length_in_samples(decoder);
-
-        ShortBuffer pcm = BufferUtils.createShortBuffer(lengthSamples);
-
-        pcm.limit(stb_vorbis_get_samples_short_interleaved(decoder, channels, pcm) * channels);
-        stb_vorbis_close(decoder);
-
-        return pcm;
-    }
+        buffer.flip();
+        return buffer;
+}
     
     @Override
     public boolean shutdown() {
@@ -131,10 +182,6 @@ public class SEAudioWorld extends SEModule{
 
     @Override
     public boolean cleanUp() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void alBufferData(int buffer, int par, ShortBuffer pcm, int sample_rate) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

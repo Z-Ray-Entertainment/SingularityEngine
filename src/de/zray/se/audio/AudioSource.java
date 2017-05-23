@@ -24,20 +24,17 @@ import static org.lwjgl.openal.AL10.alSourcei;
 public class AudioSource {
     private int bufferID, alSource;
     private long duration;
-    private ShortBuffer pcm;
     
-    public AudioSource(int bufferID, int alSource, ShortBuffer pcm, long diration){
+    public AudioSource(int bufferID, int alSource, ShortBuffer pcm){
         this.alSource = alSource;
         this.bufferID = bufferID;
-        this.pcm = pcm;
-        this.duration = duration;
     }
     
     public int getSource(){
         return alSource;
     }
     
-    public void play(boolean loop){
+    public void playAsMusic(boolean loop){
         alSourcei(alSource, AL_BUFFER, bufferID);
 
         if(loop){
