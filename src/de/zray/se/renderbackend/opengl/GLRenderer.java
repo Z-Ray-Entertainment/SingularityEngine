@@ -5,14 +5,19 @@
  */
 package de.zray.se.renderbackend.opengl;
 
+import de.zray.se.SEActor;
+import de.zray.se.SEWorld;
 import de.zray.se.Settings;
 import de.zray.se.grapics.Camera;
+import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -32,6 +37,7 @@ public class GLRenderer implements RenderBackend{
     private int windowW = Settings.get().window.resX;
     private int windowH = Settings.get().window.resY;
     private boolean closeRequested = false;
+    private List<OpenGLRenderData> oglRenderDatas = new LinkedList<>();
 
     @Override
     public boolean init() {
@@ -86,9 +92,19 @@ public class GLRenderer implements RenderBackend{
         return (window != -1);
     }
 
+       
     @Override
-    public void renderWorld(double delta) {
+    public void renderWorld(double delta, SEWorld world) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        
+        for(SEActor actor : world.getActors()){
+            if(actor.getSEMesh().getRenderData() == -1){
+                OpenGLRenderData rData = new OpenGLRenderData();
+                
+            }
+        }
+        
+        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -161,4 +177,7 @@ public class GLRenderer implements RenderBackend{
     public int getHeight() {
         return windowH;
     }
+    
+    private void renderSEMesh(SEMesh mesh){}
+
 }

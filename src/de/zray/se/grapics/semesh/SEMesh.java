@@ -37,9 +37,7 @@ public class SEMesh{
     private List<SEFace> faces = new LinkedList<>();
     private SEAmature amature = new SEAmature();
     private SEOriantation orientation = new SEOriantation();
-    private AbstractVBO vbo = null;
     private SEMaterial material = new SEMaterial(), debugMat;
-    private int displayList;
     private boolean backfaceCulling = false, vboRendered = false;
     private List <SEMesh> lods = new LinkedList<>();
     private List<SEMesh> subMeshes = new LinkedList<>();
@@ -62,6 +60,10 @@ public class SEMesh{
     
     public void setRenderData(int index){
         this.renderData = index;
+    }
+    
+    public int getRenderData(){
+        return renderData;
     }
     
     public void printMeshData(){
@@ -113,17 +115,6 @@ public class SEMesh{
     
     public void setRenderMode(RenderMode rMode){
         this.renderMode = rMode;
-        if(renderMode == RenderMode.VBO){
-            switch(displayMode){
-                case SOLID :
-                    vbo = new SolidVBO(vertecies, uvs, normals, faces, AbstractVBO.VBOMode.STATIC);
-                    break;
-                case WIRED :
-                    vbo = new WiredVBO(vertecies, uvs, normals, faces, AbstractVBO.VBOMode.STATIC);
-                    break;
-            }
-            
-        }
     }
     
     public void addLOD(SEMesh mesh, float distance){
@@ -192,10 +183,10 @@ public class SEMesh{
     }
     
     private void createList(){
-        displayList = glGenLists(1);
+        /*displayList = glGenLists(1);
         glNewList(displayList, GL_COMPILE);
         call();
-        glEndList();
+        glEndList();*/
     }
     
     private void renderDebug(){
@@ -230,19 +221,19 @@ public class SEMesh{
                     call();
                     break;
                 case DISPLAY_LIST :
-                    if(displayList == -1){
+                    /*if(displayList == -1){
                         createList();
                     }
-                    glCallList(displayList);
+                    glCallList(displayList);*/
                     break;
                 case VBO :
-                    vbo.render();
+                    /*vbo.render();
                     if(faces != null){
                         vertecies.clear();
                         faces.clear();
                         uvs.clear();
                         normals.clear();
-                    }
+                    }*/
                     break;
             }
             if(subMeshes != null && !subMeshes.isEmpty()){

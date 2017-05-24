@@ -34,7 +34,7 @@ public class MainThread {
                     currentWorld.act();
                 }
                 if(backend.isReady()){
-                    backend.renderWorld(currentWorld.getDelta());
+                    backend.renderWorld(currentWorld.getDelta(), currentWorld);
                 }
             }
         });

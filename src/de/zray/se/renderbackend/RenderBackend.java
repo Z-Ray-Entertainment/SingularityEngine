@@ -5,6 +5,8 @@
  */
 package de.zray.se.renderbackend;
 
+import de.zray.se.SEWorld;
+
 /**
  *
  * @author vortex
@@ -31,7 +33,7 @@ public interface RenderBackend {
      * @return tru if backend is initialized
      */
     public abstract boolean isInited();
-    public abstract void renderWorld(double delta);
+    public abstract void renderWorld(double delta, SEWorld world);
     public abstract void shutdown();
     public abstract boolean closeRequested();
     public abstract boolean isReady();
