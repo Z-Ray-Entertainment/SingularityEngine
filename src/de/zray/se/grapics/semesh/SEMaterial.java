@@ -5,80 +5,165 @@
  */
 package de.zray.se.grapics.semesh;
 
-import de.zray.se.grapics.texturemanager.SETexture;
-import de.zray.se.grapics.texturemanager.TextureManager;
-import java.io.IOException;
-import static org.lwjgl.opengl.GL11.*;
-
 /**
  *
  * @author vortex
  */
 public class SEMaterial {
-    SEColor diffuse, specular, ambient;
-    private int textureID;
-    private boolean lighted = false, blending = false;
-
-    public SEMaterial(String texture){
-        init(TextureManager.get().addTexture(new SETexture(texture)), new SEColor(), new SEColor(), new SEColor(), true);
+    public static final int RED = 0, GREEN = 1, BLUE = 2, ALPHA = 3;
+    
+    private String texture, specMap, bumpMap, displaceMap, parallaxMap;
+    private int texID, specMapID, bumbMapID, displaceMapID, parallaxMapID;
+    private float specFac, bumpFac, displaceFac, parallaxFac, emission, reflection;
+    private float diffuseColor[] = {1, 1, 1, 1}, specColor[] = {1, 1, 1, 1};
+    
+    public void setSpecularColor(float red, float green, float blue, float alpha){
+        specColor[RED] = red;
+        specColor[GREEN] = green;
+        specColor[BLUE] = blue;
+        specColor[ALPHA] = alpha;
     }
     
-    public SEMaterial() {
-        init(-1, new SEColor(), new SEColor(), new SEColor(), true);
+    public float[] getSpecularColor(){
+        return specColor;
     }
     
-    public SEMaterial(int textureID, TextureManager tManager){
-        init(textureID, new SEColor(), new SEColor(), new SEColor(), true);
-    }
-
-    public SEMaterial(SEColor diffuse, SEColor specular, SEColor ambient){
-        init(-1, diffuse, specular, ambient, false);
-    }
-    
-    public void setLighted(boolean enabled){
-        this.lighted = enabled;
+    public void setDiffuseColor(float red, float green, float blue, float alpha){
+        diffuseColor[RED] = red;
+        diffuseColor[GREEN] = green;
+        diffuseColor[BLUE] = blue;
+        diffuseColor[ALPHA] = alpha;
     }
     
-    private void init(int texture, SEColor diffuse, SEColor specular, SEColor ambient, boolean lighted){
-        this.textureID = texture;
-        this.lighted = lighted;
-        this.diffuse = diffuse;
-        this.specular = specular;
-        this.ambient = ambient;
+    public float[] getDiffiseColo(){
+        return diffuseColor;
     }
     
-    public void apply() throws IOException{
-        if(diffuse.colorData.get(3) > 0 && blending){
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-        else{
-            glDisable(GL_BLEND);
-        }
-        if(lighted){
-            glEnable(GL_LIGHTING);
-        }
-        else{
-            glDisable(GL_LIGHTING);
-        }
-        if(lighted){
-            //glMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse.colorData);
-            //glMaterial(GL_FRONT_AND_BACK, GL_SPECULAR, specular.colorData);
-            //glMaterial(GL_FRONT_AND_BACK, GL_AMBIENT, ambient.colorData);
-        }
-        else{
-            diffuse.getColorData().rewind();
-            glColor4f(diffuse.colorData.get(0), diffuse.colorData.get(1), diffuse.colorData.get(2), diffuse.colorData.get(3));
-        }
-        
-        if(textureID != -1){
-            glEnable(GL_TEXTURE);
-            glEnable(GL_TEXTURE_2D);
-            TextureManager.get().bindTexture(textureID);
-        }
-        else if(textureID == -1){
-            glDisable(GL_TEXTURE);
-            glDisable(GL_TEXTURE_2D);
-        }
+    public void setReflectivity(float fac){
+        reflection = fac;
+    }
+    
+    public float getReflectivity(){
+        return reflection;
+    }
+    
+    public void setEmission(float fac){
+        emission = fac;
+    }
+    
+    public float getEmission(){
+        return emission;
+    }
+    
+    public void setParallaxiness(float fac){
+        parallaxFac = fac;
+    }
+    
+    public float getParallaxiness(){
+        return parallaxFac;
+    }
+    
+    public void setSpecularity(float fac){
+        specFac = fac;
+    }
+    
+    public float getSpecularity(){
+        return specFac;
+    }
+    
+    public void setBumpiness(float fac){
+        bumpFac = fac;
+    }
+    
+    public float getBumpiness(){
+        return bumpFac;
+    }
+    
+    public void setDisplacement(float fac){
+        displaceFac = fac;
+    }
+    
+    public float getDisplacement(){
+        return displaceFac;
+    }
+    
+    public void setTexture(String file){
+        texture = file;
+    }
+    
+    public String getTexture(){
+        return texture;
+    }
+    
+    public void setSpecMap(String file){
+        specMap = file;
+    }
+    
+    public String getSpecMap(){
+        return specMap;
+    }
+    
+    public void setBumpMap(String file){
+        bumpMap = file;
+    }
+    
+    public String getBumpMap(){
+        return bumpMap;
+    }
+    
+    public void setDisplaceMap(String file){
+        displaceMap = file;
+    }
+    
+    public String getDisplaceMap(){
+        return displaceMap;
+    }
+    
+    public void setParallaxMap(String file){
+        parallaxMap = file;
+    }
+    
+    public String getParallaxMap(){
+        return parallaxMap;
+    }
+    
+    public void setTextureID(int id){
+        texID = id;
+    }
+    
+    public int getTextureID(){
+        return texID;
+    }
+    
+    public void setBumbMapID(int id){
+        bumbMapID = id;
+    }
+    
+    public int getBumbMapID(){
+        return bumbMapID;
+    }
+    
+    public void setSpecMapID(int id){
+        specMapID = id;
+    }
+    
+    public int getSpecMapID(){
+        return specMapID;
+    }
+    
+    public void setParallaxMapID(int id){
+        parallaxMapID = id;
+    }
+    
+    public int getParallaxID(){
+        return parallaxMapID;
+    }
+    
+    public void setDisplaceMapID(int id){
+        displaceMapID = id;
+    }
+    
+    public int getDisplaceMapID(){
+        return displaceMapID;
     }
 }
