@@ -5,13 +5,7 @@
  */
 package de.zray.se.grapics.semesh;
 
-import de.zray.se.MainThread;
-import de.zray.se.SEUtils;
 import de.zray.se.Settings;
-import de.zray.se.grapics.Camera;
-import de.zray.se.grapics.semesh.vbo.AbstractVBO;
-import de.zray.se.grapics.semesh.vbo.SolidVBO;
-import de.zray.se.grapics.semesh.vbo.WiredVBO;
 import de.zray.se.logger.SELogger;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -38,7 +32,7 @@ public class SEMesh{
     private SEAmature amature = new SEAmature();
     private SEOriantation orientation = new SEOriantation();
     private SEMaterial material = new SEMaterial(), debugMat;
-    private boolean backfaceCulling = false, vboRendered = false;
+    private boolean backfaceCulling = false;
     private List <SEMesh> lods = new LinkedList<>();
     private List<SEMesh> subMeshes = new LinkedList<>();
     public UUID uuid = UUID.randomUUID();
@@ -117,6 +111,10 @@ public class SEMesh{
         this.renderMode = rMode;
     }
     
+    public RenderMode getRenderMode(){
+        return renderMode;
+    }
+        
     public void addLOD(SEMesh mesh, float distance){
         mesh.setRenderDist(distance);
         mesh.setOrientation(orientation);
@@ -127,6 +125,10 @@ public class SEMesh{
         backfaceCulling = enabled;
     }
     
+    public boolean backfaceCullingEnabled(){
+        return backfaceCulling;
+    }
+    
     public void setOrientation(SEOriantation orientation){
         this.orientation = orientation;
     }
@@ -135,75 +137,12 @@ public class SEMesh{
         return orientation;
     }
     
-    public void setDisplayMpode(DisplayMode displayMode){
+    public void setDisplayMode(DisplayMode displayMode){
         this.displayMode = displayMode;
     }
     
-    private void call(){
-        switch(displayMode){
-            case SOLID:
-                glBegin(GL_TRIANGLES);
-                for(SEFace face : faces){
-                    glNormal3f(normals.get(face.n1).nX, normals.get(face.n1).nY, normals.get(face.n1).nZ);
-                    glTexCoord2f(uvs.get(face.uv1).u, uvs.get(face.uv1).v);
-                    glVertex3f(vertecies.get(face.v1).vX, vertecies.get(face.v1).vY, vertecies.get(face.v1).vZ);
-                    
-                    glNormal3f(normals.get(face.n2).nX, normals.get(face.n2).nY, normals.get(face.n2).nZ);
-                    glTexCoord2f(uvs.get(face.uv2).u, uvs.get(face.uv2).v);
-                    glVertex3f(vertecies.get(face.v2).vX, vertecies.get(face.v2).vY, vertecies.get(face.v2).vZ);
-                    
-                    glNormal3f(normals.get(face.n3).nX, normals.get(face.n3).nY, normals.get(face.n3).nZ);
-                    glTexCoord2f(uvs.get(face.uv3).u, uvs.get(face.uv3).v);
-                    glVertex3f(vertecies.get(face.v3).vX, vertecies.get(face.v3).vY, vertecies.get(face.v3).vZ);
-                }
-                glEnd();
-                break;
-            case WIRED :
-                glBegin(GL_LINES);
-                for(SEFace face : faces){
-                    glTexCoord2f(uvs.get(face.uv1).u, uvs.get(face.uv1).v);
-                    glVertex3f(vertecies.get(face.v1).vX, vertecies.get(face.v1).vY, vertecies.get(face.v1).vZ);
-                    glTexCoord2f(uvs.get(face.uv2).u, uvs.get(face.uv2).v);
-                    glVertex3f(vertecies.get(face.v2).vX, vertecies.get(face.v2).vY, vertecies.get(face.v2).vZ);
-                    glTexCoord2f(uvs.get(face.uv1).u, uvs.get(face.uv1).v);
-                    glVertex3f(vertecies.get(face.v1).vX, vertecies.get(face.v1).vY, vertecies.get(face.v1).vZ);
-                    glTexCoord2f(uvs.get(face.uv3).u, uvs.get(face.uv3).v);
-                    glVertex3f(vertecies.get(face.v3).vX, vertecies.get(face.v3).vY, vertecies.get(face.v3).vZ);
-                    glTexCoord2f(uvs.get(face.uv2).u, uvs.get(face.uv2).v);
-                    glVertex3f(vertecies.get(face.v2).vX, vertecies.get(face.v2).vY, vertecies.get(face.v2).vZ);
-                    glTexCoord2f(uvs.get(face.uv3).u, uvs.get(face.uv3).v);
-                    glVertex3f(vertecies.get(face.v3).vX, vertecies.get(face.v3).vY, vertecies.get(face.v3).vZ);
-                }
-                glEnd();
-                break;
-            case DOTS :
-                break;
-        }
-        
-    }
-    
-    private void createList(){
-        /*displayList = glGenLists(1);
-        glNewList(displayList, GL_COMPILE);
-        call();
-        glEndList();*/
-    }
-    
-    private void renderDebug(){
-        glDisable(GL_LIGHTING);
-        glLineWidth(1);
-        glBegin(GL_LINES);
-            glColor4f(0, 1, 0, 1);
-            glVertex3f(0, -.5f, 0);
-            glVertex3f(0, .5f, 0);
-            glColor4f(1, 0, 0, 1);
-            glVertex3f(-.5f, 0, 0);
-            glVertex3f(.5f, 0, 0);
-            glColor4f(0, 0, 1, 1);
-            glVertex3f(0, 0, -.5f);
-            glVertex3f(0, 0, .5f);
-        glEnd();
-        glColor4f(1, 1, 1, 1);
+    public DisplayMode getDisplayMode(){
+        return displayMode;
     }
     
     private void renderSEMesh() throws IOException{
