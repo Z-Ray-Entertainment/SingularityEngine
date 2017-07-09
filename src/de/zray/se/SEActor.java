@@ -11,6 +11,7 @@ import de.zray.se.grapics.modelloader.Modelloader;
 import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.grapics.semesh.SEOriantation;
 import de.zray.se.physics.SEBulletObject;
+import java.util.List;
 
 /**
  *
@@ -20,24 +21,21 @@ public class SEActor {
     private SEMesh mesh;
     private SEAI ai;
     private SEBulletObject bullet;
+    private SEWorld parrentWorld;
     
-    public SEActor(SEMesh mesh, SEAI ai, SEBulletObject bulletObj, SEWorld parrent){
+    public SEActor(SEMesh mesh, SEAI ai, SEBulletObject bulletObj, SEWorld parrentWorld){
         this.ai = ai;
         this.bullet = bulletObj;
         this.mesh = mesh;
+        this.parrentWorld = parrentWorld;
     }
     
-    public SEActor(String mesh, SEWorld parrent){
+    public SEActor(String mesh, SEWorld parrentWorld){
         this.mesh = Modelloader.get().loadModel(mesh);
     }
     
-    public SEActor(String mesh, SEMaterial mat){
-        this.mesh = Modelloader.get().loadModel(mesh);
-        this.mesh.setMaterial(mat);
-    }
-    
-    public SEMesh getSEMesh(){
-        return mesh;
+    public List<SEMesh> getRendableSEMeshes(){
+        return mesh.getRendableMesh(parrentWorld.getCurrentCamera());
     }
     
     public SEAI getSEAI(){
