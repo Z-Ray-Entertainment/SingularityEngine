@@ -32,9 +32,9 @@ public class SEMesh{
     private List<SEFace> faces = new LinkedList<>();
     private SEAmature amature = new SEAmature();
     private SEOriantation orientation = new SEOriantation();
-    private SEMaterial material = new SEMaterial(), debugMat;
-    private boolean backfaceCulling = false;
-    private List <SEMesh> lods = new LinkedList<>();
+    private SEMaterial material = new SEMaterial();
+    private boolean isAnimated = false;
+    private SEMesh lod;
     private List<SEMesh> subMeshes = new LinkedList<>();
     public UUID uuid = UUID.randomUUID();
     private BoundingBox bb;
@@ -104,6 +104,10 @@ public class SEMesh{
         this.material = mat;
     }
     
+    public SEMaterial getMaterial(){
+        return material;
+    }
+    
     public void setRenderMode(RenderMode rMode){
         this.renderMode = rMode;
     }
@@ -112,10 +116,13 @@ public class SEMesh{
         return renderMode;
     }
         
-    public void addLOD(SEMesh mesh, float distance){
-        mesh.setRenderDist(distance);
+    public void addLOD(SEMesh mesh){
         mesh.setOrientation(orientation);
-        lods.add(mesh);
+        SEMesh freeLOD = lod;
+        while(freeLOD != null){
+            freeLOD = freeLOD.lod;
+        }
+        freeLOD = mesh;
     }
     
     public void setBackfaceCulling(boolean enabled){
@@ -140,52 +147,6 @@ public class SEMesh{
     
     public DisplayMode getDisplayMode(){
         return displayMode;
-    }
-    
-    private void renderSEMesh() throws IOException{
-        if(inView()){
-            material.apply();
-            if(backfaceCulling && !glIsEnabled(GL_CULL_FACE)){
-                glEnable(GL_CULL_FACE);
-            }
-            else if(glIsEnabled(GL_CULL_FACE)){
-                glDisable(GL_CULL_FACE);
-            }
-
-            switch(renderMode){
-                case DIRECT :
-                    call();
-                    break;
-                case DISPLAY_LIST :
-                    /*if(displayList == -1){
-                        createList();
-                    }
-                    glCallList(displayList);*/
-                    break;
-                case VBO :
-                    /*vbo.render();
-                    if(faces != null){
-                        vertecies.clear();
-                        faces.clear();
-                        uvs.clear();
-                        normals.clear();
-                    }*/
-                    break;
-            }
-            if(subMeshes != null && !subMeshes.isEmpty()){
-                for(SEMesh sub : subMeshes){
-                    sub.render();
-                }
-            }
-        }
-        else{
-            for(SEMesh lod : lods){
-                if(lod.inView()){
-                    lod.renderSEMesh();
-                    return;
-                }
-            }
-        }
     }
     
     /*
@@ -231,31 +192,33 @@ public class SEMesh{
         glPopMatrix();
     }
     
-    public List<SEMesh> getRendableMesh(Camera activeCam){
+    /**
+     * Returns only visible SEMEshes and visible LODs and submeshes
+     * @param activeCam the cmarera which is used to determine the ditance to the player
+     * @return visible Meshes
+     */
+    public List<SEMesh> getRendableMeshes(Camera activeCam){
+        List<SEMesh> rMeshes = new LinkedList<>();
         if(inView(activeCam)){
-            List<SEMesh> rendableMeshes = new LinkedList<>();
-            rendableMeshes.add(this);
-            for(SEMesh subMesh : subMeshes){
-                if(subMesh.inView(activeCam)){
-                    rendableMeshes.add(subMesh);
-}
-            }
-            return rendableMeshes;
-        }
-        else{
-            for(SEMesh lod : lods){
-                if(lod.inView(activeCam)){
-                    List<SEMesh> rendableMeshes = new LinkedList<>();
-                    rendableMeshes.add(lod);
-                    for(SEMesh subLOD : lod.subMeshes){
-                        if(subLOD.inView(activeCam)){
-                            rendableMeshes.add(subLOD);
-                        }
-                    }
-                    return rendableMeshes;
+            rMeshes.add(this);
+            for(SEMesh sub : subMeshes){
+                List<SEMesh> rendableSubMeshes = sub.getRendableMeshes(activeCam);
+                if(rendableSubMeshes != null){
+                    rMeshes.addAll(rendableSubMeshes);
                 }
             }
-            return null;
+            return rMeshes;
         }
+        else {
+            SEMesh currentdLOD = lod;
+            while(currentdLOD != null && !currentdLOD.inView(activeCam)){
+                currentdLOD = currentdLOD.lod;
+            }
+            if(currentdLOD != null && currentdLOD.inView(activeCam)){
+                rMeshes.add(currentdLOD);
+                return rMeshes;
+            }
+        }
+        return null;
     }
 }
