@@ -100,8 +100,24 @@ public class SEOriantation {
         rot = new Vector3d(x, y, z);
     }
     
+    public double[] getRotation(){
+        return new double[]{rot.x, rot.y, rot.z};
+    }
+    
+    public Vector3d getRotationVec(){
+        return rot;
+    }
+    
     public void setScale(double x, double y, double z){
         scl = new Vector3d(x, y, z);
+    }
+    
+    public double[] getScale(){
+        return new double[]{scl.x, scl.y, scl.z};
+    }
+    
+    public Vector3d getScaleVec(){
+        return scl;
     }
     
     private void initOrientation(double posX, double posY, double posZ, double rotX, double rotY, double rotZ, double scaleX, double scaleY, double scaleZ){
