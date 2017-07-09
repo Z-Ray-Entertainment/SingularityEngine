@@ -42,6 +42,7 @@ public class MainThread {
     }
     
     public void shutdown(){
+        currentWorld.getAudioWorld().shutdown();
         backend.shutdown();
         System.exit(0);
     }
