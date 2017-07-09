@@ -60,7 +60,7 @@ public class DistancePatch {
     private void renderMeshes() throws IOException{
         for(SEMesh tmp : meshes){
             if(tmp != null){
-                tmp.render();
+                //tmp.render();
                 if(!fits(tmp.getOrientation())){
                     System.out.println("Mesh left DistancePatch!!!");
                     tmp.getOrientation().wasChanged();
