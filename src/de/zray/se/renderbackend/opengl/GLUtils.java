@@ -7,6 +7,7 @@ package de.zray.se.renderbackend.opengl;
 
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.logger.SELogger;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_COMPILE;
@@ -30,6 +31,7 @@ import static org.lwjgl.opengl.GL11.glTexCoordPointer;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 import static org.lwjgl.opengl.GL11.glVertexPointer;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
@@ -81,7 +83,75 @@ public class GLUtils {
         vboData.clear();
     }
     
-    public void renderVBO(SEMesh mesh, OpenGLRenderData rData){
+    public void generateVBOWired(SEMesh mesh, OpenGLRenderData rData){
+        rData.setVBOSizeWired(mesh.getFaces().size()*6*8); //Größe für den FloatBuffer (8 Werte pro Vertex)
+        SELogger.get().dispatchMsg("WiredVBO", SELogger.SELogType.INFO, new String[]{"Generate VBO with size: "+rData.getVBOSizeWired()}, false);
+        FloatBuffer vboData = BufferUtils.createFloatBuffer(rData.getVBOSizeWired());
+        
+        for(SEFace face : mesh.getFaces()){
+            vboData.put(mesh.getVertecies().get(face.v1).vX);
+            vboData.put(mesh.getVertecies().get(face.v1).vY);
+            vboData.put(mesh.getVertecies().get(face.v1).vZ);
+            vboData.put(mesh.getNormals().get(face.n1).nX);
+            vboData.put(mesh.getNormals().get(face.n1).nY);
+            vboData.put(mesh.getNormals().get(face.n1).nZ);
+            vboData.put(mesh.getUVs().get(face.uv1).u);
+            vboData.put(mesh.getUVs().get(face.uv1).v);
+            
+            vboData.put(mesh.getVertecies().get(face.v2).vX);
+            vboData.put(mesh.getVertecies().get(face.v2).vY);
+            vboData.put(mesh.getVertecies().get(face.v2).vZ);
+            vboData.put(mesh.getNormals().get(face.n2).nX);
+            vboData.put(mesh.getNormals().get(face.n2).nY);
+            vboData.put(mesh.getNormals().get(face.n2).nZ);
+            vboData.put(mesh.getUVs().get(face.uv2).u);
+            vboData.put(mesh.getUVs().get(face.uv2).v);
+            
+            vboData.put(mesh.getVertecies().get(face.v3).vX);
+            vboData.put(mesh.getVertecies().get(face.v3).vY);
+            vboData.put(mesh.getVertecies().get(face.v3).vZ);
+            vboData.put(mesh.getNormals().get(face.n3).nX);
+            vboData.put(mesh.getNormals().get(face.n3).nY);
+            vboData.put(mesh.getNormals().get(face.n3).nZ);
+            vboData.put(mesh.getUVs().get(face.uv3).u);
+            vboData.put(mesh.getUVs().get(face.uv3).v);
+            
+            vboData.put(mesh.getVertecies().get(face.v1).vX);
+            vboData.put(mesh.getVertecies().get(face.v1).vY);
+            vboData.put(mesh.getVertecies().get(face.v1).vZ);
+            vboData.put(mesh.getNormals().get(face.n1).nX);
+            vboData.put(mesh.getNormals().get(face.n1).nY);
+            vboData.put(mesh.getNormals().get(face.n1).nZ);
+            vboData.put(mesh.getUVs().get(face.uv1).u);
+            vboData.put(mesh.getUVs().get(face.uv1).v);
+            
+            vboData.put(mesh.getVertecies().get(face.v3).vX);
+            vboData.put(mesh.getVertecies().get(face.v3).vY);
+            vboData.put(mesh.getVertecies().get(face.v3).vZ);
+            vboData.put(mesh.getNormals().get(face.n3).nX);
+            vboData.put(mesh.getNormals().get(face.n3).nY);
+            vboData.put(mesh.getNormals().get(face.n3).nZ);
+            vboData.put(mesh.getUVs().get(face.uv3).u);
+            vboData.put(mesh.getUVs().get(face.uv3).v);
+            
+            vboData.put(mesh.getVertecies().get(face.v2).vX);
+            vboData.put(mesh.getVertecies().get(face.v2).vY);
+            vboData.put(mesh.getVertecies().get(face.v2).vZ);
+            vboData.put(mesh.getNormals().get(face.n2).nX);
+            vboData.put(mesh.getNormals().get(face.n2).nY);
+            vboData.put(mesh.getNormals().get(face.n2).nZ);
+            vboData.put(mesh.getUVs().get(face.uv2).u);
+            vboData.put(mesh.getUVs().get(face.uv2).v);
+        }
+        vboData.flip();
+        rData.setVBOIDWired(glGenBuffers());
+        
+        glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOIDWired());
+        glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
+	vboData.clear();
+    }
+    
+    public void renderVBO(OpenGLRenderData rData){
         glEnableClientState(GL_VERTEX_ARRAY);
         glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOID());
         glVertexPointer(3, GL_FLOAT, 32, 0);
@@ -93,6 +163,22 @@ public class GLUtils {
         glTexCoordPointer(2, GL_FLOAT, 32, 24);
         
 	glDrawArrays(GL_TRIANGLES, 0, rData.getVBOSize());
+        
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+    
+    public void renderVBOWired(OpenGLRenderData rData){
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOIDWired());
+        glVertexPointer(3, GL_FLOAT, 32, 0);
+        
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, 32, 12); //3*4 = 12 (3 vertexdaten * 4 wegen float)
+        
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 32, 24); //6*4 = 24 (3 Vertex und 3 Normals * 4 wegen float
+        
+	glDrawArrays(GL_LINES, 0, rData.getVBOSizeWired());
         
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
@@ -134,17 +220,17 @@ public class GLUtils {
         glEnd();
     }
     
+    public void generateDisplayListWired(SEMesh mesh, OpenGLRenderData rData){
+        rData.setDisplayList(glGenLists(1));
+        glNewList(rData.getDisplayList(), GL_COMPILE);
+        drawObjectWired(mesh);
+        glEndList();
+    }
+    
     public void generateDisplayList(SEMesh mesh, OpenGLRenderData rData){
         rData.setDisplayList(glGenLists(1));
         glNewList(rData.getDisplayList(), GL_COMPILE);
-        switch(mesh.getDisplayMode()){
-            case SOLID :
-                drawObject(mesh);
-                break;
-            case WIRED :
-                drawObjectWired(mesh);
-                break;
-        }
+        drawObject(mesh);
         glEndList();
     }
 }
