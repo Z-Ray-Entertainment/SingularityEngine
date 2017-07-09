@@ -96,7 +96,7 @@ public class GLRenderer implements RenderBackend{
     @Override
     public void renderWorld(double delta, SEWorld world) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        
+        applyCamera(world.getCurrentCamera());
         for(SEActor actor : world.getActors()){
             for(SEMesh mesh : actor.getRendableSEMeshes()){
                 if(mesh.getRenderData() == -1){
@@ -104,15 +104,17 @@ public class GLRenderer implements RenderBackend{
                 }
                 switch(mesh.getRe){}
             }
-        }
-        
-        
+            
+        }        
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     @Override
     public void shutdown() {
+        oglRenderDatas.forEach((rData) -> {
+            rData.destroy();
+        });
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -130,7 +132,7 @@ public class GLRenderer implements RenderBackend{
     }
 
     @Override
-    public void backendSwitchRequested() {
+    public void backendSwitchRequested(){
         //Do nothing
     }
     
