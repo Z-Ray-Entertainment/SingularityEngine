@@ -5,13 +5,8 @@
  */
 package de.zray.se.grapics.semesh;
 
-import de.zray.se.MainThread;
-import de.zray.se.SEUtils;
 import de.zray.se.Settings;
 import de.zray.se.grapics.Camera;
-import de.zray.se.grapics.semesh.vbo.AbstractVBO;
-import de.zray.se.grapics.semesh.vbo.SolidVBO;
-import de.zray.se.grapics.semesh.vbo.WiredVBO;
 import de.zray.se.logger.SELogger;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -38,7 +33,7 @@ public class SEMesh{
     private SEAmature amature = new SEAmature();
     private SEOriantation orientation = new SEOriantation();
     private SEMaterial material = new SEMaterial(), debugMat;
-    private boolean backfaceCulling = false, vboRendered = false;
+    private boolean backfaceCulling = false;
     private List <SEMesh> lods = new LinkedList<>();
     private List<SEMesh> subMeshes = new LinkedList<>();
     public UUID uuid = UUID.randomUUID();
@@ -71,10 +66,6 @@ public class SEMesh{
             "Vertex: "+vertecies.size(), "UVs: "+uvs.size(), 
             "Normals: "+normals.size(), "Faces: "+faces.size()};
         SELogger.get().dispatchMsg("SEMesh", SELogger.SELogType.INFO, lines, false);
-    }
-    
-    public float getRenderDistance(){
-        return renderDist;
     }
     
     public void setRenderDist(float renderDist){
@@ -197,13 +188,27 @@ public class SEMesh{
         }
     }
     
-    public boolean inView(){
+    /*
+    Determine if the currentd Mesh is in the view cone of the active camera and
+    within the render distance.
+    */
+    public boolean inView(Camera activeCam){
         /*Camera cam = MainThread.getCurrentWorld().getGLModule().getCurrentCamera();
         Vector3f posCam = new Vector3f(cam.getPosition().x, cam.getPosition().y, cam.getPosition().z);
         Vector3f posMesh = orientation.getPositionVec();
         float dist = SEUtils.getLenght(SEUtils.getVector(posMesh, posCam));
         return (renderDist == -1 || dist < renderDist);*/
-        return true;
+        float startX = activeCam.getPosition().x;
+        float startY = activeCam.getPosition().y;
+        float startZ = activeCam.getPosition().z;
+        float endX = (float) getOrientation().getPositionVec().x;
+        float endY = (float) getOrientation().getPositionVec().y;
+        float endZ = (float) getOrientation().getPositionVec().z;
+
+        Vector3f distVec = new Vector3f(endX - startX, endY - startY, endZ - startZ);
+        float distance = distVec.length();
+        
+        return (distance < renderDist);
     }
     
     public void render() throws IOException{
@@ -224,5 +229,33 @@ public class SEMesh{
                 break;
         }
         glPopMatrix();
+    }
+    
+    public List<SEMesh> getRendableMesh(Camera activeCam){
+        if(inView(activeCam)){
+            List<SEMesh> rendableMeshes = new LinkedList<>();
+            rendableMeshes.add(this);
+            for(SEMesh subMesh : subMeshes){
+                if(subMesh.inView(activeCam)){
+                    rendableMeshes.add(subMesh);
+}
+            }
+            return rendableMeshes;
+        }
+        else{
+            for(SEMesh lod : lods){
+                if(lod.inView(activeCam)){
+                    List<SEMesh> rendableMeshes = new LinkedList<>();
+                    rendableMeshes.add(lod);
+                    for(SEMesh subLOD : lod.subMeshes){
+                        if(subLOD.inView(activeCam)){
+                            rendableMeshes.add(subLOD);
+                        }
+                    }
+                    return rendableMeshes;
+                }
+            }
+            return null;
+        }
     }
 }
