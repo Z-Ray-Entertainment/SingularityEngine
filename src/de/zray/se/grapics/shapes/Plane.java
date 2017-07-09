@@ -47,7 +47,6 @@ public class Plane implements SEMeshProvider{
         faces.add(new SEFace(3, 4, 5, 0, 2, 3, 0, 0, 0));
         
         plane = new SEMesh(vertecies, uvs,normals, faces, null, new SEMaterial());
-        plane.setBackfaceCulling(backfaceculling);
     }
 
     @Override
