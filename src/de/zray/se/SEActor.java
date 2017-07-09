@@ -35,7 +35,7 @@ public class SEActor {
     }
     
     public List<SEMesh> getRendableSEMeshes(){
-        return mesh.getRendableMesh(parrentWorld.getCurrentCamera());
+        return mesh.getRendableMeshes(parrentWorld.getCurrentCamera());
     }
     
     public SEAI getSEAI(){
