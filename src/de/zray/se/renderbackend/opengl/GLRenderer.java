@@ -98,9 +98,11 @@ public class GLRenderer implements RenderBackend{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         for(SEActor actor : world.getActors()){
-            if(actor.getSEMesh().getRenderData() == -1){
-                OpenGLRenderData rData = new OpenGLRenderData();
-                
+            for(SEMesh mesh : actor.getRendableSEMeshes()){
+                if(mesh.getRenderData() == -1){
+                    OpenGLRenderData rData = new OpenGLRenderData();
+                }
+                switch(mesh.getRe){}
             }
         }
         
