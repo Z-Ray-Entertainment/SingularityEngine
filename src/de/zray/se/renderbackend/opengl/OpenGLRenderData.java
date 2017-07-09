@@ -5,41 +5,18 @@
  */
 package de.zray.se.renderbackend.opengl;
 
-import static org.lwjgl.opengl.GL15.glDeleteBuffers;
-
 /**
  *
  * @author vortex
  */
 public class OpenGLRenderData {
-    private int vboID, displayList;
-    public int vboSize;
+    private long vbo;
     
-    public void setDisplayList(int id){
-        displayList = id;
+    public void setVBO(long index){
+        vbo = index;
     }
     
-    public int getDisplayList(){
-        return displayList;
-    }
-    
-    public void setVBOID(int index){
-        vboID = index;
-    }
-    
-    public int getVBOID(){
-        return vboID;
-    }
-    
-    public void setVBOSize(int size){
-        vboSize = size;
-    }
-    
-    public int getVBOSize(){
-        return vboSize;
-    }
-    
-    public void destroy(){
-        glDeleteBuffers(vboID);
+    public long getVBO(){
+        return vbo;
     }
 }

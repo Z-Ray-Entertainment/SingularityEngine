@@ -20,7 +20,6 @@ public class SEActor {
     private SEMesh mesh;
     private SEAI ai;
     private SEBulletObject bullet;
-    private boolean isVisible;
     
     public SEActor(SEMesh mesh, SEAI ai, SEBulletObject bulletObj, SEWorld parrent){
         this.ai = ai;
@@ -59,13 +58,5 @@ public class SEActor {
    
    public SEOriantation getOrientation(){
        return mesh.getOrientation();
-   }
-   
-   public void setVisible(boolean visible){
-       isVisible = visible;
-   }
-   
-   public boolean isVisible(){
-       return isVisible;
    }
 }
