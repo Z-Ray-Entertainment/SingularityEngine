@@ -16,6 +16,15 @@ public class SEMaterial {
     private int texID, specMapID, bumbMapID, displaceMapID, parallaxMapID;
     private float specFac, bumpFac, displaceFac, parallaxFac, emission, reflection;
     private float diffuseColor[] = {1, 1, 1, 1}, specColor[] = {1, 1, 1, 1};
+    private boolean cullBackFaces = true;
+    
+    public void setBackfaceCulling(boolean enabled){
+        this.cullBackFaces = enabled;
+    }
+    
+    public boolean cullBackfaces(){
+        return cullBackFaces;
+    }
     
     public void setSpecularColor(float red, float green, float blue, float alpha){
         specColor[RED] = red;
