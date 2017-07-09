@@ -125,14 +125,6 @@ public class SEMesh{
         freeLOD = mesh;
     }
     
-    public void setBackfaceCulling(boolean enabled){
-        backfaceCulling = enabled;
-    }
-    
-    public boolean backfaceCullingEnabled(){
-        return backfaceCulling;
-    }
-    
     public void setOrientation(SEOriantation orientation){
         this.orientation = orientation;
     }
@@ -170,26 +162,6 @@ public class SEMesh{
         float distance = distVec.length();
         
         return (distance < renderDist);
-    }
-    
-    public void render() throws IOException{
-        glPushMatrix();
-        orientation.apply();
-        switch(Settings.get().debug.debugMode){
-            case DEBUG_AND_OBJECTS:
-                renderDebug();
-                renderSEMesh();
-                bb.debug();
-                break;
-            case DEBUG_ON :
-                renderDebug();
-                bb.debug();
-                break;
-            case DEBUG_OFF :
-                renderSEMesh();
-                break;
-        }
-        glPopMatrix();
     }
     
     /**
