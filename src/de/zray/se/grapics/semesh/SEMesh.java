@@ -151,9 +151,15 @@ public class SEMesh{
         Vector3f posMesh = orientation.getPositionVec();
         float dist = SEUtils.getLenght(SEUtils.getVector(posMesh, posCam));
         return (renderDist == -1 || dist < renderDist);*/
-        float startX = activeCam.getPosition().x;
-        float startY = activeCam.getPosition().y;
-        float startZ = activeCam.getPosition().z;
+        float startX = 0;
+        float startY = 0;
+        float startZ = 0;
+        if(activeCam != null){
+            startX = activeCam.getPosition().x;
+            startY = activeCam.getPosition().y;
+            startZ = activeCam.getPosition().z;
+        }
+        
         float endX = (float) getOrientation().getPositionVec().x;
         float endY = (float) getOrientation().getPositionVec().y;
         float endZ = (float) getOrientation().getPositionVec().z;
