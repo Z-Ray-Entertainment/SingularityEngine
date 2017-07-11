@@ -5,18 +5,67 @@
  */
 package de.zray.se.grapics.semesh;
 
+import javax.vecmath.Color3f;
+
 /**
  *
  * @author vortex
  */
 public class SEMaterial {
-    public static final int RED = 0, GREEN = 1, BLUE = 2, ALPHA = 3;
+    public static enum ReflectionMode {BLEND_INTO_MATERIAL, BLEND_INTO_SKY, NO_BLEND};
     
     private String texture, specMap, bumpMap, displaceMap, parallaxMap;
-    private int texID, specMapID, bumbMapID, displaceMapID, parallaxMapID;
-    private float specFac, bumpFac, displaceFac, parallaxFac, emission, reflection;
-    private float diffuseColor[] = {1, 1, 1, 1}, specColor[] = {1, 1, 1, 1};
-    private boolean cullBackFaces = true;
+    private float specFac, bumpFac, displaceFac, parallaxFac, emission, reflection, transparency,
+            maxReflectionDistance = 0;
+    private Color3f diffuseColor = new Color3f(1, 1, 1),
+            specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
+    private boolean cullBackFaces = true, shadeless = false;
+    private ReflectionMode refMode = ReflectionMode.NO_BLEND;
+    
+    public SEMaterial(){}
+    
+    public SEMaterial(Color3f diffuseColor){
+        this.diffuseColor = diffuseColor;
+    }
+    
+    public SEMaterial(Color3f diffuseColor, Color3f specColor){
+        this.diffuseColor = diffuseColor;
+        this.specularColor = specColor;
+    }
+    
+    public SEMaterial(Color3f diffuseColor, Color3f specColor, Color3f reflectionColor){
+        this.diffuseColor = diffuseColor;
+        this.specularColor = specColor;
+        this.reflectionColor = reflectionColor;
+    }
+    
+    public SEMaterial(String diffuseTexture){
+        setTextures(texture, "", "", "", "");
+    }
+    
+    public SEMaterial(String diffuseTexture, String bumpMap){
+        setTextures(texture, "", bumpMap, "", "");
+    }
+    
+    public SEMaterial(String diffuseTexture, String bumpMap, String specMap){
+        setTextures(texture, specMap, bumpMap, "", "");
+    }
+    
+    public SEMaterial(String diffuseTexture, String bumpMap, String specMap, String paralax){
+        setTextures(texture, specMap, bumpMap, "", paralax);
+    }
+    
+    public SEMaterial(String diffuseTexture, String bumpMap, String specMap, String paralax, String displaceMap){
+        setTextures(texture, specMap, bumpMap, displaceMap, paralax);
+    }
+    
+    private void setTextures(String diff, String spec, String bump, String disp, String para){
+        this.texture = diff;
+        this.specMap = spec;
+        this.bumpMap = bump;
+        this.parallaxMap = para;
+        this.displaceMap = disp;
+    }
     
     public void setBackfaceCulling(boolean enabled){
         this.cullBackFaces = enabled;
@@ -26,30 +75,62 @@ public class SEMaterial {
         return cullBackFaces;
     }
     
-    public void setSpecularColor(float red, float green, float blue, float alpha){
-        specColor[RED] = red;
-        specColor[GREEN] = green;
-        specColor[BLUE] = blue;
-        specColor[ALPHA] = alpha;
+    public void setReflectionColor(float red, float green, float blue, float alpha){
+        reflectionColor.x = red;
+        reflectionColor.y = green;
+        reflectionColor.z = blue;
     }
     
-    public float[] getSpecularColor(){
-        return specColor;
+    public Color3f getReflectionColor(){
+        return reflectionColor;
+    }
+    
+    public void setSpecularColor(float red, float green, float blue, float alpha){
+        specularColor.x = red;
+        specularColor.y = green;
+        specularColor.z = blue;
+    }
+    
+    public Color3f getSpecularColor(){
+        return specularColor;
     }
     
     public void setDiffuseColor(float red, float green, float blue, float alpha){
-        diffuseColor[RED] = red;
-        diffuseColor[GREEN] = green;
-        diffuseColor[BLUE] = blue;
-        diffuseColor[ALPHA] = alpha;
+        diffuseColor.x = red;
+        diffuseColor.y = green;
+        diffuseColor.z = blue;
     }
-    
-    public float[] getDiffiseColo(){
+      
+    public Color3f getDiffiseColor(){
         return diffuseColor;
     }
     
+    public void setReflectionMode(ReflectionMode mode){
+        this.refMode = mode;
+    }
+    
+    public ReflectionMode getReflectionMode(){
+        return refMode;
+    }
+    
+    public void setShadeless(boolean enabled){
+        this.shadeless = enabled;
+    }
+    
+    public boolean isShadeless(){
+        return shadeless;
+    }
+    
+    public void setTransparency(float fac){
+        this.transparency = fac%1;
+    }
+    
+    public float getTransparency(){
+        return transparency;
+    }
+    
     public void setReflectivity(float fac){
-        reflection = fac;
+        reflection = fac%1;
     }
     
     public float getReflectivity(){
@@ -134,45 +215,5 @@ public class SEMaterial {
     
     public String getParallaxMap(){
         return parallaxMap;
-    }
-    
-    public void setTextureID(int id){
-        texID = id;
-    }
-    
-    public int getTextureID(){
-        return texID;
-    }
-    
-    public void setBumbMapID(int id){
-        bumbMapID = id;
-    }
-    
-    public int getBumbMapID(){
-        return bumbMapID;
-    }
-    
-    public void setSpecMapID(int id){
-        specMapID = id;
-    }
-    
-    public int getSpecMapID(){
-        return specMapID;
-    }
-    
-    public void setParallaxMapID(int id){
-        parallaxMapID = id;
-    }
-    
-    public int getParallaxID(){
-        return parallaxMapID;
-    }
-    
-    public void setDisplaceMapID(int id){
-        displaceMapID = id;
-    }
-    
-    public int getDisplaceMapID(){
-        return displaceMapID;
     }
 }
