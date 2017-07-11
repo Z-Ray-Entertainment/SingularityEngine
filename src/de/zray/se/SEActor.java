@@ -6,8 +6,6 @@
 package de.zray.se;
 
 import de.zray.se.ai.SEAI;
-import de.zray.se.grapics.semesh.SEMaterial;
-import de.zray.se.grapics.modelloader.Modelloader;
 import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.grapics.semesh.SEOriantation;
 import de.zray.se.physics.SEBulletObject;
@@ -28,10 +26,6 @@ public class SEActor {
         this.bullet = bulletObj;
         this.mesh = mesh;
         this.parrentWorld = parrentWorld;
-    }
-    
-    public SEActor(String mesh, SEWorld parrentWorld){
-        this.mesh = Modelloader.get().loadModel(mesh);
     }
     
     public List<SEMesh> getRendableSEMeshes(){
