@@ -164,7 +164,7 @@ public class SEMesh{
         Vector3f distVec = new Vector3f(endX - startX, endY - startY, endZ - startZ);
         float distance = distVec.length();
         
-        return (distance < renderDist);
+        return (distance < renderDist) || (renderDist == -1);
     }
     
     /**
