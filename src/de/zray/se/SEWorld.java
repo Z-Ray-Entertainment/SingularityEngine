@@ -44,12 +44,22 @@ public abstract class SEWorld {
     }
     
     public final Camera getCurrentCamera(){
-        return views.get(currentCamera);
+        if(currentCamera != -1){
+            return views.get(currentCamera);
+        }
+        return null;
     }
     
     public final void act(){
         actors.forEach((actor) -> {
-            actor.getSEAI().act(delta);
+            if(actor != null){
+                try{
+                    actor.getSEAI().act(delta);
+                }
+                catch(NullPointerException e){
+                    //Null AI
+                }
+            }
         });
         updateDelta();
     }
