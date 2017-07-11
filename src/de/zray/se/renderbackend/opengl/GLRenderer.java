@@ -106,7 +106,7 @@ public class GLRenderer implements RenderBackend{
                 glPopMatrix();
             }
             
-        }        
+        }
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -138,6 +138,10 @@ public class GLRenderer implements RenderBackend{
     }
     
     private void applyCamera(Camera cam){
+        if(cam == null){
+            applayEmptyCamera();
+            return;
+        }
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         switch (cam.getCameraMode()) {
@@ -156,8 +160,13 @@ public class GLRenderer implements RenderBackend{
             glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
         }
         glMatrixMode(GL_MODELVIEW);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glLoadIdentity();
+    }
+    
+    private void applayEmptyCamera(){
+        glMatrixMode(GL_PROJECTION);
+        glOrtho(0, windowW, windowH, 0, 1, 100);
+        glMatrixMode(GL_MODELVIEW);
     }
     
     private void applyRotations(Camera cam) {
