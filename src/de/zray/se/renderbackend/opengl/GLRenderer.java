@@ -100,12 +100,17 @@ public class GLRenderer implements RenderBackend{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         applyCamera(world.getCurrentCamera());
         for(SEActor actor : world.getActors()){
-            for(SEMesh mesh : actor.getRendableSEMeshes()){
-                glPushMatrix();
-                renderMesh(mesh);
-                glPopMatrix();
+            List<SEMesh> rendables = actor.getRendableSEMeshes();
+            if(rendables != null){
+                for(int i = 0; i < rendables.size(); i++){
+                    SEMesh mesh = rendables.get(i);
+                    if(mesh != null){
+                        glPushMatrix();
+                        renderMesh(mesh);
+                        glPopMatrix();
+                    }
+                }
             }
-            
         }
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -166,6 +171,7 @@ public class GLRenderer implements RenderBackend{
     private void applayEmptyCamera(){
         glMatrixMode(GL_PROJECTION);
         glOrtho(0, windowW, windowH, 0, 1, 100);
+        glRotated(90, 1, 0, 0);
         glMatrixMode(GL_MODELVIEW);
     }
     
@@ -221,7 +227,8 @@ public class GLRenderer implements RenderBackend{
                     glUtils.generateVBO(mesh, rData);
                     break;
             }
-
+            oglRenderDatas.add(rData);
+            mesh.setRenderData(oglRenderDatas.size()-1);
         }
         
         applyMaterial(mesh.getMaterial());
