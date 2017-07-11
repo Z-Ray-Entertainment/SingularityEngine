@@ -129,7 +129,7 @@ public class GLRenderer implements RenderBackend{
 
     @Override
     public boolean closeRequested() {
-        return closeRequested;
+        return (closeRequested || glfwWindowShouldClose(window));
     }
 
     @Override
