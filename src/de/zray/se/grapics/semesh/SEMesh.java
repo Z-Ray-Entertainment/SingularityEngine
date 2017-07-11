@@ -176,14 +176,12 @@ public class SEMesh{
         List<SEMesh> rMeshes = new LinkedList<>();
         if(inView(activeCam)){
             rMeshes.add(this);
-            System.out.println("Added rendable Mesh");
             for(SEMesh sub : subMeshes){
                 List<SEMesh> rendableSubMeshes = sub.getRendableMeshes(activeCam);
                 if(rendableSubMeshes != null){
                     for(SEMesh tmp : rendableSubMeshes){
                         if(tmp != null){
                             rMeshes.add(tmp);
-                            System.out.println("Added rendable Mesh");
                         }
                     }
                 }
