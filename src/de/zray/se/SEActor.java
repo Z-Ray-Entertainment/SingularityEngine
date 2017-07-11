@@ -44,6 +44,10 @@ public class SEActor {
        return bullet;
    }
    
+   public SEMesh getRootMesh(){
+       return mesh;
+   }
+   
    public void setOriantation(SEOriantation ori){
        mesh.setOrientation(ori);
    }
