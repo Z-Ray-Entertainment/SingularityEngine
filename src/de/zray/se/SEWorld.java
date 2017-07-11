@@ -43,6 +43,15 @@ public abstract class SEWorld {
         return actors;
     }
     
+    public void setActiveCamera(int cam){
+        currentCamera = cam;
+    }
+    
+    public int addCamera(Camera cam){
+        this.views.add(cam);
+        return this.views.size()-1;
+    }
+    
     public final Camera getCurrentCamera(){
         if(currentCamera != -1){
             return views.get(currentCamera);
