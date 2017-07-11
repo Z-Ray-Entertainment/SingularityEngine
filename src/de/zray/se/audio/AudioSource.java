@@ -5,7 +5,6 @@
  */
 package de.zray.se.audio;
 
-import java.nio.ShortBuffer;
 import javax.vecmath.Vector3f;
 import static org.lwjgl.openal.AL10.AL_BUFFER;
 import static org.lwjgl.openal.AL10.AL_LOOPING;
@@ -17,7 +16,6 @@ import static org.lwjgl.openal.AL10.alSource3f;
 import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceStop;
 import static org.lwjgl.openal.AL10.alSourcei;
-import org.lwjgl.openal.ALC10;
 
 /**
  *
