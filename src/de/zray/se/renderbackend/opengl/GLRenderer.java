@@ -217,32 +217,47 @@ public class GLRenderer implements RenderBackend{
         
         if(mesh.getRenderData() == -1){
             OpenGLRenderData rData = new OpenGLRenderData();
-            switch(mesh.getRenderMode()){
-                case DISPLAY_LIST :
-                    glUtils.generateDisplayList(mesh, rData);
-                    glUtils.generateDisplayListWired(mesh, rData);
-                    break;
-                case VBO :
-                    glUtils.generateVBO(mesh, rData);
-                    glUtils.generateVBO(mesh, rData);
-                    break;
-            }
             oglRenderDatas.add(rData);
             mesh.setRenderData(oglRenderDatas.size()-1);
         }
         
         applyMaterial(mesh.getMaterial());
-        
+        OpenGLRenderData rData = oglRenderDatas.get(mesh.getRenderData());
         switch(mesh.getRenderMode()){
             case DIRECT :
                 glUtils.drawObject(mesh);
                 break;
             case DISPLAY_LIST :
-                int listID = oglRenderDatas.get(mesh.getRenderData()).getDisplayList();
-                glCallList(listID);
+                switch(mesh.getDisplayMode()){
+                    case SOLID :
+                        if(rData.getDisplayList() == -1){
+                            glUtils.generateDisplayList(mesh, rData);
+                        }
+                        glCallList(rData.getDisplayList());
+                        break;
+                    case WIRED :
+                        if(rData.getDisplayListWired()== -1){
+                            glUtils.generateDisplayListWired(mesh, rData);
+                        }
+                        glCallList(rData.getDisplayListWired());
+                        break;
+                }
                 break;
             case VBO :
-                glUtils.renderVBO(oglRenderDatas.get(mesh.getRenderData()));
+                switch(mesh.getDisplayMode()){
+                    case SOLID :
+                        if(rData.getVBOID() == -1 || rData.getVBOSize() == -1){
+                            glUtils.generateVBO(mesh, rData);
+                        }
+                        glUtils.renderVBO(oglRenderDatas.get(mesh.getRenderData()));
+                        break;
+                    case WIRED :
+                        if(rData.getVBOIDWired()== -1 || rData.getVBOSizeWired()== -1){
+                            glUtils.generateVBOWired(mesh, rData);
+                        }
+                        glUtils.renderVBOWired(oglRenderDatas.get(mesh.getRenderData()));
+                        break;
+                }
                 break;
         }
     }
