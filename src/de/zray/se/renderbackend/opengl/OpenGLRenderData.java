@@ -5,7 +5,6 @@
  */
 package de.zray.se.renderbackend.opengl;
 
-import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.glDeleteLists;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 
@@ -14,8 +13,8 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
  * @author vortex
  */
 public class OpenGLRenderData {
-    private int vboID, vboIDWired, displayList, displayListWired;
-    private int vboSize, vboSizeWired;
+    private int vboID = -1, vboIDWired = -1, displayList = -1, displayListWired = -1;
+    private int vboSize = -1, vboSizeWired = -1;
     
     public void setDisplayList(int id){
         displayList = id;

@@ -133,7 +133,7 @@ public class GLRenderer implements RenderBackend{
                     SEMesh mesh = rendables.get(i);
                     if(mesh != null){
                         glPushMatrix();
-                        //renderMesh(mesh);
+                        renderMesh(mesh);
                         glPopMatrix();
                     }
                 }
@@ -283,13 +283,13 @@ public class GLRenderer implements RenderBackend{
                         if(rData.getVBOID() == -1 || rData.getVBOSize() == -1){
                             glUtils.generateVBO(mesh, rData);
                         }
-                        glUtils.renderVBO(oglRenderDatas.get(mesh.getRenderData()));
+                        glUtils.renderVBO(rData);
                         break;
                     case WIRED :
                         if(rData.getVBOIDWired()== -1 || rData.getVBOSizeWired()== -1){
                             glUtils.generateVBOWired(mesh, rData);
                         }
-                        glUtils.renderVBOWired(oglRenderDatas.get(mesh.getRenderData()));
+                        glUtils.renderVBOWired(rData);
                         break;
                 }
                 break;
