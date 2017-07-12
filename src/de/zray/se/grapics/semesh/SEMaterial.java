@@ -40,23 +40,23 @@ public class SEMaterial {
     }
     
     public SEMaterial(String diffuseTexture){
-        setTextures(texture, "", "", "", "");
+        setTextures(diffuseTexture, "", "", "", "");
     }
     
     public SEMaterial(String diffuseTexture, String bumpMap){
-        setTextures(texture, "", bumpMap, "", "");
+        setTextures(diffuseTexture, "", bumpMap, "", "");
     }
     
     public SEMaterial(String diffuseTexture, String bumpMap, String specMap){
-        setTextures(texture, specMap, bumpMap, "", "");
+        setTextures(diffuseTexture, specMap, bumpMap, "", "");
     }
     
     public SEMaterial(String diffuseTexture, String bumpMap, String specMap, String paralax){
-        setTextures(texture, specMap, bumpMap, "", paralax);
+        setTextures(diffuseTexture, specMap, bumpMap, "", paralax);
     }
     
     public SEMaterial(String diffuseTexture, String bumpMap, String specMap, String paralax, String displaceMap){
-        setTextures(texture, specMap, bumpMap, displaceMap, paralax);
+        setTextures(diffuseTexture, specMap, bumpMap, displaceMap, paralax);
     }
     
     private void setTextures(String diff, String spec, String bump, String disp, String para){
