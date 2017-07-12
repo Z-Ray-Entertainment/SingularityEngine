@@ -86,7 +86,7 @@ public abstract class SEWorld {
         actors.forEach((actor) -> {
             if(actor != null){
                 try{
-                    actor.getSEAI().act(MainThread.getDelta());
+                    actor.getSEAI().act(MainThread.getDeltaInSec());
                 }
                 catch(NullPointerException e){
                     //Null AI
