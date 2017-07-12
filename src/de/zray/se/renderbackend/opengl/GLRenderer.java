@@ -258,7 +258,7 @@ public class GLRenderer implements RenderBackend{
             mesh.setRenderData(oglRenderDatas.size()-1);
         }
         
-        applyMaterial(mesh.getMaterial());
+        glUtils.applyMaterial(mesh.getMaterial());
         OpenGLRenderData rData = oglRenderDatas.get(mesh.getRenderData());
         switch(mesh.getRenderMode()){
             case DIRECT :
@@ -296,35 +296,6 @@ public class GLRenderer implements RenderBackend{
                         break;
                 }
                 break;
-        }
-    }
-    
-    private void applyMaterial(SEMaterial mat){
-        if(mat.cullBackfaces() && !glIsEnabled(GL_CULL_FACE)){
-            glEnable(GL_CULL_FACE);
-        }
-        else if(glIsEnabled(GL_CULL_FACE)){
-            glDisable(GL_CULL_FACE);
-        }
-        if(mat.isShadeless()){
-            glDisable(GL_LIGHTING);
-            if(mat.getTransparency() > 0){
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_ONE, GL_SRC_COLOR);
-            }
-            glColor4f(mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency());
-        }
-        else{
-            glEnable(GL_LIGHTING);
-            if(mat.getTransparency() > 0){
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_ONE, GL_SRC_COLOR);
-            }
-            float[] diffuse = new float[]{mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency()};
-            float[] spec = new float[]{mat.getSpecularColor().x, mat.getSpecularColor().y, mat.getSpecularColor().z, mat.getTransparency()};
-            
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
-            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
         }
     }
 }
