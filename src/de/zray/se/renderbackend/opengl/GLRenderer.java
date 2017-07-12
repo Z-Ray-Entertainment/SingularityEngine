@@ -5,6 +5,7 @@
  */
 package de.zray.se.renderbackend.opengl;
 
+import de.zray.se.inputmanager.InputManager;
 import de.zray.se.SEActor;
 import de.zray.se.SEWorld;
 import de.zray.se.Settings;
@@ -13,6 +14,7 @@ import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
+import java.awt.event.KeyEvent;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
 
@@ -56,8 +58,13 @@ public class GLRenderer implements RenderBackend{
             SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"Failed to create the GLFW window"}, true);
             return false;
         }
-
+        
+        glfwSetMouseButtonCallback(window, (window, key, action, mods) -> {
+            
+        });
+        
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+            translateInputs(key);
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ){
                     glfwSetWindowShouldClose(window, true);
                     closeRequested = true;
@@ -100,6 +107,15 @@ public class GLRenderer implements RenderBackend{
     public void renderWorld(double delta, SEWorld world) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         applyCamera(world.getCurrentCamera());
+        glPushMatrix();
+        glTranslated(0, 0, -10);
+        glBegin(GL_TRIANGLES);
+            glVertex3f(0, 1, 0);
+            glVertex3f(1, 0, 0);
+            glVertex3f(-1, 0, 0);
+        glEnd();
+        glPopMatrix();
+        
         for(SEActor actor : world.getActors()){
             List<SEMesh> rendables = actor.getRendableSEMeshes();
             if(rendables != null){
@@ -143,6 +159,16 @@ public class GLRenderer implements RenderBackend{
         //Do nothing
     }
     
+    @Override
+    public void handleKeyInput(int keyCode, int mode) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public void handleMouseInput(int keyCode, int mode) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     private void applyCamera(Camera cam){
         if(cam == null){
             applayEmptyCamera();
@@ -164,7 +190,9 @@ public class GLRenderer implements RenderBackend{
             applyRotations(cam);
         }
         else {
-            glUtils.gluLookAt(cam.getPosition(), new Vector3f(), new Vector3f(0, 1, 1));
+            Vector3f lookAt = new Vector3f(cam.getLookAt());
+            glUtils.gluLookAt(cam.getPosition(), lookAt, new Vector3f(0, 1, 1));
+            //System.out.println("LookAt: "+lookAt.x+" "+lookAt.y+" "+lookAt.z);
             //applyRotations(cam);
             //glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
         }
@@ -200,6 +228,11 @@ public class GLRenderer implements RenderBackend{
     @Override
     public int getHeight() {
         return windowH;
+    }
+    
+    
+    public void translateInputs(int key){
+        System.out.println("Key: "+KeyEvent.getKeyText(key)+" Code: "+key);
     }
     
     private void renderMesh(SEMesh mesh){
@@ -274,5 +307,4 @@ public class GLRenderer implements RenderBackend{
             glDisable(GL_CULL_FACE);
         }
     }
-
 }

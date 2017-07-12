@@ -8,6 +8,7 @@ package de.zray.se;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.grapics.Camera;
+import de.zray.se.inputmanager.InputManager;
 import de.zray.se.physics.SEBulletWorld;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,8 +23,19 @@ public abstract class SEWorld {
     private SEAudioWorld audioWorld;
     private List<SEActor> actors = new LinkedList<>();
     private List<Camera> views = new LinkedList<>();
+    private List<InputManager> inputManages = new LinkedList<>();
     private double delta = 0, timeBeforeAct, fpsUpdate = 0;
     private int currentCamera = -1, fps = 0, countedFrames;
+    
+    public final void addInputManager(InputManager manager){
+        inputManages.add(manager);
+    }
+    
+    public final void hanldeInputs(int key, int mode){
+        for(InputManager man : inputManages){
+            
+        }
+    }
     
     public final double getDelta(){
         return delta;

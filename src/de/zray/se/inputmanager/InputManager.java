@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se;
+package de.zray.se.inputmanager;
 
 /**
  *
  * @author vortex
  */
 public abstract class InputManager {
+    public static final KeyMap KEY_MAP = new KeyMap(KeyMap.KeyBoardLayout.ENGLSIH);
+    
     public abstract void mousePressed(int key, int posX, int posY);
     public abstract void mouseClicked(int key, int posX, int posY);
     public abstract void mouseMoved(int posX, int posY);

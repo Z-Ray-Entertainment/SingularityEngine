@@ -5,6 +5,7 @@
  */
 package de.zray.se.renderbackend;
 
+import de.zray.se.inputmanager.InputManager;
 import de.zray.se.SEWorld;
 
 /**
@@ -40,4 +41,6 @@ public interface RenderBackend {
     public abstract void backendSwitchRequested();
     public abstract int getWidth();
     public abstract int getHeight();
+    public abstract void handleKeyInput(int keyCode, int mode);
+    public abstract void handleMouseInput(int keyCode, int mode);
 }
