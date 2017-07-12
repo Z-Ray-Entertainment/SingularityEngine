@@ -20,7 +20,6 @@ import org.lwjgl.system.*;
 import java.nio.*;
 import java.util.LinkedList;
 import java.util.List;
-import javax.vecmath.Vector3f;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -67,6 +66,7 @@ public class GLRenderer implements RenderBackend{
             switch(action){
                case GLFW_RELEASE :
                    currentWorld.hanldeKeyInputs(key, KeyMap.MODE.RELEASED);
+                   System.out.println("KeyCode: "+key);
                    break;
                case GLFW_PRESS :
                    currentWorld.hanldeKeyInputs(key, KeyMap.MODE.TIPED);
@@ -77,15 +77,6 @@ public class GLRenderer implements RenderBackend{
            }
         });
 
-        glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
-            @Override
-            public void invoke(long window, int width, int height) {
-                aspectRatio = (float) width/ (float) height;
-                windowW = width;
-                windowH = height;
-            }
-        });
-        
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
@@ -113,12 +104,25 @@ public class GLRenderer implements RenderBackend{
     public void renderWorld(double delta) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         applyCamera(currentWorld.getCurrentCamera());
+        
+        //glOrtho(0, windowW, windowH, 0, 1, 100);
         glPushMatrix();
         glTranslated(0, 0, -10);
+        glColor3f(1, 1, 1);
         glBegin(GL_TRIANGLES);
             glVertex3f(0, 1, 0);
             glVertex3f(1, 0, 0);
             glVertex3f(-1, 0, 0);
+        glEnd();
+        glPopMatrix();
+        
+        glPushMatrix();
+        glColor3f(1, 0.5f, 0.5f);
+        glBegin(GL_QUADS);
+            glVertex3f(-100, 0, -100);
+            glVertex3f(-100, 0, 100);
+            glVertex3f(100, 0, 100);
+            glVertex3f(100, 0, -100);
         glEnd();
         glPopMatrix();
         
@@ -129,7 +133,7 @@ public class GLRenderer implements RenderBackend{
                     SEMesh mesh = rendables.get(i);
                     if(mesh != null){
                         glPushMatrix();
-                        renderMesh(mesh);
+                        //renderMesh(mesh);
                         glPopMatrix();
                     }
                 }
@@ -182,20 +186,10 @@ public class GLRenderer implements RenderBackend{
                 glOrtho(0, windowW, windowH, 0, cam.getNear(), cam.getFar());
                 break;
             case PERSPECTIVE:
-                glViewport(0, 0, windowW, windowH);
-                glUtils.gluPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
+                GLUProject.gluPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
+                glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
+                //applyRotations(cam);
                 break;
-        }
-        if (cam.getViewMode() == Camera.ViewMode.EGO) {
-            glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
-            applyRotations(cam);
-        }
-        else {
-            Vector3f lookAt = new Vector3f(cam.getLookAt());
-            glUtils.gluLookAt(cam.getPosition(), lookAt, new Vector3f(0, 1, 1));
-            //System.out.println("LookAt: "+lookAt.x+" "+lookAt.y+" "+lookAt.z);
-            //applyRotations(cam);
-            //glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
         }
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -203,9 +197,10 @@ public class GLRenderer implements RenderBackend{
     
     private void applayEmptyCamera(){
         glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
         glOrtho(0, windowW, windowH, 0, 1, 100);
-        glRotated(90, 1, 0, 0);
         glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
     }
     
     private void applyRotations(Camera cam) {
