@@ -6,12 +6,15 @@
 package de.zray.se.audio;
 
 import javax.vecmath.Vector3f;
+import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.AL_BUFFER;
 import static org.lwjgl.openal.AL10.AL_LOOPING;
+import static org.lwjgl.openal.AL10.AL_PLAYING;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_TRUE;
 import static org.lwjgl.openal.AL10.alDeleteBuffers;
 import static org.lwjgl.openal.AL10.alDeleteSources;
+import static org.lwjgl.openal.AL10.alGetSourcei;
 import static org.lwjgl.openal.AL10.alSource3f;
 import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.AL10.alSourceStop;
@@ -57,7 +60,7 @@ public class AudioSource {
     }
     
     public boolean isPlaying(){
-        return false;
+        return (alGetSourcei(alSource, AL10.AL_SOURCE_STATE) == AL_PLAYING);
     }
     
     public void delete(){

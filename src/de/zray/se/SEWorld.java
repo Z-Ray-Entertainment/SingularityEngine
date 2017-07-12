@@ -83,6 +83,7 @@ public abstract class SEWorld {
     }
     
     public final void act(double delta){
+        audioWorld.setALListener(getCurrentCamera().getPosition());
         actors.forEach((actor) -> {
             if(actor != null){
                 try{

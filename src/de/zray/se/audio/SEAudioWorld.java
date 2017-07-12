@@ -21,14 +21,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import javax.vecmath.Vector3f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
+import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.alBufferData;
 import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alGenSources;
+import static org.lwjgl.openal.AL10.alListenerfv;
 import static org.lwjgl.openal.ALC.createCapabilities;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.openal.ALC11.*;
@@ -110,6 +114,11 @@ public class SEAudioWorld extends SEModule{
         return audioSource;
     }
 
+    public void setALListener(Vector3f position){
+        alListenerfv(AL_POSITION, new float[]{position.x, position.y, position.z});
+        System.out.println("Set ALListener to: "+position.x+" "+position.y+" "+position.z);
+    }
+    
     private ShortBuffer readVorbis(String file, int bufferSize, STBVorbisInfo info){
         try {
             ByteBuffer vorbis = ioResourceToByteBuffer(file, bufferSize);
