@@ -78,13 +78,12 @@ public class GLUtils {
        
         glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOID());
         glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
-
         vboData.clear();
+        
     }
     
     public void generateVBOWired(SEMesh mesh, OpenGLRenderData rData){
         rData.setVBOSizeWired(mesh.getFaces().size()*6*8); //Größe für den FloatBuffer (8 Werte pro Vertex)
-        SELogger.get().dispatchMsg("WiredVBO", SELogger.SELogType.INFO, new String[]{"Generate VBO with size: "+rData.getVBOSizeWired()}, false);
         FloatBuffer vboData = BufferUtils.createFloatBuffer(rData.getVBOSizeWired());
         
         for(SEFace face : mesh.getFaces()){
