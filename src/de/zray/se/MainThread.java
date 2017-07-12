@@ -37,6 +37,7 @@ public class MainThread {
                     backend.renderWorld(currentWorld.getDelta(), currentWorld);
                 }
             }
+            shutdown();
         });
         loop.start();
     }
