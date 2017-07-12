@@ -51,13 +51,6 @@ import sun.nio.ch.IOUtil;
  */
 public class SEAudioWorld extends SEModule{
     private List<AudioSource> sources = new LinkedList<>();
-    
-    
-    private ByteBuffer resizeBuffer(ByteBuffer buffer, int i) {
-        ByteBuffer newbuf = BufferUtils.createByteBuffer(buffer.capacity()*i);
-        newbuf.put(buffer);
-        return newbuf;
-    }
     private long audioDevice, context;
 
     public SEAudioWorld(SEWorld parrent) {
@@ -96,6 +89,13 @@ public class SEAudioWorld extends SEModule{
             "ALC_MONO_SOURCES: " + alcGetInteger(audioDevice, ALC_MONO_SOURCES),
             "ALC_STEREO_SOURCES: " + alcGetInteger(audioDevice, ALC_STEREO_SOURCES)
         }, false);
+    }
+    
+    private ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
+        ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
+        buffer.flip();
+        newBuffer.put(buffer);
+        return newBuffer;
     }
     
     public AudioSource loadAudioFile(String file){
