@@ -105,6 +105,9 @@ public class GLRenderer implements RenderBackend{
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         applyCamera(currentWorld.getCurrentCamera());
         
+        glDisable(GL_BLEND);
+        glDisable(GL_LIGHTING);
+        glDisable(GL_CULL_FACE);
         //glOrtho(0, windowW, windowH, 0, 1, 100);
         glPushMatrix();
         glTranslated(0, 0, -10);
@@ -187,8 +190,8 @@ public class GLRenderer implements RenderBackend{
                 break;
             case PERSPECTIVE:
                 GLUProject.gluPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
-                glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
                 //applyRotations(cam);
+                glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
                 break;
         }
         glMatrixMode(GL_MODELVIEW);
@@ -302,6 +305,26 @@ public class GLRenderer implements RenderBackend{
         }
         else if(glIsEnabled(GL_CULL_FACE)){
             glDisable(GL_CULL_FACE);
+        }
+        if(mat.isShadeless()){
+            glDisable(GL_LIGHTING);
+            if(mat.getTransparency() > 0){
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_ONE, GL_SRC_COLOR);
+            }
+            glColor4f(mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency());
+        }
+        else{
+            glEnable(GL_LIGHTING);
+            if(mat.getTransparency() > 0){
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_ONE, GL_SRC_COLOR);
+            }
+            float[] diffuse = new float[]{mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency()};
+            float[] spec = new float[]{mat.getSpecularColor().x, mat.getSpecularColor().y, mat.getSpecularColor().z, mat.getTransparency()};
+            
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
         }
     }
 }
