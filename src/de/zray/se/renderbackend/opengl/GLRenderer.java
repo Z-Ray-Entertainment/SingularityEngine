@@ -190,7 +190,7 @@ public class GLRenderer implements RenderBackend{
                 break;
             case PERSPECTIVE:
                 GLUProject.gluPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
-                //applyRotations(cam);
+                applyRotations(cam);
                 glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
                 break;
         }

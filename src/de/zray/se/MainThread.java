@@ -20,7 +20,7 @@ public class MainThread {
     private SEWorld currentWorld;
     
     private static void updateDelta(){
-        delta =  getTimeInMs()- timeBeforeAct;
+        delta =  getTimeInMs() - timeBeforeAct;
         timeBeforeAct = getTimeInMs();
         calcFPS(delta);
     }
@@ -73,8 +73,8 @@ public class MainThread {
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
                     backend.renderWorld(getDeltaInSec());
-                    updateDelta();
                 }
+                updateDelta();
             }
             shutdown();
         });
