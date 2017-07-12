@@ -64,16 +64,17 @@ public class GLRenderer implements RenderBackend{
         });
         
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ){
-                switch(action){
-                    case GLFW_RELEASE :
-                        currentWorld.hanldeKeyInputs(key, KeyMap.MODE.RELEASED);
-                        break;
-                    case GLFW_PRESS :
-                        currentWorld.hanldeKeyInputs(key, KeyMap.MODE.PRESSED);
-                        break;
-                }
-            }
+            switch(action){
+               case GLFW_RELEASE :
+                   currentWorld.hanldeKeyInputs(key, KeyMap.MODE.RELEASED);
+                   break;
+               case GLFW_PRESS :
+                   currentWorld.hanldeKeyInputs(key, KeyMap.MODE.TIPED);
+                   break;
+               case GLFW_REPEAT :
+                   currentWorld.hanldeKeyInputs(key, KeyMap.MODE.PRESSED);
+                   break;
+           }
         });
 
         glfwSetWindowSizeCallback(window, new GLFWWindowSizeCallback() {
