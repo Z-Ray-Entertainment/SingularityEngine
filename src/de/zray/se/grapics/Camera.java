@@ -5,8 +5,8 @@
  */
 package de.zray.se.grapics;
 
-import de.zray.se.SEWorld;
 import de.zray.se.Settings;
+import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 /**
@@ -29,10 +29,16 @@ public class Camera {
     private String camName = "Camera";
     private ViewMode viewMode = ViewMode.THIRDPERSON;
     private boolean rotLocks[] = {false, false, false}, posLocks[] = {false, false, false};
+    private Vector3d lookAt = new Vector3d();
 
-    public Camera(SEWorld world) {
+    public void setLookAt(Vector3d lookAt){
+        this.lookAt = lookAt;
     }
-
+    
+    public Vector3d getLookAt(){
+        return lookAt;
+    }
+    
     public float getNear(){
         return near;
     }
