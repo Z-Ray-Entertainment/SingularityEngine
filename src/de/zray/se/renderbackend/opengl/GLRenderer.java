@@ -269,18 +269,15 @@ public class GLRenderer implements RenderBackend{
         for(int i = 32; i < keyTimes.length; i++){
             if(glfwGetKey(window, i) == 1){
                 if(keyTimes[i] == 0){
-                    System.out.println("Key tiped!");
                     currentWorld.hanldeKeyInputs(i, KeyMap.MODE.TIPED);
                 }
                 else if(keyTimes[i] >= threshold){
-                    System.out.println("Key pressed!");
                     currentWorld.hanldeKeyInputs(i, KeyMap.MODE.PRESSED);
                 }
                 keyTimes[i] += MainThread.getDeltaInMs();
             }
             else{
                 if(keyTimes[i] > 0){
-                    System.out.println("Key released!");
                     currentWorld.hanldeKeyInputs(i, KeyMap.MODE.RELEASED);
                 }
                 keyTimes[i] = 0;
