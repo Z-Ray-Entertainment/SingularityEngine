@@ -19,7 +19,7 @@ public class SEMaterial {
             maxReflectionDistance = 0;
     private Color3f diffuseColor = new Color3f(1, 1, 1),
             specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
-    private boolean cullBackFaces = true, shadeless = false;
+    private boolean cullBackFaces = false, shadeless = false;
     private ReflectionMode refMode = ReflectionMode.NO_BLEND;
     
     public SEMaterial(){}
