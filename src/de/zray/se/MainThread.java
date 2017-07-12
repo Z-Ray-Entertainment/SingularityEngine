@@ -20,28 +20,32 @@ public class MainThread {
     private SEWorld currentWorld;
     
     private static void updateDelta(){
-        delta =  getTimeInSec() - timeBeforeAct;
-        timeBeforeAct = getTimeInSec();
+        delta =  getTimeInMs()- timeBeforeAct;
+        timeBeforeAct = getTimeInMs();
         calcFPS(delta);
     }
     
     private static void calcFPS(double delta){
         fpsUpdate += delta;
         countedFrames++;
-        if(fpsUpdate >= 1){
+        if(fpsUpdate >= 1000){
             fps = countedFrames;
             countedFrames = 0;
             fpsUpdate = 0;
-            System.out.println("FPS: "+fps);
+            System.out.println("FPS: "+fps+" Delta: "+delta+"ms");
         }
     }
     
-    public static final double getDelta(){
+    public static final double getDeltaInSec(){
+        return delta/100;
+    }
+    
+    public static final double getDeltaInMs(){
         return delta;
     }
           
-    public static final double getTimeInSec(){
-        return System.nanoTime()*Math.pow(10, -9);
+    public static final double getTimeInMs(){
+        return System.nanoTime()*Math.pow(10, -6);
     }
     
     public static final int getFPS(){
@@ -64,11 +68,11 @@ public class MainThread {
                     backend.init();
                 }
                 if(currentWorld != null){
-                    currentWorld.act(getDelta());
+                    currentWorld.act(getDeltaInSec());
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
-                    backend.renderWorld(getDelta());
+                    backend.renderWorld(getDeltaInSec());
                     updateDelta();
                 }
             }
