@@ -32,7 +32,6 @@ public class MainThread {
             fps = countedFrames;
             countedFrames = 0;
             fpsUpdate = 0;
-            System.out.println("FPS: "+fps+" Delta: "+delta+"ms");
         }
     }
     
