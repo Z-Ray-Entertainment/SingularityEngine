@@ -33,13 +33,11 @@ public class OBJLoader extends LoaderModule{
     public SEMesh loadModel(String file) {
         try {
             String objFile = loadTextFile(file);
-            //String mtlFile = loadTextFile(getMTLFromOBJ(objFile));
             List<OBJGroup> groups = readGroups(objFile);
             SEMesh root = objGroupToSEMesh(groups.get(0));
             for(int i = 1; i < groups.size(); i++){
                 root.addSubMesh(objGroupToSEMesh(groups.get(i)));
             }
-            //root.printMeshData();
             return root;
         }
         catch (FileNotFoundException ex){
