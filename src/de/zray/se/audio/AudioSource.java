@@ -23,7 +23,6 @@ import static org.lwjgl.openal.AL10.alSourcei;
  */
 public class AudioSource {
     private int bufferID, alSource;
-    private long duration;
     private Vector3f pos = new Vector3f(0, 0, 0);
     
     public AudioSource(int bufferID, int alSource){
