@@ -27,8 +27,8 @@ public abstract class SEWorld {
     private List<SEActor> actors = new LinkedList<>();
     private List<Camera> views = new LinkedList<>();
     private List<InputManager> inputManages = new LinkedList<>();
-    private double delta = 0, timeBeforeAct, fpsUpdate = 0;
-    private int currentCamera = -1, fps = 0, countedFrames;
+    
+    private int currentCamera = -1;
     
     public void setRenderBackend(RenderBackend backend){
         this.backend = backend;
@@ -58,16 +58,6 @@ public abstract class SEWorld {
         }
     }
     
-    public final double getDelta(){
-        return delta;
-    }
-    
-    public final void updateDelta(){
-        delta =  getTimeInSec() - timeBeforeAct;
-        timeBeforeAct = getTimeInSec();
-        calcFPS(delta);
-    }
-    
     public final void addSEActor(SEActor actor){
         actors.add(actor);
     }
@@ -92,36 +82,17 @@ public abstract class SEWorld {
         return null;
     }
     
-    public final void act(){
+    public final void act(double delta){
         actors.forEach((actor) -> {
             if(actor != null){
                 try{
-                    actor.getSEAI().act(delta);
+                    actor.getSEAI().act(MainThread.getDelta());
                 }
                 catch(NullPointerException e){
                     //Null AI
                 }
             }
         });
-        updateDelta();
-    }
-    
-    public final double getTimeInSec(){
-        return System.nanoTime()*Math.pow(10, -9);
-    }
-    
-    public final int getFPS(){
-        return fps;
-    }
-    
-    private final void calcFPS(double delta){
-        fpsUpdate += delta;
-        countedFrames++;
-        if(fpsUpdate >= 1){
-            fps = countedFrames;
-            countedFrames = 0;
-            fpsUpdate = 0;
-        }
     }
     
     public final SEAIWorld getAIWorld(){
