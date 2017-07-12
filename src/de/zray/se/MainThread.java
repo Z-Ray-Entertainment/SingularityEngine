@@ -44,7 +44,7 @@ public class MainThread {
     }
           
     public static final double getTimeInMs(){
-        return System.nanoTime()*Math.pow(10, -6);
+        return System.currentTimeMillis();
     }
     
     public static final int getFPS(){
