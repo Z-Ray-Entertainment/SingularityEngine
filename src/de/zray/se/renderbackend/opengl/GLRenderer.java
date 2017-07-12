@@ -5,11 +5,11 @@
  */
 package de.zray.se.renderbackend.opengl;
 
+import de.zray.se.MainThread;
 import de.zray.se.SEActor;
 import de.zray.se.SEWorld;
 import de.zray.se.Settings;
 import de.zray.se.grapics.Camera;
-import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.logger.SELogger;
@@ -42,6 +42,7 @@ public class GLRenderer implements RenderBackend{
     private List<OpenGLRenderData> oglRenderDatas = new LinkedList<>();
     private GLUtils glUtils = new GLUtils();
     private SEWorld currentWorld;
+    private int keyTimes[] = new int[349], threshold = 32;
 
     @Override
     public boolean init() {
@@ -60,21 +61,6 @@ public class GLRenderer implements RenderBackend{
         
         glfwSetMouseButtonCallback(window, (window, key, action, mods) -> {
             
-        });
-        
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            switch(action){
-               case GLFW_RELEASE :
-                   currentWorld.hanldeKeyInputs(key, KeyMap.MODE.RELEASED);
-                   System.out.println("KeyCode: "+key);
-                   break;
-               case GLFW_PRESS :
-                   currentWorld.hanldeKeyInputs(key, KeyMap.MODE.TIPED);
-                   break;
-               case GLFW_REPEAT :
-                   currentWorld.hanldeKeyInputs(key, KeyMap.MODE.PRESSED);
-                   break;
-           }
         });
 
         try ( MemoryStack stack = stackPush() ) {
@@ -121,6 +107,7 @@ public class GLRenderer implements RenderBackend{
         applyCamera(currentWorld.getCurrentCamera());
         glfwSwapBuffers(window);
         glfwPollEvents();
+        pollInputs();
     }
 
     @Override
@@ -276,5 +263,28 @@ public class GLRenderer implements RenderBackend{
                 break;
         }
         glDisable(GL_TEXTURE_2D);
+    }
+    
+    private void pollInputs(){
+        for(int i = 32; i < keyTimes.length; i++){
+            if(glfwGetKey(window, i) == 1){
+                if(keyTimes[i] == 0){
+                    System.out.println("Key tiped!");
+                    currentWorld.hanldeKeyInputs(i, KeyMap.MODE.TIPED);
+                }
+                else if(keyTimes[i] >= threshold){
+                    System.out.println("Key pressed!");
+                    currentWorld.hanldeKeyInputs(i, KeyMap.MODE.PRESSED);
+                }
+                keyTimes[i] += MainThread.getDeltaInMs();
+            }
+            else{
+                if(keyTimes[i] > 0){
+                    System.out.println("Key released!");
+                    currentWorld.hanldeKeyInputs(i, KeyMap.MODE.RELEASED);
+                }
+                keyTimes[i] = 0;
+            }
+        }
     }
 }
