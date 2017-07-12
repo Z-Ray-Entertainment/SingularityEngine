@@ -12,7 +12,6 @@ import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
-import de.zray.se.logger.SELogger;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,7 +39,7 @@ public class OBJLoader extends LoaderModule{
             for(int i = 1; i < groups.size(); i++){
                 root.addSubMesh(objGroupToSEMesh(groups.get(i)));
             }
-            root.printMeshData();
+            //root.printMeshData();
             return root;
         }
         catch (FileNotFoundException ex){
