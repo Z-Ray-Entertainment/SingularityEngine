@@ -34,13 +34,13 @@ public interface RenderBackend {
      * @return tru if backend is initialized
      */
     public abstract boolean isInited();
-    public abstract void renderWorld(double delta, SEWorld world);
+    public abstract void renderWorld(double delta);
+    public abstract void setCurrentWorld(SEWorld world);
     public abstract void shutdown();
+    public abstract void requestClose();
     public abstract boolean closeRequested();
     public abstract boolean isReady();
     public abstract void backendSwitchRequested();
     public abstract int getWidth();
     public abstract int getHeight();
-    public abstract void handleKeyInput(int keyCode, int mode);
-    public abstract void handleMouseInput(int keyCode, int mode);
 }

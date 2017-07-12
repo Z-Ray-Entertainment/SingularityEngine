@@ -5,16 +5,15 @@
  */
 package de.zray.se.renderbackend.opengl;
 
-import de.zray.se.inputmanager.InputManager;
 import de.zray.se.SEActor;
 import de.zray.se.SEWorld;
 import de.zray.se.Settings;
 import de.zray.se.grapics.Camera;
 import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
-import java.awt.event.KeyEvent;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
 
@@ -42,7 +41,8 @@ public class GLRenderer implements RenderBackend{
     private int windowH = Settings.get().window.resY;
     private boolean closeRequested = false;
     private List<OpenGLRenderData> oglRenderDatas = new LinkedList<>();
-    GLUtils glUtils = new GLUtils();
+    private GLUtils glUtils = new GLUtils();
+    private SEWorld currentWorld;
 
     @Override
     public boolean init() {
@@ -64,10 +64,15 @@ public class GLRenderer implements RenderBackend{
         });
         
         glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-            translateInputs(key);
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE ){
-                    glfwSetWindowShouldClose(window, true);
-                    closeRequested = true;
+                switch(action){
+                    case GLFW_RELEASE :
+                        currentWorld.hanldeKeyInputs(key, KeyMap.MODE.RELEASED);
+                        break;
+                    case GLFW_PRESS :
+                        currentWorld.hanldeKeyInputs(key, KeyMap.MODE.PRESSED);
+                        break;
+                }
             }
         });
 
@@ -104,9 +109,9 @@ public class GLRenderer implements RenderBackend{
 
        
     @Override
-    public void renderWorld(double delta, SEWorld world) {
+    public void renderWorld(double delta) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        applyCamera(world.getCurrentCamera());
+        applyCamera(currentWorld.getCurrentCamera());
         glPushMatrix();
         glTranslated(0, 0, -10);
         glBegin(GL_TRIANGLES);
@@ -116,7 +121,7 @@ public class GLRenderer implements RenderBackend{
         glEnd();
         glPopMatrix();
         
-        for(SEActor actor : world.getActors()){
+        for(SEActor actor : currentWorld.getActors()){
             List<SEMesh> rendables = actor.getRendableSEMeshes();
             if(rendables != null){
                 for(int i = 0; i < rendables.size(); i++){
@@ -160,13 +165,8 @@ public class GLRenderer implements RenderBackend{
     }
     
     @Override
-    public void handleKeyInput(int keyCode, int mode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    @Override
-    public void handleMouseInput(int keyCode, int mode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void setCurrentWorld(SEWorld world){
+        this.currentWorld = world;
     }
     
     private void applyCamera(Camera cam){
@@ -182,7 +182,7 @@ public class GLRenderer implements RenderBackend{
                 break;
             case PERSPECTIVE:
                 glViewport(0, 0, windowW, windowH);
-                glUtils.gluPerspective(cam.getFOV(), (float) windowW / (float) windowH, cam.getNear(), cam.getFar());
+                glUtils.gluPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
                 break;
         }
         if (cam.getViewMode() == Camera.ViewMode.EGO) {
@@ -230,9 +230,10 @@ public class GLRenderer implements RenderBackend{
         return windowH;
     }
     
-    
-    public void translateInputs(int key){
-        System.out.println("Key: "+KeyEvent.getKeyText(key)+" Code: "+key);
+    @Override
+    public void requestClose() {
+        closeRequested = true;
+        glfwSetWindowShouldClose(window, true);
     }
     
     private void renderMesh(SEMesh mesh){
