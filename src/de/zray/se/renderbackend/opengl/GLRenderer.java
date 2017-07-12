@@ -103,32 +103,8 @@ public class GLRenderer implements RenderBackend{
     @Override
     public void renderWorld(double delta) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        applyCamera(currentWorld.getCurrentCamera());
-        
-        glDisable(GL_BLEND);
-        glDisable(GL_LIGHTING);
-        glDisable(GL_CULL_FACE);
-        //glOrtho(0, windowW, windowH, 0, 1, 100);
-        glPushMatrix();
-        glTranslated(0, 0, -10);
-        glColor3f(1, 1, 1);
-        glBegin(GL_TRIANGLES);
-            glVertex3f(0, 1, 0);
-            glVertex3f(1, 0, 0);
-            glVertex3f(-1, 0, 0);
-        glEnd();
-        glPopMatrix();
-        
-        glPushMatrix();
-        glColor3f(1, 0.5f, 0.5f);
-        glBegin(GL_QUADS);
-            glVertex3f(-100, 0, -100);
-            glVertex3f(-100, 0, 100);
-            glVertex3f(100, 0, 100);
-            glVertex3f(100, 0, -100);
-        glEnd();
-        glPopMatrix();
-        
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
         for(SEActor actor : currentWorld.getActors()){
             List<SEMesh> rendables = actor.getRendableSEMeshes();
             if(rendables != null){
@@ -142,6 +118,7 @@ public class GLRenderer implements RenderBackend{
                 }
             }
         }
+        applyCamera(currentWorld.getCurrentCamera());
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -190,7 +167,7 @@ public class GLRenderer implements RenderBackend{
                 break;
             case PERSPECTIVE:
                 GLUProject.gluPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
-                applyRotations(cam);
+                //applyRotations(cam);
                 glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
                 break;
         }
@@ -258,8 +235,9 @@ public class GLRenderer implements RenderBackend{
             mesh.setRenderData(oglRenderDatas.size()-1);
         }
         
-        glUtils.applyMaterial(mesh.getMaterial());
         OpenGLRenderData rData = oglRenderDatas.get(mesh.getRenderData());
+        glUtils.applyMaterial(mesh.getMaterial(), rData);
+        
         switch(mesh.getRenderMode()){
             case DIRECT :
                 glUtils.drawObject(mesh);
@@ -297,5 +275,6 @@ public class GLRenderer implements RenderBackend{
                 }
                 break;
         }
+        glDisable(GL_TEXTURE_2D);
     }
 }
