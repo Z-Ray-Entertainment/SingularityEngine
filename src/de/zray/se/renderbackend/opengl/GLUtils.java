@@ -9,6 +9,7 @@ import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.logger.SELogger;
 import java.nio.FloatBuffer;
+import javax.vecmath.Vector3f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.GL_COMPILE;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -23,15 +24,16 @@ import static org.lwjgl.opengl.GL11.glEnableClientState;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glEndList;
 import static org.lwjgl.opengl.GL11.glGenLists;
+import static org.lwjgl.opengl.GL11.glMultMatrixf;
 import static org.lwjgl.opengl.GL11.glNewList;
 import static org.lwjgl.opengl.GL11.glNormal3f;
 import static org.lwjgl.opengl.GL11.glNormalPointer;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
 import static org.lwjgl.opengl.GL11.glTexCoordPointer;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 import static org.lwjgl.opengl.GL11.glVertexPointer;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_DYNAMIC_DRAW;
 import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
 import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
@@ -42,6 +44,17 @@ import static org.lwjgl.opengl.GL15.glGenBuffers;
  * @author vortex
  */
 public class GLUtils {
+    private static float[] IDENTIY_MATRIX;
+    private FloatBuffer matrix = BufferUtils.createFloatBuffer(16);
+    
+    public GLUtils(){
+        IDENTIY_MATRIX = new float[] {
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, 0.0f, 1.0f };
+    }
+    
     public void generateVBO(SEMesh mesh, OpenGLRenderData rData){
         rData.setVBOSize(mesh.getFaces().size()*3*8);
         FloatBuffer vboData = BufferUtils.createFloatBuffer(rData.getVBOSize());
@@ -232,5 +245,72 @@ public class GLUtils {
         glNewList(rData.getDisplayList(), GL_COMPILE);
         drawObject(mesh);
         glEndList();
+    }
+    
+    public void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
+       
+        float sine, cotangent, deltaZ;
+        float radians = fovy / 2 * (float) Math.PI / 180;
+
+        deltaZ = zFar - zNear;
+        sine = (float) Math.sin(radians);
+
+        if ((deltaZ == 0) || (sine == 0) || (aspect == 0)) {
+                return;
+        }
+
+        cotangent = (float) Math.cos(radians) / sine;
+
+        gluMakeIdentityf(matrix);
+
+        matrix.put(0 * 4 + 0, cotangent / aspect);
+        matrix.put(1 * 4 + 1, cotangent);
+        matrix.put(2 * 4 + 2, - (zFar + zNear) / deltaZ);
+        matrix.put(2 * 4 + 3, -1);
+        matrix.put(3 * 4 + 2, -2 * zNear * zFar / deltaZ);
+        matrix.put(3 * 4 + 3, 0);
+
+        glMultMatrixf(matrix);
+    }
+    
+    private void gluMakeIdentityf(FloatBuffer m) {
+        int oldPos = m.position();
+        m.put(IDENTIY_MATRIX);
+        m.position(oldPos);
+    }
+    
+    public void gluLookAt(Vector3f eye, Vector3f center, Vector3f up){
+        Vector3f forward = new Vector3f();
+        Vector3f side = new Vector3f();
+        Vector3f upv = new Vector3f();
+
+        forward.x = center.x - eye.x;
+        forward.y = center.y - eye.y;
+        forward.z = center.z - eye.z;
+
+        upv.x = up.x;
+        upv.y = up.y;
+        upv.z = up.z;
+
+        forward.normalize();
+        forward.cross(up, side);
+        side.normalize();
+        side.cross(forward, up);
+
+        gluMakeIdentityf(matrix);
+        matrix.put(0 * 4 + 0, side.x);
+        matrix.put(1 * 4 + 0, side.y);
+        matrix.put(2 * 4 + 0, side.z);
+
+        matrix.put(0 * 4 + 1, up.x);
+        matrix.put(1 * 4 + 1, up.y);
+        matrix.put(2 * 4 + 1, up.z);
+
+        matrix.put(0 * 4 + 2, -forward.x);
+        matrix.put(1 * 4 + 2, -forward.y);
+        matrix.put(2 * 4 + 2, -forward.z);
+
+        glMultMatrixf(matrix);
+        glTranslatef(-eye.x, -eye.y, -eye.z);
     }
 }

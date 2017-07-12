@@ -19,6 +19,7 @@ import org.lwjgl.system.*;
 import java.nio.*;
 import java.util.LinkedList;
 import java.util.List;
+import javax.vecmath.Vector3f;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -85,7 +86,7 @@ public class GLRenderer implements RenderBackend{
         glfwShowWindow(window);
         GL.createCapabilities();
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        
+        glEnable(GL_DEPTH_TEST);
         return true;
     }
 
@@ -154,15 +155,18 @@ public class GLRenderer implements RenderBackend{
                 glOrtho(0, windowW, windowH, 0, cam.getNear(), cam.getFar());
                 break;
             case PERSPECTIVE:
-                //glPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
+                glViewport(0, 0, windowW, windowH);
+                glUtils.gluPerspective(cam.getFOV(), (float) windowW / (float) windowH, cam.getNear(), cam.getFar());
                 break;
         }
-        if (cam.getViewMode() == Camera.ViewMode.THIRDPERSON) {
+        if (cam.getViewMode() == Camera.ViewMode.EGO) {
             glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
             applyRotations(cam);
-        } else {
-            applyRotations(cam);
-            glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
+        }
+        else {
+            glUtils.gluLookAt(cam.getPosition(), new Vector3f(), new Vector3f(0, 1, 1));
+            //applyRotations(cam);
+            //glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
         }
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
