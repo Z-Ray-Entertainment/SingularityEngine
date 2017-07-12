@@ -8,48 +8,10 @@ package de.zray.se.renderbackend.opengl;
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
-import de.zray.se.logger.SELogger;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL11.GL_AMBIENT_AND_DIFFUSE;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_COMPILE;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINES;
-import static org.lwjgl.opengl.GL11.GL_NORMAL_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SPECULAR;
-import static org.lwjgl.opengl.GL11.GL_SRC_COLOR;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_COORD_ARRAY;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glEnableClientState;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glEndList;
-import static org.lwjgl.opengl.GL11.glGenLists;
-import static org.lwjgl.opengl.GL11.glIsEnabled;
-import static org.lwjgl.opengl.GL11.glMaterialfv;
-import static org.lwjgl.opengl.GL11.glNewList;
-import static org.lwjgl.opengl.GL11.glNormal3f;
-import static org.lwjgl.opengl.GL11.glNormalPointer;
-import static org.lwjgl.opengl.GL11.glTexCoord2f;
-import static org.lwjgl.opengl.GL11.glTexCoordPointer;
-import static org.lwjgl.opengl.GL11.glVertex3f;
-import static org.lwjgl.opengl.GL11.glVertexPointer;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL15.glBufferData;
-import static org.lwjgl.opengl.GL15.glGenBuffers;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
 
 /**
  *
@@ -240,7 +202,32 @@ public class GLUtils {
         glEndList();
     }
     
-    public void applyMaterial(SEMaterial mat){
+    private void loadTexture(String file, OpenGLRenderData rData){
+        rData.setDiffuseTextureID(glGenTextures());
+        glBindTexture(GL_TEXTURE_2D, rData.getDiffuseTextureID());
+        
+        GLTexture diffuse = new GLTexture();
+        diffuse.loadTexture(file);
+        
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, diffuse.getImageWidth(), diffuse.getImageHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, diffuse.getImageBuffer());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    }
+    
+    private void applyTextures(SEMaterial mat, OpenGLRenderData rData){
+        if(mat.getTexture() != null && !mat.getTexture().isEmpty()){
+            if(rData.getDiffuseTextureID() == -1){
+                loadTexture(mat.getTexture(), rData);
+            }
+            glBindTexture(GL_TEXTURE_2D, rData.getDiffuseTextureID());
+            glEnable(GL_TEXTURE_2D);
+        }
+        else{
+            glDisable(GL_TEXTURE_2D);
+        }
+    }
+    
+    public void applyMaterial(SEMaterial mat, OpenGLRenderData rData){
         if(mat.cullBackfaces() && !glIsEnabled(GL_CULL_FACE)){
             glEnable(GL_CULL_FACE);
         }
@@ -261,12 +248,13 @@ public class GLUtils {
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_ONE, GL_SRC_COLOR);
             }
-            float[] diffuse = new float[]{mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency()};
-            float[] spec = new float[]{mat.getSpecularColor().x, mat.getSpecularColor().y, mat.getSpecularColor().z, mat.getTransparency()};
-            
-            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
-            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
         }
+        float[] diffuse = new float[]{mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency()};
+        float[] spec = new float[]{mat.getSpecularColor().x, mat.getSpecularColor().y, mat.getSpecularColor().z, mat.getTransparency()};
+        
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
+        applyTextures(mat, rData);
     }
     
     public void generateDisplayList(SEMesh mesh, OpenGLRenderData rData){

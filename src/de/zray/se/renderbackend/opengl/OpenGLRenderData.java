@@ -15,6 +15,15 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 public class OpenGLRenderData {
     private int vboID = -1, vboIDWired = -1, displayList = -1, displayListWired = -1;
     private int vboSize = -1, vboSizeWired = -1;
+    private int diffID = -1, specID = -1, dispID = -1, paraID = -1, bumpID = -1;
+    
+    public void setDiffuseTextureID(int id){
+        diffID = id;
+    }
+    
+    public int getDiffuseTextureID(){
+        return diffID;
+    }
     
     public void setDisplayList(int id){
         displayList = id;
