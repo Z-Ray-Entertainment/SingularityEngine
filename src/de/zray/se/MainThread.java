@@ -21,7 +21,8 @@ public class MainThread {
     }
     
     public void switchWorld(SEWorld world){
-        this.currentWorld = world;
+        currentWorld = world;
+        currentWorld.setRenderBackend(backend);
     }
     
     public void loop() throws IOException{
@@ -34,7 +35,8 @@ public class MainThread {
                     currentWorld.act();
                 }
                 if(backend.isReady()){
-                    backend.renderWorld(currentWorld.getDelta(), currentWorld);
+                    backend.setCurrentWorld(currentWorld);
+                    backend.renderWorld(currentWorld.getDelta());
                 }
             }
             shutdown();
