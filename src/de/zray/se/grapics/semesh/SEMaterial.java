@@ -15,7 +15,7 @@ public class SEMaterial {
     public static enum ReflectionMode {BLEND_INTO_MATERIAL, BLEND_INTO_SKY, NO_BLEND};
     
     private String texture, specMap, bumpMap, displaceMap, parallaxMap;
-    private float specFac, bumpFac, displaceFac, parallaxFac, emission, reflection, transparency,
+    private float specFac = 0, bumpFac = 0, displaceFac = 0, parallaxFac = 0, emission = 0, reflection = 0, transparency = 0f,
             maxReflectionDistance = 0;
     private Color3f diffuseColor = new Color3f(1, 1, 1),
             specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
@@ -99,6 +99,7 @@ public class SEMaterial {
         diffuseColor.x = red;
         diffuseColor.y = green;
         diffuseColor.z = blue;
+        transparency = alpha;
     }
       
     public Color3f getDiffiseColor(){
