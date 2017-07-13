@@ -24,7 +24,7 @@ public class SEBulletWorld extends SEModule{
     }
 
     @Override
-    public boolean update(float delta) {
+    public boolean update(double delta) {
         return true;
     }
 

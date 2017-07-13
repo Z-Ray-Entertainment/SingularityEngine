@@ -16,6 +16,6 @@ public abstract class SEModule {
     }
     
     public abstract boolean shutdown();
-    public abstract boolean update(float delta);
+    public abstract boolean update(double delta);
     public abstract boolean cleanUp();
 }

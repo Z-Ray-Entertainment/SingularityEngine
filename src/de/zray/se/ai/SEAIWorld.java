@@ -22,7 +22,7 @@ public class SEAIWorld extends SEModule{
     }
     
     @Override
-    public boolean update(float delta){
+    public boolean update(double delta){
         for(SEAI tmp : ais){
             if(tmp != null){
                 tmp.act(delta);
