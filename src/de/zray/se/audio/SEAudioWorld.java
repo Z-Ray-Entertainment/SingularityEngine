@@ -25,14 +25,16 @@ import javax.vecmath.Vector3f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
 import static org.lwjgl.openal.AL10.AL_FORMAT_MONO16;
 import static org.lwjgl.openal.AL10.AL_FORMAT_STEREO16;
+import static org.lwjgl.openal.AL10.AL_NO_ERROR;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.alBufferData;
 import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alGenSources;
+import static org.lwjgl.openal.AL10.alGetError;
 import static org.lwjgl.openal.AL10.alListenerfv;
+import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.ALC.createCapabilities;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.openal.ALC11.*;
@@ -55,7 +57,7 @@ import sun.nio.ch.IOUtil;
  */
 public class SEAudioWorld extends SEModule{
     private List<AudioSource> sources = new LinkedList<>();
-    private long audioDevice, context;
+    private static long audioDevice, context;
 
     public SEAudioWorld(SEWorld parrent) {
         super(parrent);
@@ -102,21 +104,34 @@ public class SEAudioWorld extends SEModule{
         return newBuffer;
     }
     
-    public AudioSource loadAudioFile(String file){
+    public int loadAudioFile(String file){
         int buffer = alGenBuffers();
+        handleALError("alGenBuffers");
         int source = alGenSources();
+        handleALError("alGenSource");
         ShortBuffer pcm;
         STBVorbisInfo info = STBVorbisInfo.malloc();
         pcm = readVorbis(file, 32 * 1024, info);
         alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
+        handleALError("alBufferData");
         AudioSource audioSource = new AudioSource(buffer, source);
         sources.add(audioSource);
-        return audioSource;
+        return sources.size()-1;
     }
 
+    public AudioSource getAudioSource(int source){
+        return sources.get(source);
+    }
+    
     public void setALListener(Vector3f position){
         alListenerfv(AL_POSITION, new float[]{position.x, position.y, position.z});
-        System.out.println("Set ALListener to: "+position.x+" "+position.y+" "+position.z);
+    }
+    
+    public static void handleALError(String additionalInfo){
+        int error = alGetError();
+        if(error != AL_NO_ERROR){
+            SELogger.get().dispatchMsg("AL", SELogger.SELogType.WARNING, new String[]{"AL throws Error: "+alcGetString(audioDevice, error)+" ("+additionalInfo+")"}, false);
+        }
     }
     
     private ShortBuffer readVorbis(String file, int bufferSize, STBVorbisInfo info){
@@ -194,8 +209,13 @@ public class SEAudioWorld extends SEModule{
     }
 
     @Override
-    public boolean update(float delta) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean update(double delta) {
+        for(AudioSource src : sources){
+            if(src.isLooped() && !src.isPlaying()){
+                src.playAsSound(true);
+            }
+        }
+        return true;
     }
 
     @Override
