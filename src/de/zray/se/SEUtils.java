@@ -14,6 +14,7 @@ import javax.vecmath.Vector3f;
  * @author Vortex Acherontic
  */
 public class SEUtils {
+    public static final double G = 6.67408*Math.pow(10, -11);
     public static String getSuffix(String file){
         int lastDot = 0;
         for(int i = 0; i < file.length(); i++){
@@ -39,5 +40,21 @@ public class SEUtils {
     
     public static Vector2d calcCoordinates(double radius, double angle){
         return new Vector2d(radius*Math.cos(angle), radius*Math.sin(angle));
+    }
+    
+    /**
+     * Calculates the speed required by an object to cycle any orb on a stable
+     * orbit
+     * @param massOfCenter the mass of the orb which the satelite orbits
+     * @param radiusOfCenter the size of the orb which the satelite orbits
+     * @param distanceToCenter the height above the orb which the satelite centers
+     * @return 
+     */
+    public static double calcSateliteSpeed(double massOfCenter, double radiusOfCenter, double distanceToCenter){
+        return Math.sqrt(G*(massOfCenter/(radiusOfCenter+distanceToCenter)));
+    }
+    
+    public static double calcSpeedInAngleSpeed(double speed, double radius){
+        return speed/radius;
     }
 }
