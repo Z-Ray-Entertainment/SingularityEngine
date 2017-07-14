@@ -63,6 +63,10 @@ public class GLRenderer implements RenderBackend{
             
         });
 
+        glfwSetWindowSizeCallback(window, (window, w, h) -> {
+            calcWindowProps(w, h);
+        });
+        
         try ( MemoryStack stack = stackPush() ) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
@@ -77,9 +81,17 @@ public class GLRenderer implements RenderBackend{
         GL.createCapabilities();
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
+        calcWindowProps(windowW, windowH);
         return true;
     }
 
+    private void calcWindowProps(int w, int h){
+        aspectRatio = (float)w/(float)h;
+        windowW = w;
+        windowH = h;
+        glViewport(0, 0, windowW, windowH);
+    }
+    
     @Override
     public boolean isInited() {
         return (window != -1);
