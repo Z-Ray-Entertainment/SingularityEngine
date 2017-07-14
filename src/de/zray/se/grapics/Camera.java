@@ -39,6 +39,11 @@ public class Camera {
         return lookAt;
     }
     
+    public void setClips(float near, float far){
+        this.near = near;
+        this.far = far;
+    }
+    
     public float getNear(){
         return near;
     }
