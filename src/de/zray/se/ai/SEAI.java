@@ -22,5 +22,13 @@ public abstract class SEAI {
         aiMod.addAI(this);
     }
     
+    public final SEActor getActor(){
+        return parrentActor;
+    }
+    
+    public void setActor(SEActor actor){
+        this.parrentActor = actor;
+    }
+    
     public abstract void act(double delta);
 }
