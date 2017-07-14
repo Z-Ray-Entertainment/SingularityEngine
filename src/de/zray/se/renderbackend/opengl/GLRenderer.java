@@ -279,6 +279,9 @@ public class GLRenderer implements RenderBackend{
     
     private void pollInputs(){
         for(int i = 32; i < keyTimes.length; i++){
+            /*if(i == GLFW_KEY_LEFT_SHIFT){
+                System.out.println(GLFW_KEY_LEFT_SHIFT);
+            }*/
             if(glfwGetKey(window, i) == 1){
                 if(keyTimes[i] == 0){
                     currentWorld.hanldeKeyInputs(i, KeyMap.MODE.TIPED);
