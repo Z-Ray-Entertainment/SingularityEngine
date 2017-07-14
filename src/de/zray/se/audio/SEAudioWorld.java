@@ -130,7 +130,7 @@ public class SEAudioWorld extends SEModule{
     public static void handleALError(String additionalInfo){
         int error = alGetError();
         if(error != AL_NO_ERROR){
-            SELogger.get().dispatchMsg("AL", SELogger.SELogType.WARNING, new String[]{"AL throws Error: "+alcGetString(audioDevice, error)+" ("+additionalInfo+")"}, false);
+            //SELogger.get().dispatchMsg("AL", SELogger.SELogType.WARNING, new String[]{"AL throws Error: "+alcGetString(audioDevice, error)+" ("+additionalInfo+")"}, false);
         }
     }
     
