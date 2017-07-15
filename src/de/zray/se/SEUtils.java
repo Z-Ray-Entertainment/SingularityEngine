@@ -5,6 +5,7 @@
  */
 package de.zray.se;
 
+import java.util.Random;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
@@ -56,5 +57,9 @@ public class SEUtils {
     
     public static double calcSpeedInAngleSpeed(double speed, double radius){
         return speed/radius;
+    }
+    
+    public static int randomInt(int start, int end){
+        return (new Random().nextInt(end)+start)%end;
     }
 }
