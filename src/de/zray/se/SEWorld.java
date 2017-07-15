@@ -8,6 +8,7 @@ package de.zray.se;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.grapics.Camera;
+import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.physics.SEBulletWorld;
@@ -27,8 +28,8 @@ public abstract class SEWorld {
     private List<SEActor> actors = new LinkedList<>();
     private List<Camera> views = new LinkedList<>();
     private List<InputManager> inputManages = new LinkedList<>();
-    
     private int currentCamera = -1;
+    private List<SEMesh> rendableMeshes = new LinkedList<>();
     
     public void setRenderBackend(RenderBackend backend){
         this.backend = backend;
