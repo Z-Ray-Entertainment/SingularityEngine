@@ -37,6 +37,7 @@ public class SEMesh{
     private BoundingBox bb;
     private Vector3f direction;
     private float renderDist = -1;
+    private boolean cleared = false;
     
     public SEMesh(List<SEVertex> vertexList, List<SEUV> uvs, List<SENormal> normals, List<SEFace> faceList, SEAmature amature, SEMaterial material){
         this.amature = amature;
@@ -48,6 +49,18 @@ public class SEMesh{
         orientation = new SEOriantation();
         this.bb = new BoundingBox(vertecies);
         this.direction = new Vector3f(0, 0, -1);
+    }
+    
+    public void clear(){
+        vertecies.clear();
+        faces.clear();
+        normals.clear();
+        uvs.clear();
+        cleared = true;
+    }
+    
+    public boolean isCleared(){
+        return cleared;
     }
     
     public void setRenderData(int index){

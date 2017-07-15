@@ -55,8 +55,7 @@ public class GLUtils {
        
         glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOID());
         glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
-        vboData.clear();
-        
+        vboData = null;
     }
     
     public void generateVBOWired(SEMesh mesh, OpenGLRenderData rData){
@@ -123,7 +122,7 @@ public class GLUtils {
         
         glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOIDWired());
         glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
-	vboData.clear();
+	vboData = null;
     }
     
     public void renderVBO(OpenGLRenderData rData){
