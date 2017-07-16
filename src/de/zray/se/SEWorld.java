@@ -84,7 +84,6 @@ public abstract class SEWorld {
     }
     
     public final void act(double delta){
-        
         actors.forEach((actor) -> {
             if(actor != null){
                 try{
@@ -97,6 +96,24 @@ public abstract class SEWorld {
         });
         audioWorld.setALListener(getCurrentCamera().getPosition());
         audioWorld.update(delta);
+        optimizeScene();
+    }
+    
+    private void optimizeScene(){
+        if(views.get(currentCamera).propsWhereChanged()){
+            collectRendableMeshes();            
+        }
+    }
+    
+    private void collectRendableMeshes(){
+        rendableMeshes = new LinkedList<>();
+        for(SEActor actor : actors){
+            
+        }
+    }
+    
+    public List<SEMesh> getRendableMeshes(){
+        return rendableMeshes;
     }
     
     public final SEAIWorld getAIWorld(){
