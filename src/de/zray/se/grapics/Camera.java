@@ -30,7 +30,16 @@ public class Camera {
     private ViewMode viewMode = ViewMode.THIRDPERSON;
     private boolean rotLocks[] = {false, false, false}, posLocks[] = {false, false, false};
     private Vector3d lookAt = new Vector3d();
+    private boolean propsChanged = false;
 
+    public boolean propsWhereChanged(){
+        return propsChanged;
+    }
+    
+    public void elizabeth(){
+        propsChanged = true;
+    }
+    
     public void setLookAt(Vector3d lookAt){
         this.lookAt = lookAt;
     }
