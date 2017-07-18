@@ -31,7 +31,7 @@ public class SEMesh{
     private float renderDist = -1;
     private BoundingBox bb;
     
-    public SEMesh(SEAmature amature, SEMaterial material, int seMeshData){
+    public SEMesh(SEMaterial material, int seMeshData){
         this.material = material;
         orientation = new SEOriantation();
         meshData = seMeshData;
