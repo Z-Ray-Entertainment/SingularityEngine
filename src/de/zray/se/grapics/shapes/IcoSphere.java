@@ -24,15 +24,13 @@ import storages.AssetLibrary;
  */
 public class IcoSphere implements SEMeshProvider{
     private SEMeshData icoSphere;
-    private float lengthScale = 1, radius;
+    private float lengthScale = 1;
     
-    public IcoSphere(float radius, int subDiv){
-        this.radius = radius;
+    public IcoSphere(int subDiv){
         generate(subDiv, false, 0, 0, 0);
     }
     
-    public IcoSphere(float radius, int subDiv, boolean deform, long seed, float scale, float freq){
-        this.radius = radius;
+    public IcoSphere(int subDiv, boolean deform, long seed, float scale, float freq){
         generate(subDiv, deform, seed, scale, freq);
     }
     
@@ -163,7 +161,7 @@ public class IcoSphere implements SEMeshProvider{
     
     private SEVertex setOnUnitSphere(SEVertex v){
         float lenght = (float) Math.sqrt(v.vX*v.vX + v.vY*v.vY + v.vZ*v.vZ)*lengthScale;
-        return new SEVertex(v.vX/lenght*radius, v.vY/lenght*radius, v.vZ/lenght*radius);
+        return new SEVertex(v.vX/lenght, v.vY/lenght, v.vZ/lenght);
     }
     
     private SEVertex deform(SEVertex v, long seed, float scale, float frequenzy){
