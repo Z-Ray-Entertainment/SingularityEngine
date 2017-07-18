@@ -8,12 +8,13 @@ package de.zray.se.grapics.shapes;
 import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+import storages.AssetLibrary;
 
 /**
  *
@@ -71,7 +72,9 @@ public class Cube implements SEMeshProvider{
         f.add(new SEFace(5, 6, 2, 4, 13, 8, 3, 3, 3));
         f.add(new SEFace(2, 6, 7, 8, 13, 9, 5, 5, 5));
         
-        cube = new SEMesh(v, uvs, normlas, f, null, material);
+        SEMeshData mData = new SEMeshData(v, uvs, normlas, f, null);
+        int mDataID = AssetLibrary.get().addMesh(mData);
+        cube = new SEMesh(material, mDataID);
     }
     
     @Override

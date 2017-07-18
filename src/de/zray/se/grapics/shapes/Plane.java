@@ -8,11 +8,13 @@ package de.zray.se.grapics.shapes;
 import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
 import java.util.ArrayList;
 import java.util.List;
+import storages.AssetLibrary;
 
 
 /**
@@ -46,7 +48,9 @@ public class Plane implements SEMeshProvider{
         faces.add(new SEFace(0, 1, 2, 0, 1, 2, 0, 0, 0));
         faces.add(new SEFace(3, 4, 5, 0, 2, 3, 0, 0, 0));
         
-        plane = new SEMesh(vertecies, uvs,normals, faces, null, new SEMaterial());
+        SEMeshData mData = new SEMeshData(vertecies, uvs, normals, faces, null);
+        int mDataID = AssetLibrary.get().addMesh(mData);
+        plane = new SEMesh(new SEMaterial(), mDataID);
     }
 
     @Override

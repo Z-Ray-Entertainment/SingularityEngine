@@ -6,22 +6,24 @@
 package de.zray.se.grapics.shapes;
 
 import de.zray.se.generators.VoronoiCracle;
-import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEFace;
+import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
 import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Vector3f;
+import storages.AssetLibrary;
 
 /**
  *
  * @author Vortex Acherontic
  */
 public class IcoSphere implements SEMeshProvider{
-    private SEMesh icoSphere;
+    private SEMeshData icoSphere;
     private float lengthScale = 1, radius;
     
     public IcoSphere(float radius, int subDiv){
@@ -87,7 +89,8 @@ public class IcoSphere implements SEMeshProvider{
         faces.add(new SEFace(8, 6, 7, 0, 0, 0, 0, 0, 0));
         faces.add(new SEFace(9, 8, 1, 0, 0, 0, 0, 0, 0));
         
-        icoSphere = subdevide(subDiv, new SEMesh(vertex, uvs, normals, faces, null, new SEMaterial()));
+        SEMeshData mData = new SEMeshData(vertex, uvs, normals, faces, null);
+        icoSphere = subdevide(subDiv, mData);
         
         if(deform){
             for(int i = 0; i < icoSphere.getVertecies().size(); i++){
@@ -96,14 +99,14 @@ public class IcoSphere implements SEMeshProvider{
         }
     }
     
-    private SEMesh subdevide(int iterations, SEMesh mesh){
-        SEMesh tmpMesh = mesh;
+    private SEMeshData subdevide(int iterations, SEMeshData mesh){
+        SEMeshData tmpMeshData = mesh;
         
         for(int i = 0; i < iterations; i++){
-            tmpMesh = iterate(tmpMesh);
+            tmpMeshData = iterate(tmpMeshData);
         }
         
-        return tmpMesh;
+        return tmpMeshData;
     }
     
     private SENormal calcNormal(SEVertex v){
@@ -112,7 +115,7 @@ public class IcoSphere implements SEMeshProvider{
         return new SENormal(n.x, n.y, n.z);
     }
     
-    private SEMesh iterate(SEMesh mesh){
+    private SEMeshData iterate(SEMeshData mesh){
         List<SEVertex> v = new ArrayList<>();
         List<SEFace> f = new ArrayList<>();
         List<SEUV> uv = new ArrayList<>();
@@ -151,7 +154,7 @@ public class IcoSphere implements SEMeshProvider{
             f.add(new SEFace(iv3, ic, ib, 0, 0, 0, iv3, ic, ib));
             f.add(new SEFace(ia, ib, ic, 0, 0, 0, ia, ib, ic));
         }
-        return new SEMesh(v, uv, n, f, null, new SEMaterial());
+        return new SEMeshData(v, uv, n, f, null);
     }
     
     private SEVertex getMiddle(SEVertex v1, SEVertex v2){
@@ -171,7 +174,8 @@ public class IcoSphere implements SEMeshProvider{
     
     @Override
     public SEMesh getSEMesh() {
-        return icoSphere;
+        int mDataID = AssetLibrary.get().addMesh(icoSphere);
+        return new SEMesh(new SEMaterial(), mDataID);
     }
     
 }
