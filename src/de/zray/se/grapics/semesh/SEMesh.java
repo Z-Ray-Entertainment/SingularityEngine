@@ -6,10 +6,8 @@
 package de.zray.se.grapics.semesh;
 
 import de.zray.se.grapics.Camera;
-import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import javax.vecmath.Vector3f;
 
 /**
@@ -23,44 +21,29 @@ public class SEMesh{
     private int renderData = -1;
     private RenderMode renderMode = RenderMode.DIRECT;
     private DisplayMode displayMode = DisplayMode.SOLID;
-    private List<SEVertex> vertecies = new LinkedList<>();
-    private List<SEUV> uvs = new LinkedList<>();
-    private List<SENormal> normals = new LinkedList<>();
-    private List<SEFace> faces = new LinkedList<>();
-    private SEAmature amature = new SEAmature();
     private SEOriantation orientation = new SEOriantation();
     private SEMaterial material = new SEMaterial();
     private boolean isAnimated = false;
     private SEMesh lod;
     private List<SEMesh> subMeshes = new LinkedList<>();
-    public UUID uuid = UUID.randomUUID();
-    private BoundingBox bb;
+    private int meshData = -1;
     private Vector3f direction;
     private float renderDist = -1;
-    private boolean cleared = false;
+    private BoundingBox bb;
     
-    public SEMesh(List<SEVertex> vertexList, List<SEUV> uvs, List<SENormal> normals, List<SEFace> faceList, SEAmature amature, SEMaterial material){
-        this.amature = amature;
-        this.faces = faceList;
+    public SEMesh(SEAmature amature, SEMaterial material, int seMeshData){
         this.material = material;
-        this.vertecies = vertexList;
-        this.uvs = uvs;
-        this.normals = normals;
         orientation = new SEOriantation();
-        this.bb = new BoundingBox(vertecies);
+        meshData = seMeshData;
         this.direction = new Vector3f(0, 0, -1);
     }
     
-    public void clear(){
-        vertecies.clear();
-        faces.clear();
-        normals.clear();
-        uvs.clear();
-        cleared = true;
+    public int getSEMeshData(){
+        return meshData;
     }
     
-    public boolean isCleared(){
-        return cleared;
+    public void setMeshData(int mData){
+        this.meshData = mData;
     }
     
     public void setRenderData(int index){
@@ -69,13 +52,6 @@ public class SEMesh{
     
     public int getRenderData(){
         return renderData;
-    }
-    
-    public void printMeshData(){
-        String lines[] = {"SEMESH: "+uuid.toString(),
-            "Vertex: "+vertecies.size(), "UVs: "+uvs.size(), 
-            "Normals: "+normals.size(), "Faces: "+faces.size()};
-        SELogger.get().dispatchMsg("SEMesh", SELogger.SELogType.INFO, lines, false);
     }
     
     public void setRenderDist(float renderDist){
@@ -88,22 +64,6 @@ public class SEMesh{
     
     public Vector3f getDirection(){
         return direction;
-    }
-    
-    public List<SEFace> getFaces(){
-        return faces;
-    }
-    
-    public List<SEVertex> getVertecies(){
-        return vertecies;
-    }
-    
-    public List<SEUV> getUVs(){
-        return uvs;
-    }
-    
-    public List<SENormal> getNormals(){
-        return normals;
     }
     
     public void addSubMesh(SEMesh subMesh){

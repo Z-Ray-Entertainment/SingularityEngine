@@ -7,8 +7,6 @@ package de.zray.se.grapics.semesh;
 
 import java.util.List;
 import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  *
@@ -27,6 +25,30 @@ public class BoundingBox {
         this.ymax = ymax;
         this.zmin = zmin;
         this.zmax = zmax;
+        buildBB();
+    }
+    
+    public void extendBoundingBox(List<SEVertex> newVertecies){
+        for(SEVertex tmp : newVertecies){
+            if(tmp.vX < xmin){
+                xmin = tmp.vX;
+            }
+            else if(tmp.vX > xmax){
+                xmax = tmp.vX;
+            }
+            if(tmp.vY < ymin){
+                ymin = tmp.vY;
+            }
+            else if(tmp.vY > ymax){
+                ymax = tmp.vY;
+            }
+            if(tmp.vZ < zmin){
+                zmin = tmp.vZ;
+            }
+            else if(tmp.vZ > zmax){
+                zmax = tmp.vZ;
+            }
+        }
         buildBB();
     }
     
@@ -93,75 +115,5 @@ public class BoundingBox {
             return true;
         }
         return false;
-    }
-    
-    public void debug(){
-        /*glDisable(GL_TEXTURE);
-        glDisable(GL_TEXTURE_2D);
-        glColor4f(0, 1, 0, 0);
-        glBegin(GL_LINES);
-        glVertex3f(v1.x, v1.y, v1.z);
-        glVertex3f(v2.x, v2.y, v2.z);
-        glVertex3f(v1.x, v1.y, v1.z);
-        glVertex3f(v3.x, v3.y, v3.z);
-        glVertex3f(v1.x, v1.y, v1.z);
-        glVertex3f(v4.x, v4.y, v4.z);
-        glVertex3f(v1.x, v1.y, v1.z);
-        glVertex3f(v5.x, v5.y, v5.z);
-        glVertex3f(v1.x, v1.y, v1.z);
-        glVertex3f(v6.x, v6.y, v6.z);
-        glVertex3f(v1.x, v1.y, v1.z);
-        glVertex3f(v7.x, v7.y, v7.z);
-        glVertex3f(v1.x, v1.y, v1.z);
-        glVertex3f(v8.x, v8.y, v8.z);
-        
-        glVertex3f(v2.x, v2.y, v2.z);
-        glVertex3f(v3.x, v3.y, v3.z);
-        glVertex3f(v2.x, v2.y, v2.z);
-        glVertex3f(v4.x, v4.y, v4.z);
-        glVertex3f(v2.x, v2.y, v2.z);
-        glVertex3f(v5.x, v5.y, v5.z);
-        glVertex3f(v2.x, v2.y, v2.z);
-        glVertex3f(v6.x, v6.y, v6.z);
-        glVertex3f(v2.x, v2.y, v2.z);
-        glVertex3f(v7.x, v7.y, v7.z);
-        glVertex3f(v2.x, v2.y, v2.z);
-        glVertex3f(v8.x, v8.y, v8.z);
-        
-        glVertex3f(v3.x, v3.y, v3.z);
-        glVertex3f(v4.x, v4.y, v4.z);
-        glVertex3f(v3.x, v3.y, v3.z);
-        glVertex3f(v5.x, v5.y, v5.z);
-        glVertex3f(v3.x, v3.y, v3.z);
-        glVertex3f(v6.x, v6.y, v6.z);
-        glVertex3f(v3.x, v3.y, v3.z);
-        glVertex3f(v7.x, v7.y, v7.z);
-        glVertex3f(v3.x, v3.y, v3.z);
-        glVertex3f(v8.x, v8.y, v8.z);
-        
-        glVertex3f(v4.x, v4.y, v4.z);
-        glVertex3f(v5.x, v5.y, v5.z);
-        glVertex3f(v4.x, v4.y, v4.z);
-        glVertex3f(v6.x, v6.y, v6.z);
-        glVertex3f(v4.x, v4.y, v4.z);
-        glVertex3f(v7.x, v7.y, v7.z);
-        glVertex3f(v4.x, v4.y, v4.z);
-        glVertex3f(v8.x, v8.y, v8.z);
-        
-        glVertex3f(v5.x, v5.y, v5.z);
-        glVertex3f(v6.x, v6.y, v6.z);
-        glVertex3f(v5.x, v5.y, v5.z);
-        glVertex3f(v7.x, v7.y, v7.z);
-        glVertex3f(v5.x, v5.y, v5.z);
-        glVertex3f(v8.x, v8.y, v8.z);
-        
-        glVertex3f(v6.x, v6.y, v6.z);
-        glVertex3f(v7.x, v7.y, v7.z);
-        glVertex3f(v6.x, v6.y, v6.z);
-        glVertex3f(v8.x, v8.y, v8.z);
-        
-        glVertex3f(v7.x, v7.y, v7.z);
-        glVertex3f(v8.x, v8.y, v8.z);
-        glEnd();*/
     }
 }
