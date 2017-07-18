@@ -7,6 +7,7 @@ package storages;
 
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
@@ -18,10 +19,10 @@ import java.util.List;
  * @author vortex
  */
 public class MeshLibrary {
-    private List<SEMesh> meshLibrary = new LinkedList<>();
+    private List<SEMeshData> meshLibrary = new LinkedList<>();
     private List<Integer> freeSlots = new LinkedList<>();
     
-    public SEMesh getMesh(int id){
+    public SEMeshData getMesh(int id){
         if(id >= meshLibrary.size()){
             return null;
         }
@@ -40,7 +41,7 @@ public class MeshLibrary {
         }
     }
     
-    public int addMesh(SEMesh mesh){
+    public int addMesh(SEMeshData mesh){
         for(int i = 0; i < meshLibrary.size(); i++){
             if(compareMesh(meshLibrary.get(i), mesh)){
                 return i;
@@ -58,7 +59,7 @@ public class MeshLibrary {
         }
     }
     
-    private boolean compareMesh(SEMesh original, SEMesh compare){
+    private boolean compareMesh(SEMeshData original, SEMeshData compare){
         if(original != null && compare != null){
             if(compareVertecies(original, compare)){
                 if(compareNormals(original, compare)){
@@ -76,7 +77,7 @@ public class MeshLibrary {
         return false;
     }
     
-    private boolean compareVertecies(SEMesh original, SEMesh compare){
+    private boolean compareVertecies(SEMeshData original, SEMeshData compare){
         for(int i = 0; i < original.getVertecies().size(); i++){
             SEVertex v1 = original.getVertecies().get(i);
             SEVertex v2 = compare.getVertecies().get(i);
@@ -93,7 +94,7 @@ public class MeshLibrary {
         return true;
     }
     
-    private boolean compareNormals(SEMesh original, SEMesh compare){
+    private boolean compareNormals(SEMeshData original, SEMeshData compare){
         for(int i = 0; i < original.getVertecies().size(); i++){
             SENormal n1 = original.getNormals().get(i);
             SENormal n2 = compare.getNormals().get(i);
@@ -110,7 +111,7 @@ public class MeshLibrary {
         return true;
     }
     
-    private boolean compareUVs(SEMesh original, SEMesh compare){
+    private boolean compareUVs(SEMeshData original, SEMeshData compare){
         for(int i = 0; i < original.getUVs().size(); i++){
             SEUV uv1 = original.getUVs().get(i);
             SEUV uv2 = compare.getUVs().get(i);
@@ -124,7 +125,7 @@ public class MeshLibrary {
         return true;
     }
     
-    private boolean compareFaces(SEMesh original, SEMesh compare){
+    private boolean compareFaces(SEMeshData original, SEMeshData compare){
         for(int i = 0; i < original.getFaces().size(); i++){
             SEFace f1 = original.getFaces().get(i);
             SEFace f2 = compare.getFaces().get(i);
