@@ -93,8 +93,8 @@ public class IcoSphere implements SEMeshProvider{
         icoSphere = subdevide(subDiv, mData);
         
         if(deform){
-            for(int i = 0; i < icoSphere.getVertecies().size(); i++){
-                icoSphere.getVertecies().set(i, deform(icoSphere.getVertecies().get(i), seed, scale, freq));
+            for(int i = 0; i < mData.getVertecies().size(); i++){
+                mData.getVertecies().set(i, deform(mData.getVertecies().get(i), seed, scale, freq));
             }
         }
     }
