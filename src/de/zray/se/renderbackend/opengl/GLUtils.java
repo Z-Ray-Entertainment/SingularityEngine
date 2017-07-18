@@ -9,6 +9,7 @@ import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.grapics.semesh.SEMeshData;
+import de.zray.se.logger.SELogger;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
@@ -57,6 +58,7 @@ public class GLUtils {
         glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOID());
         glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
         vboData = null;
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid VBO: "+rData.getVBOID()}, false);
     }
     
     public void generateVBOWired(SEMeshData mesh, OpenGLRenderData rData){
@@ -124,6 +126,7 @@ public class GLUtils {
         glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOIDWired());
         glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
 	vboData = null;
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new wired VBO: "+rData.getVBOIDWired()}, false);
     }
     
     public void renderVBO(OpenGLRenderData rData){
@@ -200,6 +203,7 @@ public class GLUtils {
         glNewList(rData.getDisplayList(), GL_COMPILE);
         drawObjectWired(mesh);
         glEndList();
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new wired displaylist: "+rData.getDisplayListWired()}, false);
     }
     
     private void loadTexture(String file, OpenGLRenderData rData){
@@ -262,5 +266,6 @@ public class GLUtils {
         glNewList(rData.getDisplayList(), GL_COMPILE);
         drawObject(mesh);
         glEndList();
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid displaylist: "+rData.getDisplayList()}, false);
     }
 }
