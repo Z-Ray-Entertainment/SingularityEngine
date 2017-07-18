@@ -6,7 +6,6 @@
 package storages;
 
 import de.zray.se.grapics.semesh.SEFace;
-import de.zray.se.grapics.semesh.SEMesh;
 import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
@@ -42,23 +41,32 @@ public class MeshLibrary {
     }
     
     public int addMesh(SEMeshData mesh){
+        int meshID = getMesh(mesh);
+        if(meshID == -1){
+            if(!freeSlots.isEmpty()){
+                int slot = freeSlots.get(0);
+                freeSlots.remove(0);
+                meshLibrary.set(slot, mesh);
+                return slot;
+            }
+            else{
+                meshLibrary.add(mesh);
+                return meshLibrary.size()-1;
+            }
+        }
+        else{
+            return meshID;
+        }
+    }
+    
+    public int getMesh(SEMeshData mesh){
         for(int i = 0; i < meshLibrary.size(); i++){
             if(compareMesh(meshLibrary.get(i), mesh)){
                 System.out.println("Mesh already exist!");
                 return i;
             }
         }
-        System.out.println("Mesh is new!");
-        if(!freeSlots.isEmpty()){
-            int slot = freeSlots.get(0);
-            freeSlots.remove(0);
-            meshLibrary.set(slot, mesh);
-            return slot;
-        }
-        else{
-            meshLibrary.add(mesh);
-            return meshLibrary.size()-1;
-        }
+        return -1;
     }
     
     private boolean compareMesh(SEMeshData original, SEMeshData compare){

@@ -27,6 +27,10 @@ public class AssetLibrary {
         return meshLib.addMesh(mesh);
     }
     
+    public int getMesh(SEMeshData mesh){
+        return meshLib.getMesh(mesh);
+    }
+    
     public SEMeshData getMesh(int id){
         return meshLib.getMesh(id);
     }
