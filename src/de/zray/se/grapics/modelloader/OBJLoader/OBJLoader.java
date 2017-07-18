@@ -9,6 +9,7 @@ import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.modelloader.LoaderModule;
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import storages.AssetLibrary;
 
 /**
  *
@@ -67,7 +69,9 @@ public class OBJLoader extends LoaderModule{
         for(OBJGroup.Face tmp : group.faces){
             faces.add(new SEFace(tmp.v1-1, tmp.v2-1, tmp.v3-1, tmp.uv1-1, tmp.uv2-1, tmp.uv3-1, tmp.n1-1, tmp.n2-1, tmp.n3-1));//-1 da OBJ Format mit 1 Indiziert
         }
-        return new SEMesh(seVerts, seUVs, seNormals, faces, null, new SEMaterial());
+        SEMeshData mData = new SEMeshData(seVerts, seUVs, seNormals, faces, null);
+        int mDataID = AssetLibrary.get().addMesh(mData);
+        return new SEMesh(new SEMaterial(), mDataID);
     }
     
     private String loadTextFile(String file) throws FileNotFoundException,
