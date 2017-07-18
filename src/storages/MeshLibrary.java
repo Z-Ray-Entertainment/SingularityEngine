@@ -44,9 +44,11 @@ public class MeshLibrary {
     public int addMesh(SEMeshData mesh){
         for(int i = 0; i < meshLibrary.size(); i++){
             if(compareMesh(meshLibrary.get(i), mesh)){
+                System.out.println("Mesh already exist!");
                 return i;
             }
         }
+        System.out.println("Mesh is new!");
         if(!freeSlots.isEmpty()){
             int slot = freeSlots.get(0);
             freeSlots.remove(0);
@@ -95,10 +97,10 @@ public class MeshLibrary {
     }
     
     private boolean compareNormals(SEMeshData original, SEMeshData compare){
-        for(int i = 0; i < original.getVertecies().size(); i++){
+        for(int i = 0; i < original.getNormals().size(); i++){
             SENormal n1 = original.getNormals().get(i);
             SENormal n2 = compare.getNormals().get(i);
-            if(n1.nX != n2.nY){
+            if(n1.nX != n2.nX){
                 return false;
             }
             else if(n1.nY != n2.nY){
