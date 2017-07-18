@@ -11,6 +11,7 @@ import de.zray.se.SEWorld;
 import de.zray.se.Settings;
 import de.zray.se.grapics.Camera;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
@@ -27,6 +28,7 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
+import storages.AssetLibrary;
 
 /**
  *
@@ -237,21 +239,23 @@ public class GLRenderer implements RenderBackend{
         OpenGLRenderData rData = oglRenderDatas.get(mesh.getRenderData());
         glUtils.applyMaterial(mesh.getMaterial(), rData);
         
+        SEMeshData mData = AssetLibrary.get().getMesh(mesh.getSEMeshData());
+        
         switch(mesh.getRenderMode()){
             case DIRECT :
-                glUtils.drawObject(mesh);
+                glUtils.drawObject(mData);
                 break;
             case DISPLAY_LIST :
                 switch(mesh.getDisplayMode()){
                     case SOLID :
                         if(rData.getDisplayList() == -1){
-                            glUtils.generateDisplayList(mesh, rData);
+                            glUtils.generateDisplayList(mData, rData);
                         }
                         glCallList(rData.getDisplayList());
                         break;
                     case WIRED :
                         if(rData.getDisplayListWired()== -1){
-                            glUtils.generateDisplayListWired(mesh, rData);
+                            glUtils.generateDisplayListWired(mData, rData);
                         }
                         glCallList(rData.getDisplayListWired());
                         break;
@@ -261,13 +265,13 @@ public class GLRenderer implements RenderBackend{
                 switch(mesh.getDisplayMode()){
                     case SOLID :
                         if(rData.getVBOID() == -1 || rData.getVBOSize() == -1){
-                            glUtils.generateVBO(mesh, rData);
+                            glUtils.generateVBO(mData, rData);
                         }
                         glUtils.renderVBO(rData);
                         break;
                     case WIRED :
                         if(rData.getVBOIDWired()== -1 || rData.getVBOSizeWired()== -1){
-                            glUtils.generateVBOWired(mesh, rData);
+                            glUtils.generateVBOWired(mData, rData);
                         }
                         glUtils.renderVBOWired(rData);
                         break;
@@ -275,9 +279,6 @@ public class GLRenderer implements RenderBackend{
                 break;
         }
         glDisable(GL_TEXTURE_2D);
-        if(!mesh.isCleared()){
-            mesh.clear();
-        }
     }
     
     private void pollInputs(){

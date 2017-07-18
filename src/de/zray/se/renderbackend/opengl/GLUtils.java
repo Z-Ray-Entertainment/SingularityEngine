@@ -8,6 +8,7 @@ package de.zray.se.renderbackend.opengl;
 import de.zray.se.grapics.semesh.SEFace;
 import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEMeshData;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
@@ -18,7 +19,7 @@ import static org.lwjgl.opengl.GL15.*;
  * @author vortex
  */
 public class GLUtils {
-    public void generateVBO(SEMesh mesh, OpenGLRenderData rData){
+    public void generateVBO(SEMeshData mesh, OpenGLRenderData rData){
         rData.setVBOSize(mesh.getFaces().size()*3*8);
         FloatBuffer vboData = BufferUtils.createFloatBuffer(rData.getVBOSize());
         
@@ -58,7 +59,7 @@ public class GLUtils {
         vboData = null;
     }
     
-    public void generateVBOWired(SEMesh mesh, OpenGLRenderData rData){
+    public void generateVBOWired(SEMeshData mesh, OpenGLRenderData rData){
         rData.setVBOSizeWired(mesh.getFaces().size()*6*8); //Größe für den FloatBuffer (8 Werte pro Vertex)
         FloatBuffer vboData = BufferUtils.createFloatBuffer(rData.getVBOSizeWired());
         
@@ -157,7 +158,7 @@ public class GLUtils {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     
-    public void drawObject(SEMesh mesh){
+    public void drawObject(SEMeshData mesh){
         glBegin(GL_TRIANGLES);
         for(SEFace face : mesh.getFaces()){
             glNormal3f(mesh.getNormals().get(face.n1).nX, mesh.getNormals().get(face.n1).nY, mesh.getNormals().get(face.n1).nZ);
@@ -175,7 +176,7 @@ public class GLUtils {
         glEnd();
     }
     
-    public void drawObjectWired(SEMesh mesh){
+    public void drawObjectWired(SEMeshData mesh){
         glBegin(GL_LINES);
         for(SEFace face : mesh.getFaces()){
             glTexCoord2f(mesh.getUVs().get(face.uv1).u, mesh.getUVs().get(face.uv1).v);
@@ -194,7 +195,7 @@ public class GLUtils {
         glEnd();
     }
     
-    public void generateDisplayListWired(SEMesh mesh, OpenGLRenderData rData){
+    public void generateDisplayListWired(SEMeshData mesh, OpenGLRenderData rData){
         rData.setDisplayList(glGenLists(1));
         glNewList(rData.getDisplayList(), GL_COMPILE);
         drawObjectWired(mesh);
@@ -256,7 +257,7 @@ public class GLUtils {
         applyTextures(mat, rData);
     }
     
-    public void generateDisplayList(SEMesh mesh, OpenGLRenderData rData){
+    public void generateDisplayList(SEMeshData mesh, OpenGLRenderData rData){
         rData.setDisplayList(glGenLists(1));
         glNewList(rData.getDisplayList(), GL_COMPILE);
         drawObject(mesh);
