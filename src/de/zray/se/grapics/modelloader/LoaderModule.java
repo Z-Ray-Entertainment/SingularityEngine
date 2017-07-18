@@ -6,7 +6,6 @@
 package de.zray.se.grapics.modelloader;
 
 import de.zray.se.grapics.semesh.SEMesh;
-import java.util.List;
 
 /**
  *
