@@ -10,6 +10,7 @@ import de.zray.se.grapics.semesh.SEMeshData;
 import de.zray.se.grapics.semesh.SENormal;
 import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
+import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,10 +63,10 @@ public class MeshLibrary {
     public int getMesh(SEMeshData mesh){
         for(int i = 0; i < meshLibrary.size(); i++){
             if(compareMesh(meshLibrary.get(i), mesh)){
-                System.out.println("Mesh already exist!");
                 return i;
             }
         }
+        SELogger.get().dispatchMsg("MeshLibrary", SELogger.SELogType.INFO, new String[]{"Registering new mesh data"}, false);
         return -1;
     }
     
