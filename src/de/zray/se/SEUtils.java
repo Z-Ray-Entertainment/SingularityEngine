@@ -60,6 +60,9 @@ public class SEUtils {
     }
     
     public static int randomInt(int start, int end){
+        if(start == 0 && end == 0){
+            return 0;
+        }
         return (new Random().nextInt(end)+start)%end;
     }
 }
