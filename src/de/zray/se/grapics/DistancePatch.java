@@ -41,7 +41,7 @@ public class DistancePatch {
             case DEBUG_AND_OBJECTS:
                 renderMeshes();
             case DEBUG_ON:
-                distanceBB.debug();
+                //distanceBB.debug();
                 break;
             case DEBUG_OFF:
                 renderMeshes();
@@ -92,30 +92,5 @@ public class DistancePatch {
             }
         }
         return false;
-    }
-    
-    public boolean removeSEMesh(UUID uuid){
-        for(int i = 0; i < meshes.size(); i++){
-            if(meshes.get(i).uuid.compareTo(uuid) == 0){
-                if(i < meshes.size()-1){
-                    meshes.set(i, null);
-                    freeSlots.add(i);
-                }
-                else{
-                    meshes.remove(i);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    public SEMesh getSEMesh(UUID uuid){
-        for(SEMesh tmp : meshes){
-            if(tmp.uuid.compareTo(uuid) == 0){
-                return tmp;
-            }
-        }
-        return null;
     }
 }
