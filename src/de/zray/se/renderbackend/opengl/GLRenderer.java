@@ -256,7 +256,7 @@ public class GLRenderer implements RenderBackend{
         glUtils.applyMaterial(mesh.getMaterial(), rData);
         
         SEMeshData mData = AssetLibrary.get().getMesh(mesh.getSEMeshData());
-        
+        RenderDataCacheEntry rDataCache = rCache.get(rData.getRenderDataCacheID());
         switch(mesh.getRenderMode()){
             case DIRECT :
                 glUtils.drawObject(mData);
@@ -264,21 +264,20 @@ public class GLRenderer implements RenderBackend{
             case DISPLAY_LIST :
                 switch(mesh.getDisplayMode()){
                     case SOLID :
-                        if(rData.getDisplayList() == -1){
-                            glUtils.generateDisplayList(mData, rData);
+                        if(rDataCache.displayListID == -1){
+                            glUtils.generateDisplayList(mData, rDataCache);
                         }
-                        glCallList(rData.getDisplayList());
+                        glCallList(rDataCache.displayListID);
                         break;
                     case WIRED :
-                        if(rData.getDisplayListWired()== -1){
-                            glUtils.generateDisplayListWired(mData, rData);
+                        if(rDataCache.displayListIDWired== -1){
+                            glUtils.generateDisplayListWired(mData, rDataCache);
                         }
-                        glCallList(rData.getDisplayListWired());
+                        glCallList(rDataCache.displayListIDWired);
                         break;
                 }
                 break;
             case VBO :
-                RenderDataCacheEntry rDataCache = rCache.get(rData.getRenderDataCacheID());
                 switch(mesh.getDisplayMode()){
                     case SOLID :
                         if(rDataCache.vboID == -1 || rDataCache.vboSize == -1){

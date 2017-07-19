@@ -14,7 +14,6 @@ import static org.lwjgl.opengl.GL15.glDeleteBuffers;
  */
 public class OpenGLRenderData {
     private int rDataCacheID = -1;
-    private int displayList = -1, displayListWired = -1;
     private int diffID = -1, specID = -1, dispID = -1, paraID = -1, bumpID = -1;
     
     public void setRenderDataCacheID(int cacheID){
@@ -33,26 +32,10 @@ public class OpenGLRenderData {
         return diffID;
     }
     
-    public void setDisplayList(int id){
-        displayList = id;
-    }
-    
-    public int getDisplayList(){
-        return displayList;
-    }
-    
-    public void setDisplayListWired(int id){
-        displayListWired = id;
-    }
-    
-    public int getDisplayListWired(){
-        return displayListWired;
-    }
-    
-    public void destroy(RenderDataCacheEntry vboCache){
-        glDeleteBuffers(vboCache.vboID);
-        glDeleteBuffers(vboCache.vboIDWired);
-        glDeleteLists(displayList, 1);
-        glDeleteLists(displayListWired, 1);
+    public void destroy(RenderDataCacheEntry rCache){
+        glDeleteBuffers(rCache.vboID);
+        glDeleteBuffers(rCache.vboIDWired);
+        glDeleteLists(rCache.displayListID, 1);
+        glDeleteLists(rCache.displayListIDWired, 1);
     }
 }

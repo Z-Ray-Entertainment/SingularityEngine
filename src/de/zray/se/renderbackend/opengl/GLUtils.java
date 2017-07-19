@@ -198,12 +198,12 @@ public class GLUtils {
         glEnd();
     }
     
-    public void generateDisplayListWired(SEMeshData mesh, OpenGLRenderData rData){
-        rData.setDisplayList(glGenLists(1));
-        glNewList(rData.getDisplayList(), GL_COMPILE);
+    public void generateDisplayListWired(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+        rDataCache.displayListIDWired = glGenLists(1);
+        glNewList(rDataCache.displayListIDWired, GL_COMPILE);
         drawObjectWired(mesh);
         glEndList();
-        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new wired displaylist: "+rData.getDisplayListWired()}, false);
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new wired displaylist: "+rDataCache.displayListIDWired}, false);
     }
     
     private void loadTexture(String file, OpenGLRenderData rData){
@@ -261,11 +261,11 @@ public class GLUtils {
         applyTextures(mat, rData);
     }
     
-    public void generateDisplayList(SEMeshData mesh, OpenGLRenderData rData){
-        rData.setDisplayList(glGenLists(1));
-        glNewList(rData.getDisplayList(), GL_COMPILE);
+    public void generateDisplayList(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+        rDataCache.displayListID = glGenLists(1);
+        glNewList(rDataCache.displayListID, GL_COMPILE);
         drawObject(mesh);
         glEndList();
-        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid displaylist: "+rData.getDisplayList()}, false);
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid displaylist: "+rDataCache.displayListID}, false);
     }
 }
