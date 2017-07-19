@@ -6,8 +6,11 @@
 package de.zray.se.grapics.modelloader;
 
 import de.zray.se.grapics.modelloader.OBJLoader.OBJLoader;
+import de.zray.se.grapics.semesh.SEMaterial;
 import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.logger.SELogger;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -16,12 +19,18 @@ import java.util.List;
  */
 public class Modelloader {
     public List<LoaderModule> loaderModules = new ArrayList<>();
+    private List<ModelCacheEntry> modelCache = new LinkedList<>();
     private static Modelloader mLoader;
     
     public SEMesh loadModel(String file){
-        for(LoaderModule module : loaderModules){
-            if(module.meshSupported(file)){
-                return module.loadModel(file);
+        SEMesh tmp = checkForExisitingModels(file);
+        if(tmp == null){
+            for(LoaderModule module : loaderModules){
+                if(module.meshSupported(file)){
+                    tmp = module.loadModel(file);
+                    modelCache.add(new ModelCacheEntry(file, tmp.getSEMeshData()));
+                    return module.loadModel(file);
+                }
             }
         }
         return null;
@@ -37,5 +46,16 @@ public class Modelloader {
             mLoader.addModule(new OBJLoader());
         }
         return mLoader;
+    }
+    
+    private SEMesh checkForExisitingModels(String file){
+        for(ModelCacheEntry entry : modelCache){
+            int meshDataID = entry.compareFile(file);
+            if(meshDataID > -1){
+                SELogger.get().dispatchMsg("ModelLoader", SELogger.SELogType.INFO, new String[]{"MeshData for "+file+" already cached!"}, false);
+                return new SEMesh(new SEMaterial(), meshDataID);
+            }
+        }
+        return null;
     }
 }
