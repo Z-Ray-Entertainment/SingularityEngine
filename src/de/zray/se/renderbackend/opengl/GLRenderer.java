@@ -118,6 +118,19 @@ public class GLRenderer implements RenderBackend{
                 }
             }
         }
+        
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_FRONT_AND_BACK, 0);
+        glBegin(GL_QUADS);
+            glVertex2d(-1, -1);
+            glTexCoord2d(0, 0);
+            glVertex2d(1, -1);
+            glTexCoord2d(0, 1024);
+            glVertex2d(1, 1);
+            glTexCoord2d(1024, 1024);
+            glVertex2d(-1, 1);
+            glTexCoord2d(1024, 0);
+        glEnd();
         applyCamera(currentWorld.getCurrentCamera());
         glfwSwapBuffers(window);
         glfwPollEvents();
