@@ -45,7 +45,9 @@ public class GLRenderer implements RenderBackend{
     private GLUtils glUtils = new GLUtils();
     private SEWorld currentWorld;
     private int keyTimes[] = new int[349], threshold = 32;
-
+    private List<RenderDataCacheEntry> rCache = new LinkedList<>();
+    
+    
     @Override
     public boolean init() {
         GLFWErrorCallback.createPrint(System.err).set();
@@ -140,7 +142,7 @@ public class GLRenderer implements RenderBackend{
     @Override
     public void shutdown() {
         oglRenderDatas.forEach((rData) -> {
-            rData.destroy();
+            rData.destroy(rCache.get(rData.getRenderDataCacheID()));
         });
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
@@ -245,6 +247,7 @@ public class GLRenderer implements RenderBackend{
         
         if(mesh.getRenderData() == -1){
             OpenGLRenderData rData = new OpenGLRenderData();
+            rData.setRenderDataCacheID(lookUpRenderDataCache(mesh.getSEMeshData()));
             oglRenderDatas.add(rData);
             mesh.setRenderData(oglRenderDatas.size()-1);
         }
@@ -275,23 +278,37 @@ public class GLRenderer implements RenderBackend{
                 }
                 break;
             case VBO :
+                RenderDataCacheEntry rDataCache = rCache.get(rData.getRenderDataCacheID());
                 switch(mesh.getDisplayMode()){
                     case SOLID :
-                        if(rData.getVBOID() == -1 || rData.getVBOSize() == -1){
-                            glUtils.generateVBO(mData, rData);
+                        if(rDataCache.vboID == -1 || rDataCache.vboSize == -1){
+                            glUtils.generateVBO(mData, rDataCache);
                         }
-                        glUtils.renderVBO(rData);
+                        glUtils.renderVBO(rDataCache);
                         break;
                     case WIRED :
-                        if(rData.getVBOIDWired()== -1 || rData.getVBOSizeWired()== -1){
-                            glUtils.generateVBOWired(mData, rData);
+                        if(rDataCache.vboIDWired == -1 || rDataCache.vboSizeWired == -1){
+                            glUtils.generateVBOWired(mData, rDataCache);
                         }
-                        glUtils.renderVBOWired(rData);
+                        glUtils.renderVBOWired(rDataCache);
                         break;
                 }
                 break;
         }
         glDisable(GL_TEXTURE_2D);
+    }
+    
+    private int lookUpRenderDataCache(int meshDataID){
+        for(int i = 0; i < rCache.size(); i++){
+            if(rCache.get(i).meshDataID == meshDataID){
+                return i;
+            }
+        }
+        SELogger.get().dispatchMsg("GLRenderer", SELogger.SELogType.INFO, new String[]{"Created new RenderDataCache entry for Mesh:"+meshDataID}, false);
+        RenderDataCacheEntry rDataCacheEntry = new RenderDataCacheEntry();
+        rDataCacheEntry.meshDataID = meshDataID;
+        rCache.add(rDataCacheEntry);
+        return rCache.size()-1;
     }
     
     private void pollInputs(){

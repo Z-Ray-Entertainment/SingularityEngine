@@ -20,9 +20,9 @@ import static org.lwjgl.opengl.GL15.*;
  * @author vortex
  */
 public class GLUtils {
-    public void generateVBO(SEMeshData mesh, OpenGLRenderData rData){
-        rData.setVBOSize(mesh.getFaces().size()*3*8);
-        FloatBuffer vboData = BufferUtils.createFloatBuffer(rData.getVBOSize());
+    public void generateVBO(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+        rDataCache.vboSize = mesh.getFaces().size()*3*8;
+        FloatBuffer vboData = BufferUtils.createFloatBuffer(rDataCache.vboSize);
         
         for(SEFace face : mesh.getFaces()){
             vboData.put(mesh.getVertecies().get(face.v1).vX);
@@ -53,17 +53,17 @@ public class GLUtils {
             vboData.put(mesh.getUVs().get(face.uv3).v);
         }
         vboData.flip();
-        rData.setVBOID(glGenBuffers());
+        rDataCache.vboID = glGenBuffers();
        
-        glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOID());
+        glBindBuffer(GL_ARRAY_BUFFER,  rDataCache.vboID);
         glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
         vboData = null;
-        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid VBO: "+rData.getVBOID()}, false);
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid VBO: "+ rDataCache.vboID}, false);
     }
     
-    public void generateVBOWired(SEMeshData mesh, OpenGLRenderData rData){
-        rData.setVBOSizeWired(mesh.getFaces().size()*6*8); //Größe für den FloatBuffer (8 Werte pro Vertex)
-        FloatBuffer vboData = BufferUtils.createFloatBuffer(rData.getVBOSizeWired());
+    public void generateVBOWired(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+        rDataCache.vboSizeWired = mesh.getFaces().size()*6*8; //Größe für den FloatBuffer (8 Werte pro Vertex)
+        FloatBuffer vboData = BufferUtils.createFloatBuffer(rDataCache.vboSizeWired);
         
         for(SEFace face : mesh.getFaces()){
             vboData.put(mesh.getVertecies().get(face.v1).vX);
@@ -121,17 +121,17 @@ public class GLUtils {
             vboData.put(mesh.getUVs().get(face.uv2).v);
         }
         vboData.flip();
-        rData.setVBOIDWired(glGenBuffers());
+        rDataCache.vboIDWired = glGenBuffers();
         
-        glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOIDWired());
+        glBindBuffer(GL_ARRAY_BUFFER, rDataCache.vboIDWired);
         glBufferData(GL_ARRAY_BUFFER, vboData, GL_STATIC_DRAW);
 	vboData = null;
-        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new wired VBO: "+rData.getVBOIDWired()}, false);
+        SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new wired VBO: "+rDataCache.vboIDWired}, false);
     }
     
-    public void renderVBO(OpenGLRenderData rData){
+    public void renderVBO(RenderDataCacheEntry rDataCache){
         glEnableClientState(GL_VERTEX_ARRAY);
-        glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOID());
+        glBindBuffer(GL_ARRAY_BUFFER, rDataCache.vboID);
         glVertexPointer(3, GL_FLOAT, 32, 0);
         
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -140,14 +140,14 @@ public class GLUtils {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_FLOAT, 32, 24);
         
-	glDrawArrays(GL_TRIANGLES, 0, rData.getVBOSize());
+	glDrawArrays(GL_TRIANGLES, 0, rDataCache.vboSize);
         
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     
-    public void renderVBOWired(OpenGLRenderData rData){
+    public void renderVBOWired(RenderDataCacheEntry rDataCache){
         glEnableClientState(GL_VERTEX_ARRAY);
-        glBindBuffer(GL_ARRAY_BUFFER, rData.getVBOIDWired());
+        glBindBuffer(GL_ARRAY_BUFFER, rDataCache.vboIDWired);
         glVertexPointer(3, GL_FLOAT, 32, 0);
         
         glEnableClientState(GL_NORMAL_ARRAY);
@@ -156,7 +156,7 @@ public class GLUtils {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glTexCoordPointer(2, GL_FLOAT, 32, 24); //6*4 = 24 (3 Vertex und 3 Normals * 4 wegen float
         
-	glDrawArrays(GL_LINES, 0, rData.getVBOSizeWired());
+	glDrawArrays(GL_LINES, 0, rDataCache.vboSizeWired);
         
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
