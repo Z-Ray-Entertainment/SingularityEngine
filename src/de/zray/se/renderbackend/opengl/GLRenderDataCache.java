@@ -17,16 +17,24 @@ public class GLRenderDataCache {
     private List<RenderDataCacheEntry> rCache = new LinkedList<>();
     
     public int lookUpCache(int meshDataID){
-        for(int i = 0; i < rCache.size(); i++){
-            if(rCache.get(i).meshDataID == meshDataID){
-                return i;
-            }
+        return lookUpCacheFast(meshDataID);
+    }
+    
+    private int lookUpCacheFast(int meshDataID){
+        if(rCache.size()-1 < meshDataID || rCache.get(meshDataID) == null){
+            alloc(meshDataID-rCache.size()+1);
+            RenderDataCacheEntry entry = new RenderDataCacheEntry();
+            rCache.set(meshDataID, entry);
+            SELogger.get().dispatchMsg("GLRenderDataCache", SELogger.SELogType.INFO, new String[]{"Created new RenderDataCache entry for Mesh:"+meshDataID}, false);
+            return meshDataID;
         }
-        SELogger.get().dispatchMsg("GLRenderDataCache", SELogger.SELogType.INFO, new String[]{"Created new RenderDataCache entry for Mesh:"+meshDataID}, false);
-        RenderDataCacheEntry rDataCacheEntry = new RenderDataCacheEntry();
-        rDataCacheEntry.meshDataID = meshDataID;
-        rCache.add(rDataCacheEntry);
-        return rCache.size()-1;
+        return meshDataID;
+    }
+    
+    private void alloc(int amount){
+        for(int i = 0; i < amount; i++){
+            rCache.add(null);
+        }
     }
     
     public RenderDataCacheEntry getCacheEntry(int id){
