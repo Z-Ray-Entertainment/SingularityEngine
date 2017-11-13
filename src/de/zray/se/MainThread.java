@@ -81,7 +81,9 @@ public class MainThread {
     }
     
     public void shutdown(){
-        currentWorld.getAudioWorld().shutdown();
+        if(currentWorld.getAudioWorld() != null){
+            currentWorld.getAudioWorld().shutdown();
+        }
         backend.shutdown();
         System.exit(0);
     }
