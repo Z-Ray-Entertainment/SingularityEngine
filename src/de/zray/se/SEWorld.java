@@ -103,7 +103,7 @@ public abstract class SEWorld {
     }
     
     private void optimizeScene(){
-        if(views.get(currentCamera).propsWhereChanged()){
+        if(views != null && currentCamera >= 0 && views.get(currentCamera).propsWhereChanged()){
             collectRendableMeshes();            
         }
     }
