@@ -14,7 +14,7 @@ import de.zray.se.grapics.semesh.SEUV;
 import de.zray.se.grapics.semesh.SEVertex;
 import java.util.ArrayList;
 import java.util.List;
-import storages.AssetLibrary;
+import de.zray.se.storages.AssetLibrary;
 
 /**
  *

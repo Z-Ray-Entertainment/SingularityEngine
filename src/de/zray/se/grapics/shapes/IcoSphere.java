@@ -16,7 +16,7 @@ import de.zray.se.grapics.semesh.SEVertex;
 import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Vector3f;
-import storages.AssetLibrary;
+import de.zray.se.storages.AssetLibrary;
 
 /**
  *

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package storages;
+package de.zray.se.storages;
 
 import de.zray.se.grapics.semesh.SEMeshData;
 
