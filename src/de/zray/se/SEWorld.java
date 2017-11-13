@@ -7,8 +7,8 @@ package de.zray.se;
 
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
-import de.zray.se.grapics.Camera;
-import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.graphics.Camera;
+import de.zray.se.graphics.semesh.SEMesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.physics.SEBulletWorld;

@@ -5,11 +5,11 @@
  */
 package de.zray.se.storages;
 
-import de.zray.se.grapics.semesh.SEFace;
-import de.zray.se.grapics.semesh.SEMeshData;
-import de.zray.se.grapics.semesh.SENormal;
-import de.zray.se.grapics.semesh.SEUV;
-import de.zray.se.grapics.semesh.SEVertex;
+import de.zray.se.graphics.semesh.SEFace;
+import de.zray.se.graphics.semesh.SEMeshData;
+import de.zray.se.graphics.semesh.SENormal;
+import de.zray.se.graphics.semesh.SEUV;
+import de.zray.se.graphics.semesh.SEVertex;
 import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;

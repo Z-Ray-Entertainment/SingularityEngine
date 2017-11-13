@@ -5,7 +5,7 @@
  */
 package de.zray.se.env;
 
-import de.zray.se.grapics.semesh.SEMaterial;
+import de.zray.se.graphics.semesh.SEMaterial;
 import java.io.IOException;
 
 /**

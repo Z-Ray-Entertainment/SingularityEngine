@@ -6,8 +6,8 @@
 package de.zray.se;
 
 import de.zray.se.ai.SEAI;
-import de.zray.se.grapics.semesh.SEMesh;
-import de.zray.se.grapics.semesh.SEOriantation;
+import de.zray.se.graphics.semesh.SEMesh;
+import de.zray.se.graphics.semesh.SEOriantation;
 import de.zray.se.physics.SEBulletObject;
 import java.util.List;
 

@@ -5,10 +5,10 @@
  */
 package de.zray.se.renderbackend.opengl;
 
-import de.zray.se.grapics.semesh.SEFace;
-import de.zray.se.grapics.semesh.SEMaterial;
-import de.zray.se.grapics.semesh.SEMesh;
-import de.zray.se.grapics.semesh.SEMeshData;
+import de.zray.se.graphics.semesh.SEFace;
+import de.zray.se.graphics.semesh.SEMaterial;
+import de.zray.se.graphics.semesh.SEMesh;
+import de.zray.se.graphics.semesh.SEMeshData;
 import de.zray.se.logger.SELogger;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;

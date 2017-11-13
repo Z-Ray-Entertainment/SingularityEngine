@@ -5,7 +5,7 @@
  */
 package de.zray.se.storages;
 
-import de.zray.se.grapics.semesh.SEMeshData;
+import de.zray.se.graphics.semesh.SEMeshData;
 
 /**
  *
