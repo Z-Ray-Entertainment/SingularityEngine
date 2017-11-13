@@ -94,8 +94,11 @@ public abstract class SEWorld {
                 }
             }
         });
-        audioWorld.setALListener(getCurrentCamera().getPosition());
-        audioWorld.update(delta);
+        if(audioWorld != null){
+            audioWorld.setALListener(getCurrentCamera().getPosition());
+            audioWorld.update(delta);
+        }
+        
         optimizeScene();
     }
     
