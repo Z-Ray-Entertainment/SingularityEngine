@@ -5,7 +5,6 @@
  */
 package de.zray.se.graphics.texturemanager;
 
-import de.zray.se.logger.SELogger;
 import java.io.IOException;
 
 /**
@@ -24,11 +23,6 @@ public class SETexture {
             ctc--;
         }
         ext = file.substring(ctc+1, file.length());
-    }
-    
-    public void load() throws IOException{
-        SELogger.get().dispatchMsg("SETexture", SELogger.SELogType.INFO, new String[]{"Loading Texture "+file}, false);
-        //texture = TextureLoader.getTexture(ext, new FileInputStream(file));
     }
     
     public String getFile(){
