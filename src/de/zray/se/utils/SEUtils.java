@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se;
+package de.zray.se.utils;
 
 import java.util.Random;
 import javax.vecmath.Vector2d;
