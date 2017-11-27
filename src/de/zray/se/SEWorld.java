@@ -8,6 +8,7 @@ package de.zray.se;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.graphics.Camera;
+import de.zray.se.graphics.LightSource;
 import de.zray.se.graphics.semesh.SEMesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
@@ -30,6 +31,8 @@ public abstract class SEWorld {
     private List<InputManager> inputManages = new LinkedList<>();
     private int currentCamera = -1;
     private List<SEMesh> rendableMeshes = new LinkedList<>();
+    private List<LightSource> lights = new LinkedList<>();
+    private List<Integer> emptyLightSlots = new LinkedList<>();
     
     public void setRenderBackend(RenderBackend backend){
         this.backend = backend;
@@ -56,6 +59,27 @@ public abstract class SEWorld {
                     man.keyTiped(key);
                     break;
             }
+        }
+    }
+    
+    public int addLightSource(LightSource src){
+        if(!emptyLightSlots.isEmpty()){
+            int slot = emptyLightSlots.get(0);
+            lights.set(emptyLightSlots.get(0), src);
+            emptyLightSlots.remove(0);
+            return slot;
+        }
+        lights.add(src);
+        return lights.size()-1;
+    }
+    
+    public void removeLight(int index){
+        if(index == lights.size()-1){
+            lights.remove(index);
+        }
+        else {
+            lights.set(index, null);
+            emptyLightSlots.add(index);
         }
     }
     
