@@ -14,7 +14,7 @@ import java.util.Date;
 public class Settings {
     private static Settings SETTINGS = new Settings();
     public static enum DebugMode{DEBUG_ON, DEBUG_AND_OBJECTS, DEBUG_OFF};
-    
+        
     public static Settings get(){
         return SETTINGS;
     }
@@ -45,7 +45,7 @@ public class Settings {
     }
     
     public class SceneSettings{
-        public float dbSize = 50;
+        public int[] dpSizes = {100, 10, 5};
     }
     
     public class WindowSettings{

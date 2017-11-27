@@ -34,7 +34,6 @@ import static org.lwjgl.openal.AL10.alGenBuffers;
 import static org.lwjgl.openal.AL10.alGenSources;
 import static org.lwjgl.openal.AL10.alGetError;
 import static org.lwjgl.openal.AL10.alListenerfv;
-import static org.lwjgl.openal.AL10.alSourcePlay;
 import static org.lwjgl.openal.ALC.createCapabilities;
 import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.openal.ALC11.*;
