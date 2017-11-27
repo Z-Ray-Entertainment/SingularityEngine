@@ -6,7 +6,7 @@
 package de.zray.se.renderbackend;
 
 import de.zray.se.inputmanager.InputManager;
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEWorld;
 
 /**
  *

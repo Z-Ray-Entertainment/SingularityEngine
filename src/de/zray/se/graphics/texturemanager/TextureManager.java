@@ -5,8 +5,8 @@
  */
 package de.zray.se.graphics.texturemanager;
 
-import de.zray.se.SEModule;
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEModule;
+import de.zray.se.world.SEWorld;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

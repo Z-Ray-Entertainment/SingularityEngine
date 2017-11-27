@@ -5,8 +5,8 @@
  */
 package de.zray.se.physics;
 
-import de.zray.se.SEModule;
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEModule;
+import de.zray.se.world.SEWorld;
 
 /**
  *

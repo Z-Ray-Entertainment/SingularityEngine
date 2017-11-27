@@ -5,8 +5,8 @@
  */
 package de.zray.se.ai;
 
-import de.zray.se.SEActor;
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEActor;
+import de.zray.se.world.SEWorld;
 
 /**
  *

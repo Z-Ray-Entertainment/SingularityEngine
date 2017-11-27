@@ -5,8 +5,8 @@
  */
 package de.zray.se.audio;
 
-import de.zray.se.SEModule;
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEModule;
+import de.zray.se.world.SEWorld;
 import de.zray.se.logger.SELogger;
 import java.io.IOException;
 import java.io.InputStream;

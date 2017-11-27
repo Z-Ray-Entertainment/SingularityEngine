@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se;
+package de.zray.se.world;
 
+import de.zray.se.MainThread;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.graphics.Camera;
@@ -81,6 +82,19 @@ public abstract class SEWorld {
             lights.set(index, null);
             emptyLightSlots.add(index);
         }
+    }
+    
+    public List<LightSource> getClosestLightsToActiveCamera(int amount){
+        List<LightSource> srcs = new LinkedList<>();
+        int found = 0, limit = amount;
+        if(amount > lights.size()){
+            limit = lights.size();
+        }
+        while(found < limit){
+            
+        }
+        
+        return srcs;
     }
     
     public final void addSEActor(SEActor actor){

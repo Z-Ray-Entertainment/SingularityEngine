@@ -5,8 +5,8 @@
  */
 package de.zray.se.ai;
 
-import de.zray.se.SEModule;
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEModule;
+import de.zray.se.world.SEWorld;
 import java.util.LinkedList;
 import java.util.List;
 

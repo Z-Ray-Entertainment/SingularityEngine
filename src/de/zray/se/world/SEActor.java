@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se;
+package de.zray.se.world;
 
 import de.zray.se.ai.SEAI;
 import de.zray.se.graphics.semesh.SEMesh;

@@ -5,6 +5,7 @@
  */
 package de.zray.se;
 
+import de.zray.se.world.SEWorld;
 import de.zray.se.renderbackend.RenderBackend;
 import java.io.IOException;
 

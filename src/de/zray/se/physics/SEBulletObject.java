@@ -5,7 +5,7 @@
  */
 package de.zray.se.physics;
 
-import de.zray.se.SEActor;
+import de.zray.se.world.SEActor;
 
 /**
  *

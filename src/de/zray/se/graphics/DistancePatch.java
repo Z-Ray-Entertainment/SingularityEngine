@@ -5,7 +5,7 @@
  */
 package de.zray.se.graphics;
 
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEWorld;
 import de.zray.se.Settings;
 import de.zray.se.graphics.semesh.BoundingBox;
 import de.zray.se.graphics.semesh.SEMesh;
