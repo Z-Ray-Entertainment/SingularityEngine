@@ -23,7 +23,7 @@ public class Settings {
         SETTINGS = set;
     }
     
-    public String title = "SingularityEngine", version = "0.0.7 Currendum";
+    public String title = "SingularityEngine", version = "0.0.8 Currendum";
     public String logfile = System.getProperty("user.home")+"/.se/loggs/SE-Log"+new Date().toString()+".log";
     public DebugSettings debug = new DebugSettings();
     public SoundSettings sound = new SoundSettings();
