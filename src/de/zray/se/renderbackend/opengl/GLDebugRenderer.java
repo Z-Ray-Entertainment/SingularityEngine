@@ -7,6 +7,7 @@ package de.zray.se.renderbackend.opengl;
 
 import de.zray.se.world.DistancePatch;
 import de.zray.se.world.SEWorld;
+import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -28,9 +29,24 @@ public class GLDebugRenderer {
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         glCullFace(GL_FALSE);
+        glDisable(GL11.GL_DEPTH_TEST);
         glLineWidth(1);
-        glColor3f(10, 10, 10);
+        int dps = world.getDistancePatched().size();
         for(DistancePatch dp : world.getDistancePatched()){
+            switch(dp.getLevel()){
+                case 0 :
+                    glColor3f(10, 0, 0);
+                    break;
+                case 1 :
+                    glColor3f(0, 10, 0);
+                    break;
+                case 2 :
+                    glColor3f(0, 0, 10);
+                    break;
+                default:
+                    glColor3f(1, 1, 1);
+                    break;
+            }
             double verts[][] = new double[8][3];
             int edge = dp.getEdgeLength();
             verts[0][0] = dp.getPostion()[0]-edge/2;
