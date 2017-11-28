@@ -33,7 +33,8 @@ public interface RenderBackend {
      * @return true if backend is initialized
      */
     public abstract boolean isInited();
-    public abstract void renderWorld(double delta);
+    public abstract void renderWorld();
+    public abstract void renderDebug();
     public abstract void setCurrentWorld(SEWorld world);
     public abstract void shutdown();
     public abstract void requestClose();

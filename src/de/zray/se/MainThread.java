@@ -72,7 +72,19 @@ public class MainThread {
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
-                    backend.renderWorld(getDeltaInSec());
+                    switch(Settings.get().debug.debugMode){
+                        case DEBUG_AND_OBJECTS :
+                            backend.renderWorld();
+                            backend.renderDebug();
+                            break;
+                        case DEBUG_OFF :
+                            backend.renderWorld();
+                            break;
+                        case DEBUG_ON :
+                            backend.renderDebug();
+                            break;
+                    }
+                    
                 }
                 updateDelta();
             }

@@ -103,7 +103,7 @@ public class GLRenderer implements RenderBackend{
 
        
     @Override
-    public void renderWorld(double delta) {
+    public void renderWorld() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -305,5 +305,10 @@ public class GLRenderer implements RenderBackend{
                 keyTimes[i] = 0;
             }
         }
+    }
+
+    @Override
+    public void renderDebug() {
+        
     }
 }
