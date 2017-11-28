@@ -5,6 +5,7 @@
  */
 package de.zray.se.renderbackend;
 
+import de.zray.se.Settings;
 import de.zray.se.world.SEWorld;
 
 /**
@@ -33,7 +34,7 @@ public interface RenderBackend {
      * @return true if backend is initialized
      */
     public abstract boolean isInited();
-    public abstract void renderWorld();
+    public abstract void renderWorld(Settings.DebugMode dMode);
     public abstract void renderDebug();
     public abstract void setCurrentWorld(SEWorld world);
     public abstract void shutdown();
