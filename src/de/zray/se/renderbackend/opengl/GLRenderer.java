@@ -29,6 +29,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import de.zray.se.storages.AssetLibrary;
+import de.zray.se.world.DistancePatch;
 
 /**
  *
@@ -46,6 +47,7 @@ public class GLRenderer implements RenderBackend{
     private SEWorld currentWorld;
     private int keyTimes[] = new int[349], threshold = 32;
     private GLRenderDataCache glCache = new GLRenderDataCache();
+    private GLDebugRenderer dRenderer = new GLDebugRenderer();
     
     
     @Override
@@ -103,7 +105,7 @@ public class GLRenderer implements RenderBackend{
 
        
     @Override
-    public void renderWorld() {
+    public void renderWorld(Settings.DebugMode dMode) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -119,6 +121,9 @@ public class GLRenderer implements RenderBackend{
                     }
                 }
             }
+        }
+        if(dMode == Settings.DebugMode.DEBUG_AND_OBJECTS){
+            renderDebug();
         }
         applyCamera(currentWorld.getCurrentCamera());
         glfwSwapBuffers(window);
@@ -309,6 +314,6 @@ public class GLRenderer implements RenderBackend{
 
     @Override
     public void renderDebug() {
-        
+        dRenderer.renderDistancePatches(currentWorld);
     }
 }
