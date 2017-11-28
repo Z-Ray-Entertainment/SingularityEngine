@@ -37,53 +37,6 @@ public class SEOriantation {
         return wasChanged;
     }
     
-    public void apply(){
-        chaged();
-    }
-    
-    private void chaged(){
-        if(pos.x != memPos.x){
-            wasChanged = true;
-        }
-        else if(pos.y != memPos.y){
-            wasChanged = true;
-        }
-        else if(pos.z != memPos.z){
-            wasChanged = true;
-        }
-        else if(rot.x != memRot.x){
-            wasChanged = true;
-        }
-        else if(rot.y != rot.y){
-            wasChanged = true;
-        }
-        else if(rot.z != memRot.z){
-            wasChanged = true;
-        }
-        else if(scl.x != memScl.x){
-            wasChanged = true;
-        }
-        else if(scl.y != memScl.y){
-            wasChanged = true;
-        }
-        else if(scl.z != memScl.z){
-            wasChanged = false;
-        }
-        wasChanged = false;
-        
-        memPos.x = pos.x;
-        memPos.y = pos.y;
-        memPos.z = pos.z;
-        
-        memRot.x = rot.x;
-        memRot.y = rot.y;
-        memRot.z = rot.z;
-        
-        memScl.x = scl.x;
-        memScl.y = scl.y;
-        memScl.z = scl.z;
-    }
-    
     public double[] getPosition(){
         return new double[]{pos.x, pos.y, pos.z};
     }
