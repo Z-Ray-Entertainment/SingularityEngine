@@ -120,7 +120,6 @@ public class GLRenderer implements RenderBackend{
                 }
             }
         }
-        
         applyCamera(currentWorld.getCurrentCamera());
         glfwSwapBuffers(window);
         glfwPollEvents();

@@ -5,7 +5,6 @@
  */
 package de.zray.se.renderbackend;
 
-import de.zray.se.inputmanager.InputManager;
 import de.zray.se.world.SEWorld;
 
 /**
@@ -31,7 +30,7 @@ public interface RenderBackend {
     
     /**
      * Refenrece if the Backend was already inited.
-     * @return tru if backend is initialized
+     * @return true if backend is initialized
      */
     public abstract boolean isInited();
     public abstract void renderWorld(double delta);

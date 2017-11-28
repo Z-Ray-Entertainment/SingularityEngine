@@ -17,6 +17,7 @@ import de.zray.se.physics.SEBulletWorld;
 import de.zray.se.renderbackend.RenderBackend;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  *
@@ -27,13 +28,11 @@ public abstract class SEWorld {
     private SEAIWorld aiWorld;
     private SEBulletWorld bulletWorld;
     private SEAudioWorld audioWorld;
-    private List<SEActor> actors = new LinkedList<>();
     private List<Camera> views = new LinkedList<>();
     private List<InputManager> inputManages = new LinkedList<>();
     private int currentCamera = -1;
     private List<SEMesh> rendableMeshes = new LinkedList<>();
-    private List<LightSource> lights = new LinkedList<>();
-    private List<Integer> emptyLightSlots = new LinkedList<>();
+    private List<DistancePatch> distancePatchs = new LinkedList<>();
     
     public void setRenderBackend(RenderBackend backend){
         this.backend = backend;
@@ -63,46 +62,68 @@ public abstract class SEWorld {
         }
     }
     
-    public int addLightSource(LightSource src){
-        if(!emptyLightSlots.isEmpty()){
-            int slot = emptyLightSlots.get(0);
-            lights.set(emptyLightSlots.get(0), src);
-            emptyLightSlots.remove(0);
-            return slot;
+    public SEWorldID addLightSource(LightSource src){
+        if(distancePatchs.isEmpty()){
+            DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
+            distancePatchs.add(dp);
+            return dp.addLightSource(src);
+        } else {
+            for(DistancePatch d : distancePatchs){
+                SEWorldID seWorldID = d.addLightSource(src);
+                if(seWorldID == null){
+                    DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
+                    return dp.addLightSource(src);
+                } else{
+                    return seWorldID;
+                }
+            }
+            System.err.println("Unable to add light source! SEWorldID is null!!!");
+            return null;
         }
-        lights.add(src);
-        return lights.size()-1;
     }
     
-    public void removeLight(int index){
-        if(index == lights.size()-1){
-            lights.remove(index);
-        }
-        else {
-            lights.set(index, null);
-            emptyLightSlots.add(index);
+    public void removeLight(SEWorldID seWorldID){
+        for(DistancePatch dp : distancePatchs){
+            if(dp.removeLightSource(seWorldID)){
+                return;
+            }
         }
     }
     
     public List<LightSource> getClosestLightsToActiveCamera(int amount){
         List<LightSource> srcs = new LinkedList<>();
-        int found = 0, limit = amount;
-        if(amount > lights.size()){
-            limit = lights.size();
-        }
-        while(found < limit){
-            
-        }
-        
+        distancePatchs.forEach((dp) -> {
+            srcs.addAll(dp.getLights());
+        });
         return srcs;
     }
     
-    public final void addSEActor(SEActor actor){
-        actors.add(actor);
+    public final SEWorldID addSEActor(SEActor actor){
+        if(distancePatchs.isEmpty()){
+            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+            distancePatchs.add(dp);
+            return dp.addActor(actor);
+        } else {
+            for(DistancePatch d : distancePatchs){
+                SEWorldID seWorldID = d.addActor(actor);
+                if(seWorldID == null){
+                    DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+                    return dp.addActor(actor);
+                } else{
+                    return seWorldID;
+                }
+            }
+            System.err.println("Unable to add Actor! SEWorldID is null!!!");
+            return null;
+        }
     }
     
     public final List<SEActor> getActors(){
-        return actors;
+        List<SEActor> collect = new LinkedList<>();
+        distancePatchs.forEach((dp) -> {
+            collect.addAll(dp.getActorts());
+        });
+        return collect;
     }
     
     public void setActiveCamera(int cam){
@@ -122,15 +143,15 @@ public abstract class SEWorld {
     }
     
     public final void act(double delta){
-        actors.forEach((actor) -> {
-            if(actor != null){
+        distancePatchs.forEach((DistancePatch dp) -> {
+            dp.getActorts().stream().filter((actor) -> (actor != null)).forEachOrdered((actor) -> {
                 try{
                     actor.getSEAI().act(MainThread.getDeltaInSec());
                 }
                 catch(NullPointerException e){
                     //Null AI
                 }
-            }
+            });
         });
         if(audioWorld != null){
             audioWorld.setALListener(getCurrentCamera().getPosition());
@@ -148,7 +169,7 @@ public abstract class SEWorld {
     
     private void collectRendableMeshes(){
         rendableMeshes = new LinkedList<>();
-        for(SEActor actor : actors){
+        for(DistancePatch dp : distancePatchs){
             
         }
     }
@@ -182,4 +203,8 @@ public abstract class SEWorld {
     }
     
     public abstract void init();
+    
+    private void addDistancePatch(double pos[]){
+        
+    }
 }
