@@ -106,15 +106,12 @@ public abstract class SEWorld {
         } else {
             for(DistancePatch d : distancePatchs){
                 SEWorldID seWorldID = d.addActor(actor);
-                if(seWorldID == null){
-                    DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
-                    return dp.addActor(actor);
-                } else{
+                if(seWorldID != null){
                     return seWorldID;
                 }
             }
-            System.err.println("Unable to add Actor! SEWorldID is null!!!");
-            return null;
+            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+            return dp.addActor(actor);
         }
     }
     
@@ -204,7 +201,13 @@ public abstract class SEWorld {
     
     public abstract void init();
     
-    private void addDistancePatch(double pos[]){
+    public List<DistancePatch> getDistancePatched(){
+        List<DistancePatch> tmp = new LinkedList<>();
+        tmp.addAll(distancePatchs);
+        distancePatchs.forEach((dp) -> {
+            tmp.addAll(dp.getSubPatches());
+        });
         
+        return tmp;
     }
 }

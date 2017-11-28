@@ -45,7 +45,7 @@ public class Settings {
     }
     
     public class SceneSettings{
-        public int[] dpSizes = {100, 10, 5};
+        public int[] dpSizes = {100, 10, 1};
     }
     
     public class WindowSettings{
@@ -54,7 +54,7 @@ public class Settings {
     }
     
     public class ViewSettings{
-        public float nearClip = 0.1f, farClip = 100, fov = 75;
+        public float nearClip = 0.1f, farClip = 1000, fov = 75;
     }
     
     public class SoundSettings{

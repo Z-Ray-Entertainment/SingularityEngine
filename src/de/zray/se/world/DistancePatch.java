@@ -40,13 +40,10 @@ public class DistancePatch {
         SEOriantation ori = actor.getOrientation();
         if(isInside(ori.getPosition()[0], ori.getPosition()[1], ori.getPosition()[2])){
             if(isLowestDistancePatch()){
-                System.out.println("I'm the lowest with: "+level);
                 return addFreeActor(actor);
             } else {
                 if(subPatches.isEmpty()){
-                    DistancePatch sub = new DistancePatch(this.level+1, ori.getPosition());
-                    subPatches.add(sub);
-                    return sub.addActor(actor);
+                    return createAndAddSubPatch(actor);
                 } else {
                     for(DistancePatch dp : subPatches){
                         SEWorldID seid = dp.addActor(actor);
@@ -54,9 +51,7 @@ public class DistancePatch {
                             return seid;
                         }
                     }
-                    DistancePatch sub = new DistancePatch(this.level+1, ori.getPosition());
-                    subPatches.add(sub);
-                    return sub.addActor(actor);
+                    return createAndAddSubPatch(actor);
                 }
             }
         }
@@ -223,5 +218,17 @@ public class DistancePatch {
     
     public int getEdgeLength(){
         return Settings.get().scene.dpSizes[level];
+    }
+    
+    public int getLevel(){
+        return level;
+    }
+    
+    private SEWorldID createAndAddSubPatch(SEActor actor){
+        DistancePatch sub = new DistancePatch(this.level+1, actor.getOrientation().getPosition());
+        subPatches.add(sub);
+        System.out.println("Adding Subpatch level "+sub.getLevel()+" at "+sub.getPostion()[0]+" "+sub.getPostion()[1]+" "+sub.getPostion()[2]);
+        SEWorldID seid = sub.addActor(actor);
+        return seid;
     }
 }
