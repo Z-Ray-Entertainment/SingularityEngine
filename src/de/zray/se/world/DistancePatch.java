@@ -31,16 +31,16 @@ public class DistancePatch {
     }
     
     public DistancePatch(DistancePatch parent, int level, double pos[]){
-        calcPosition(pos);
         this.level = level;
         this.parent = parent;
-        System.out.println("New DistancePatch Level: "+level+" at "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]+" for: "+pos[0]+" "+pos[1]+" "+pos[2]);
+        calcPosition(pos);
     }
     
     public SEWorldID addActor(SEActor actor){
         SEOriantation ori = actor.getOrientation();
         if(isInside(ori.getPosition()[0], ori.getPosition()[1], ori.getPosition()[2])){
             if(isLowestDistancePatch()){
+                System.out.println("I'm the lowest with: "+level);
                 return addFreeActor(actor);
             } else {
                 if(subPatches.isEmpty()){
@@ -54,6 +54,9 @@ public class DistancePatch {
                             return seid;
                         }
                     }
+                    DistancePatch sub = new DistancePatch(this.level+1, ori.getPosition());
+                    subPatches.add(sub);
+                    return sub.addActor(actor);
                 }
             }
         }
@@ -61,16 +64,22 @@ public class DistancePatch {
     }
     
     private SEWorldID addFreeActor(SEActor actor){
-        if(!freeActors.isEmpty()){
-            int slot = freeActors.get(0);
-            freeActors.remove(slot);
-            actors.set(slot, actor);
-            return new SEWorldID(uuid, slot);
+        double pos[] = actor.getOrientation().getPosition();
+        if(isInside(pos[0], pos[1], pos[2])){
+            if(!freeActors.isEmpty()){
+                int slot = freeActors.get(0);
+                freeActors.remove(slot);
+                actors.set(slot, actor);
+                System.out.println("Added new Actor!");
+                return new SEWorldID(uuid, slot);
+            }
+            else{
+                actors.add(actor);
+                System.out.println("Added new Actor!");
+                return new SEWorldID(uuid, actors.size()-1);
+            }
         }
-        else{
-            actors.add(actor);
-            return new SEWorldID(uuid, actors.size()-1);
-        }
+        return null;
     }
     
     public boolean removeActor(SEWorldID seWorldID){
@@ -110,16 +119,20 @@ public class DistancePatch {
     }
     
     private SEWorldID addFreeLightSource(LightSource src){
-        if(!freeLights.isEmpty()){
-            int slot = freeLights.get(0);
-            freeLights.remove(slot);
-            lights.set(slot, src);
-            return new SEWorldID(uuid, slot);
+        double pos[] = src.getOrientation().getPosition();
+        if(isInside(pos[0], pos[1], pos[2])){
+            if(!freeLights.isEmpty()){
+                int slot = freeLights.get(0);
+                freeLights.remove(slot);
+                lights.set(slot, src);
+                return new SEWorldID(uuid, slot);
+            }
+            else{
+                lights.add(src);
+                return new SEWorldID(uuid, lights.size()-1);
+            }
         }
-        else{
-            lights.add(src);
-            return new SEWorldID(uuid, lights.size()-1);
-        }
+        return null;
     }
     
     public boolean removeLightSource(SEWorldID seWorldID){
@@ -139,32 +152,32 @@ public class DistancePatch {
     
     private void calcPosition(double pos[]){
         int edgeLength = Settings.get().scene.dpSizes[level];
-        this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength/2f);
-        this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength/2f);
-        this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength/2f);
+        this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength/2);
+        this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength/2);
+        this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength/2);
     }
     
     public boolean isInside(double x, double y, double z){
         int edgeLength = Settings.get().scene.dpSizes[level];
         
-        if(!onLine(pos[0], pos[0]+edgeLength/2, x)){
-            if(!onLine(pos[0], pos[0]-edgeLength/2, x)){
+        if(!isBetween(pos[0], pos[0]+edgeLength/2, x)){
+            if(!isBetween(pos[0]-edgeLength/2, pos[0], x)){
                 return false;
             }
-        } else if(!onLine(pos[1], pos[1]+edgeLength/2, y)){
-            if(!onLine(pos[1], pos[1]-edgeLength/2, y)){
+        } else if(!isBetween(pos[1], pos[1]+edgeLength/2, y)){
+            if(!isBetween(pos[1]-edgeLength/2, pos[1], y)){
                 return false;
             }
-        } else if(!onLine(pos[2], pos[2]+edgeLength/2, z)){
-            if(!onLine(pos[2], pos[2]-edgeLength/2, z)){
+        } else if(!isBetween(pos[2], pos[2]+edgeLength/2, z)){
+            if(!isBetween(pos[2]-edgeLength/2, pos[2], z)){
                 return false;
             }
         }
         return true;
     }
     
-    private boolean onLine(double start, double end, double num){
-        return num <= end && num >= start;
+    private boolean isBetween(double start, double end, double val){
+        return val <= end && val >= start;
     }
     
     public List<SEActor> getActorts(){
@@ -193,5 +206,22 @@ public class DistancePatch {
     
     private boolean isLowestDistancePatch(){
         return level == Settings.get().scene.dpSizes.length-1;
+    }
+    
+    public List<DistancePatch> getSubPatches(){
+        List<DistancePatch> subs = new LinkedList<>();
+        subs.addAll(subPatches);
+        for(DistancePatch subsub : subPatches){
+            subs.addAll(subsub.getSubPatches());
+        }
+        return subs;
+    }
+    
+    public double[] getPostion(){
+        return pos;
+    }
+    
+    public int getEdgeLength(){
+        return Settings.get().scene.dpSizes[level];
     }
 }
