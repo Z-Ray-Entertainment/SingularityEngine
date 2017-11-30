@@ -8,52 +8,51 @@ package de.zray.se.renderbackend.opengl;
 import de.zray.se.Settings;
 import de.zray.se.world.DistancePatch;
 import de.zray.se.world.SEWorld;
-import org.lwjgl.opengl.GL11;
-import static org.lwjgl.opengl.GL11.GL_FALSE;
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_LINES;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glColor3f;
-import static org.lwjgl.opengl.GL11.glCullFace;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glVertex3d;
+import static org.lwjgl.opengl.GL11.*;
 
 /**
  *
  * @author vortex
  */
 public class GLDebugRenderer {
+    private int gridDisplayList = -1;
+    
     public void render(SEWorld world){
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         glCullFace(GL_FALSE);
         if(Settings.get().debug.renderOnTop){
-            glDisable(GL11.GL_DEPTH_TEST);
+            glDisable(GL_DEPTH_TEST);
         }        
         glLineWidth(1);
         
-        if(Settings.get().debug.showDistancePatches){
-            renderDistancePatches(world);
-        }
         if(Settings.get().debug.showGrid){
             renderGrid();
+        }
+        if(Settings.get().debug.showDistancePatches){
+            renderDistancePatches(world);
         }
     }
     
     private void renderGrid(){
         glColor3f(0.5f, 0.5f, 0.5f);
-        double edge = Settings.get().debug.gridSize;
-        double step = Settings.get().debug.gridStep;
         
-        glBegin(GL_LINES);
-        for(int i = 0; i < (edge+1)/step; i++){
-            glVertex3d(-edge/2, 0, (-edge/2)+i*step); glVertex3d(edge/2, 0, (-edge/2)+i*step);
-            glVertex3d((-edge/2)+i*step, 0, -edge/2); glVertex3d((-edge/2)+i*step, 0, edge/2);
+        if(gridDisplayList == -1){
+            double edge = Settings.get().debug.gridSize;
+            double step = Settings.get().debug.gridStep;
+            
+            gridDisplayList = glGenLists(1);
+            glNewList(gridDisplayList, GL_COMPILE);
+            glBegin(GL_LINES);
+            for(int i = 0; i < (edge+1)/step; i++){
+                glVertex3d(-edge/2, 0, (-edge/2)+i*step); glVertex3d(edge/2, 0, (-edge/2)+i*step);
+                glVertex3d((-edge/2)+i*step, 0, -edge/2); glVertex3d((-edge/2)+i*step, 0, edge/2);
+            }
+            glEnd();
+            glEndList();
         }
-        glEnd();
+        glCallList(gridDisplayList);
+        
     }
     
     private void renderDistancePatches(SEWorld world){
