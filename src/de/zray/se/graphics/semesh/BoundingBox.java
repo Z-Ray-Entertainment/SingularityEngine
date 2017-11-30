@@ -12,11 +12,11 @@ import javax.vecmath.Vector3d;
  *
  * @author Vortex Acherontic
  */
-public class BoundingBox {
+public class BoundingBox{
     float xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = 0, zmax = 0;
     Vector3d v1, v2, v3, v4, v5, v6, v7, v8;
     SEMesh cube;
-    SEOriantation ori = new SEOriantation(0, 0, 0);
+    SEOriantation ori = new SEOriantation(null, 0, 0, 0);
     
     public BoundingBox(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax){
         this.xmax = xmax;
@@ -101,7 +101,7 @@ public class BoundingBox {
     }
     
     public boolean inside(Vector3d point){
-        return realInside(point, new SEOriantation());
+        return realInside(point, new SEOriantation(null));
     }
     
     private boolean realInside(Vector3d point, SEOriantation vecOri){

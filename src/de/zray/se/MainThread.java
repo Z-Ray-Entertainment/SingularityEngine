@@ -14,15 +14,16 @@ import java.io.IOException;
  * @author vortex
  */
 public class MainThread {
-    private static double delta = 0, timeBeforeAct = 0, fpsUpdate = 0;
+    private static double fpsUpdate = 0;
+    private static long delta = 0, timeBeforeAct = 0;
     private static int fps = 0, countedFrames;
     
     private RenderBackend backend;
     private SEWorld currentWorld;
     
     private static void updateDelta(){
-        delta =  getTimeInMs() - timeBeforeAct;
-        timeBeforeAct = getTimeInMs();
+        delta =  getTimeInMillis() - timeBeforeAct;
+        timeBeforeAct = getTimeInMillis();
         calcFPS(delta);
     }
     
@@ -37,14 +38,14 @@ public class MainThread {
     }
     
     public static final double getDeltaInSec(){
-        return delta/100;
+        return delta/100f;
     }
     
     public static final double getDeltaInMs(){
         return delta;
     }
           
-    public static final double getTimeInMs(){
+    public static final long getTimeInMillis(){
         return System.currentTimeMillis();
     }
     
@@ -58,7 +59,6 @@ public class MainThread {
     
     public void switchWorld(SEWorld world){
         currentWorld = world;
-        currentWorld.setRenderBackend(backend);
     }
     
     public void loop() throws IOException{
@@ -69,6 +69,7 @@ public class MainThread {
                 }
                 if(currentWorld != null){
                     currentWorld.act(getDeltaInSec());
+                    currentWorld.optimizeScene();
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);

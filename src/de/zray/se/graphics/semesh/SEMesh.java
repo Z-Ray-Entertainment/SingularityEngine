@@ -6,6 +6,8 @@
 package de.zray.se.graphics.semesh;
 
 import de.zray.se.graphics.Camera;
+import de.zray.se.world.Refreshable;
+import de.zray.se.world.SEActor;
 import java.util.LinkedList;
 import java.util.List;
 import javax.vecmath.Vector3f;
@@ -21,7 +23,7 @@ public class SEMesh{
     private int renderData = -1;
     private RenderMode renderMode = RenderMode.DIRECT;
     private DisplayMode displayMode = DisplayMode.SOLID;
-    private SEOriantation orientation = new SEOriantation();
+    private SEOriantation offset = new SEOriantation(null);
     private SEMaterial material = new SEMaterial();
     private boolean isAnimated = false;
     private SEMesh lod;
@@ -33,7 +35,7 @@ public class SEMesh{
     
     public SEMesh(SEMaterial material, int seMeshData){
         this.material = material;
-        orientation = new SEOriantation();
+        offset = new SEOriantation(null);
         meshData = seMeshData;
         this.direction = new Vector3f(0, 0, -1);
     }
@@ -87,7 +89,7 @@ public class SEMesh{
     }
         
     public void addLOD(SEMesh mesh){
-        mesh.setOrientation(orientation);
+        mesh.setOrientation(offset);
         SEMesh freeLOD = lod;
         while(freeLOD != null){
             freeLOD = freeLOD.lod;
@@ -95,12 +97,12 @@ public class SEMesh{
         freeLOD = mesh;
     }
     
-    public void setOrientation(SEOriantation orientation){
-        this.orientation = orientation;
+    public void setOrientation(SEOriantation offset){
+        this.offset = offset;
     }
     
-    public SEOriantation getOrientation(){
-        return orientation;
+    public SEOriantation getOffset(){
+        return offset;
     }
     
     public void setDisplayMode(DisplayMode displayMode){
@@ -130,9 +132,9 @@ public class SEMesh{
             startZ = activeCam.getPosition().z;
         }
         
-        float endX = (float) getOrientation().getPositionVec().x;
-        float endY = (float) getOrientation().getPositionVec().y;
-        float endZ = (float) getOrientation().getPositionVec().z;
+        float endX = (float) getOffset().getPositionVec().x;
+        float endY = (float) getOffset().getPositionVec().y;
+        float endZ = (float) getOffset().getPositionVec().z;
 
         Vector3f distVec = new Vector3f(endX - startX, endY - startY, endZ - startZ);
         float distance = distVec.length();

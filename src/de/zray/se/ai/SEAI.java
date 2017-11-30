@@ -13,21 +13,21 @@ import de.zray.se.world.SEWorld;
  * @author Vortex Acherontic
  */
 public abstract class SEAI {
-    public SEActor parrentActor;
-    public SEWorld parrentWorld;
+    public SEActor parentActor;
+    public SEWorld parentWorld;
     
     public SEAI(SEWorld world, SEActor actor, SEAIWorld aiMod){
-        this.parrentWorld = world;
-        this.parrentActor = actor;
+        this.parentWorld = world;
+        this.parentActor = actor;
         aiMod.addAI(this);
     }
     
     public final SEActor getActor(){
-        return parrentActor;
+        return parentActor;
     }
     
     public void setActor(SEActor actor){
-        this.parrentActor = actor;
+        this.parentActor = actor;
     }
     
     public abstract void act(double delta);

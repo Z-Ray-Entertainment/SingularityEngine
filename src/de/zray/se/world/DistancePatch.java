@@ -12,20 +12,23 @@ import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import javax.vecmath.Vector3d;
 
 /**
  *
  * @author vortex
  */
-public class DistancePatch {
+public class DistancePatch implements Refreshable{
     private UUID uuid = UUID.randomUUID();
     private DistancePatch parent;
+    private SEWorld parentWorld;
     private int level;
     private List<DistancePatch> subPatches = new LinkedList<>();
     private double pos[] = new double[3];
     private List<SEActor> actors = new LinkedList<>();
     private List<LightSource> lights = new LinkedList<>();
     private List<Integer> freeActors = new LinkedList<>(), freeLights = new LinkedList<>();
+    private boolean refreshNeeded = false;
     
     public DistancePatch(int level, double pos[]){
         this(null, level, pos);
@@ -35,6 +38,65 @@ public class DistancePatch {
         this.level = level;
         this.parent = parent;
         calcPosition(pos);
+    }
+    
+    @Override
+    public void setRefreshNeeded(boolean b) {
+        if(b){
+            refreshNeeded = true;
+            if(parent != null){
+                parent.setRefreshNeeded(b);
+            }
+        }
+    }
+    
+    public void refresh(){
+        if(refreshNeeded){
+            for(DistancePatch dp : subPatches){
+                dp.refresh();
+            }
+            if(isLowestDistancePatch()){
+                for(int i = 0; i < actors.size(); i++){
+                    if(actors.get(i) != null){
+                        double pos[] = actors.get(i).getOrientation().getPosition();
+                        if(!isInside(pos[0], pos[1], pos[2])){
+                            System.out.println("Actor left DP!");
+                            SEActor tmp = actors.get(i);
+                            removeActor(tmp.getSEWorldID());
+                            sortActor(tmp);
+                        }
+                    }
+                }
+            }
+            refreshNeeded = false;
+        }
+    }
+    
+    public void resortActor(SEActor actor){
+        for(DistancePatch dp : subPatches){
+            SEWorldID id = dp.addActor(actor);
+            if(id != null){
+                return;
+            }
+        }
+        sortActor(actor);
+    }
+    
+    public void sortActor(SEActor act){
+        System.out.println("Sorting Actor");
+        if(parent != null){
+            System.out.println("Sending to parent");
+            parent.resortActor(act);
+        } else if(parentWorld != null){
+            System.out.println("Sending to world");
+            parentWorld.addSEActor(act);
+        } else {
+            SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"DistanceOatch without parent!"}, false);
+        }
+    }
+    
+    public void setParentWorld(SEWorld world){
+        this.parentWorld = world;
     }
     
     public SEWorldID addActor(SEActor actor){
@@ -66,11 +128,15 @@ public class DistancePatch {
                 int slot = freeActors.get(0);
                 freeActors.remove(slot);
                 actors.set(slot, actor);
-                return new SEWorldID(uuid, slot);
+                actor.setSEWorldID(new SEWorldID(uuid, slot));
+                actor.setParentDistancePatch(this);
+                return actor.getSEWorldID();
             }
             else{
                 actors.add(actor);
-                return new SEWorldID(uuid, actors.size()-1);
+                actor.setParentDistancePatch(this);
+                actor.setSEWorldID(new SEWorldID(uuid, actors.size()-1));
+                return actor.getSEWorldID();
             }
         }
         return null;
@@ -226,9 +292,11 @@ public class DistancePatch {
     }
     
     private SEWorldID createAndAddSubPatch(SEActor actor){
-        DistancePatch sub = new DistancePatch(this.level+1, actor.getOrientation().getPosition());
+        DistancePatch sub = new DistancePatch(this, this.level+1, actor.getOrientation().getPosition());
         subPatches.add(sub);
         SEWorldID seid = sub.addActor(actor);
+        Vector3d subPos = new Vector3d(sub.getPostion());
+        System.out.println("New DP at "+subPos.toString()+" for "+actor.getOrientation().getPositionVec().toString());
         return seid;
     }
 }

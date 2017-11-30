@@ -14,17 +14,14 @@ import de.zray.se.graphics.semesh.SEMesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.physics.SEBulletWorld;
-import de.zray.se.renderbackend.RenderBackend;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  *
  * @author vortex
  */
 public abstract class SEWorld {
-    private RenderBackend backend;
     private SEAIWorld aiWorld;
     private SEBulletWorld bulletWorld;
     private SEAudioWorld audioWorld;
@@ -32,15 +29,7 @@ public abstract class SEWorld {
     private List<InputManager> inputManages = new LinkedList<>();
     private int currentCamera = -1;
     private List<SEMesh> rendableMeshes = new LinkedList<>();
-    private List<DistancePatch> distancePatchs = new LinkedList<>();
-    
-    public void setRenderBackend(RenderBackend backend){
-        this.backend = backend;
-    }
-    
-    public RenderBackend getRenderBackend(){
-        return backend;
-    }
+    private List<DistancePatch> distancePatches = new LinkedList<>();
     
     public final void addInputManager(InputManager manager){
         inputManages.add(manager);
@@ -63,12 +52,12 @@ public abstract class SEWorld {
     }
     
     public SEWorldID addLightSource(LightSource src){
-        if(distancePatchs.isEmpty()){
+        if(distancePatches.isEmpty()){
             DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
-            distancePatchs.add(dp);
+            distancePatches.add(dp);
             return dp.addLightSource(src);
         } else {
-            for(DistancePatch d : distancePatchs){
+            for(DistancePatch d : distancePatches){
                 SEWorldID seWorldID = d.addLightSource(src);
                 if(seWorldID == null){
                     DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
@@ -83,7 +72,7 @@ public abstract class SEWorld {
     }
     
     public void removeLight(SEWorldID seWorldID){
-        for(DistancePatch dp : distancePatchs){
+        for(DistancePatch dp : distancePatches){
             if(dp.removeLightSource(seWorldID)){
                 return;
             }
@@ -92,20 +81,21 @@ public abstract class SEWorld {
     
     public List<LightSource> getClosestLightsToActiveCamera(int amount){
         List<LightSource> srcs = new LinkedList<>();
-        distancePatchs.forEach((dp) -> {
+        distancePatches.forEach((dp) -> {
             srcs.addAll(dp.getLights());
         });
         return srcs;
     }
     
     public final SEWorldID addSEActor(SEActor actor){
-        if(distancePatchs.isEmpty()){
+        if(distancePatches.isEmpty()){
             DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+            dp.setParentWorld(this);
             double posAct[] = actor.getOrientation().getPosition();
-            distancePatchs.add(dp);
+            distancePatches.add(dp);
             return dp.addActor(actor);
         } else {
-            for(DistancePatch d : distancePatchs){
+            for(DistancePatch d : distancePatches){
                 SEWorldID seWorldID = d.addActor(actor);
                 if(seWorldID != null){
                     return seWorldID;
@@ -118,7 +108,7 @@ public abstract class SEWorld {
     
     public final List<SEActor> getActors(){
         List<SEActor> collect = new LinkedList<>();
-        distancePatchs.forEach((dp) -> {
+        distancePatches.forEach((dp) -> {
             collect.addAll(dp.getActorts());
         });
         return collect;
@@ -141,7 +131,7 @@ public abstract class SEWorld {
     }
     
     public final void act(double delta){
-        distancePatchs.forEach((DistancePatch dp) -> {
+        distancePatches.forEach((DistancePatch dp) -> {
             dp.getActorts().stream().filter((actor) -> (actor != null)).forEachOrdered((actor) -> {
                 try{
                     actor.getSEAI().act(MainThread.getDeltaInSec());
@@ -159,7 +149,10 @@ public abstract class SEWorld {
         optimizeScene();
     }
     
-    private void optimizeScene(){
+    public void optimizeScene(){
+        distancePatches.forEach((dp) -> {
+            dp.refresh();
+        });
         if(views != null && currentCamera >= 0 && views.get(currentCamera).propsWhereChanged()){
             collectRendableMeshes();            
         }
@@ -167,7 +160,7 @@ public abstract class SEWorld {
     
     private void collectRendableMeshes(){
         rendableMeshes = new LinkedList<>();
-        for(DistancePatch dp : distancePatchs){
+        for(DistancePatch dp : distancePatches){
             
         }
     }
@@ -204,8 +197,8 @@ public abstract class SEWorld {
     
     public List<DistancePatch> getDistancePatched(){
         List<DistancePatch> tmp = new LinkedList<>();
-        tmp.addAll(distancePatchs);
-        distancePatchs.forEach((dp) -> {
+        tmp.addAll(distancePatches);
+        distancePatches.forEach((dp) -> {
             tmp.addAll(dp.getSubPatches());
         });
         

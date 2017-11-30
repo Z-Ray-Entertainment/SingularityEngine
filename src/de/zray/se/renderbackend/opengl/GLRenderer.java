@@ -111,14 +111,16 @@ public class GLRenderer implements RenderBackend{
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         for(SEActor actor : currentWorld.getActors()){
-            List<SEMesh> rendables = actor.getRendableSEMeshes();
-            if(rendables != null){
-                for(int i = 0; i < rendables.size(); i++){
-                    SEMesh mesh = rendables.get(i);
-                    if(mesh != null){
-                        glPushMatrix();
-                        renderMesh(mesh);
-                        glPopMatrix();
+            if(actor != null){
+                List<SEMesh> rendables = actor.getRendableSEMeshes();
+                if(rendables != null){
+                    for(int i = 0; i < rendables.size(); i++){
+                        SEMesh mesh = rendables.get(i);
+                        if(mesh != null){
+                            glPushMatrix();
+                            renderMesh(mesh, actor);
+                            glPopMatrix();
+                        }
                     }
                 }
             }
@@ -221,16 +223,16 @@ public class GLRenderer implements RenderBackend{
         glfwSetWindowShouldClose(window, true);
     }
     
-    private void renderMesh(SEMesh mesh){
-        double posX = mesh.getOrientation().getPositionVec().x;
-        double posY = mesh.getOrientation().getPositionVec().y;
-        double posZ = mesh.getOrientation().getPositionVec().z;
-        double rotX = mesh.getOrientation().getRotationVec().x;
-        double rotY = mesh.getOrientation().getRotationVec().y;
-        double rotZ = mesh.getOrientation().getRotationVec().z;
-        double scaleX = mesh.getOrientation().getScaleVec().x;
-        double scaleY = mesh.getOrientation().getScaleVec().y;
-        double scaleZ = mesh.getOrientation().getScaleVec().z;
+    private void renderMesh(SEMesh mesh, SEActor parent){
+        double posX = parent.getOrientation().getPositionVec().x+mesh.getOffset().getPositionVec().x;
+        double posY = parent.getOrientation().getPositionVec().y+mesh.getOffset().getPositionVec().y;
+        double posZ = parent.getOrientation().getPositionVec().z+mesh.getOffset().getPositionVec().z;
+        double rotX = parent.getOrientation().getRotationVec().x+mesh.getOffset().getRotationVec().x;
+        double rotY = parent.getOrientation().getRotationVec().y+mesh.getOffset().getRotationVec().y;
+        double rotZ = parent.getOrientation().getRotationVec().z+mesh.getOffset().getRotationVec().z;
+        double scaleX = parent.getOrientation().getScaleVec().x+mesh.getOffset().getScaleVec().x;
+        double scaleY = parent.getOrientation().getScaleVec().y+mesh.getOffset().getScaleVec().y;
+        double scaleZ = parent.getOrientation().getScaleVec().z+mesh.getOffset().getScaleVec().z;
         
         glTranslated(posX, posY, posZ);
         glRotated(rotX, 1, 0, 0);
