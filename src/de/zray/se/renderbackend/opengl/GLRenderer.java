@@ -29,7 +29,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import de.zray.se.storages.AssetLibrary;
-import de.zray.se.world.DistancePatch;
+import javax.vecmath.Vector3d;
 
 /**
  *
@@ -107,6 +107,7 @@ public class GLRenderer implements RenderBackend{
     @Override
     public void renderWorld(Settings.DebugMode dMode) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         for(SEActor actor : currentWorld.getActors()){
@@ -315,5 +316,15 @@ public class GLRenderer implements RenderBackend{
     @Override
     public void renderDebug() {
         dRenderer.render(currentWorld);
+    }
+
+    @Override
+    public boolean pick(int pointerX, int pointerY) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean rayPick(Vector3d ray) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

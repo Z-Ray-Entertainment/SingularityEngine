@@ -7,6 +7,7 @@ package de.zray.se.renderbackend;
 
 import de.zray.se.Settings;
 import de.zray.se.world.SEWorld;
+import javax.vecmath.Vector3d;
 
 /**
  *
@@ -44,4 +45,6 @@ public interface RenderBackend {
     public abstract void backendSwitchRequested();
     public abstract int getWidth();
     public abstract int getHeight();
+    public abstract boolean pick(int pointerX, int pointerY);
+    public abstract boolean rayPick(Vector3d ray);
 }
