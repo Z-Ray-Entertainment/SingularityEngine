@@ -45,7 +45,7 @@ public class Settings {
     }
     
     public class SceneSettings{
-        public int[] dpSizes = {100, 10, 1};
+        public int[] dpSizes = {1000, 100, 10, 1};
     }
     
     public class WindowSettings{
@@ -66,6 +66,6 @@ public class Settings {
         public boolean showDistancePatches = true, showGrid = true,
                 showWorldCoordSystem = true, showBoundingBoxes = true,
                 showLocalCoordSystems = true, renderOnTop = true;
-        public double gridSize = 1000, gridStep = 10;
+        public double gridSize = 1000, gridStep = 1;
     }
 }
