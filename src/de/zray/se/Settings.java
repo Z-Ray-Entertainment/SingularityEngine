@@ -63,5 +63,9 @@ public class Settings {
     
     public class DebugSettings{
         public DebugMode debugMode = DebugMode.DEBUG_OFF;
+        public boolean showDistancePatches = true, showGrid = true,
+                showWorldCoordSystem = true, showBoundingBoxes = true,
+                showLocalCoordSystems = true, renderOnTop = false;
+        public double gridSize = 1000, gridStep = 10;
     }
 }
