@@ -8,6 +8,7 @@ package de.zray.se.world;
 import de.zray.se.Settings;
 import de.zray.se.graphics.LightSource;
 import de.zray.se.graphics.semesh.SEOriantation;
+import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -42,17 +43,17 @@ public class DistancePatch {
             if(isLowestDistancePatch()){
                 return addFreeActor(actor);
             } else {
-                if(subPatches.isEmpty()){
-                    return createAndAddSubPatch(actor);
-                } else {
-                    for(DistancePatch dp : subPatches){
-                        SEWorldID seid = dp.addActor(actor);
-                        if(seid != null){
-                            return seid;
-                        }
+                for(DistancePatch dp : subPatches){
+                    SEWorldID seid = dp.addActor(actor);
+                    if(seid != null){
+                        return seid;
                     }
-                    return createAndAddSubPatch(actor);
                 }
+                SEWorldID tmpID = createAndAddSubPatch(actor);
+                if(tmpID == null){
+                    SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"SEWorldID is null but should not be null! :("}, false);
+                }
+                return tmpID;
             }
         }
         return null;
@@ -65,12 +66,10 @@ public class DistancePatch {
                 int slot = freeActors.get(0);
                 freeActors.remove(slot);
                 actors.set(slot, actor);
-                System.out.println("Added new Actor!");
                 return new SEWorldID(uuid, slot);
             }
             else{
                 actors.add(actor);
-                System.out.println("Added new Actor!");
                 return new SEWorldID(uuid, actors.size()-1);
             }
         }
@@ -147,9 +146,9 @@ public class DistancePatch {
     
     private void calcPosition(double pos[]){
         int edgeLength = Settings.get().scene.dpSizes[level];
-        this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength/2);
-        this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength/2);
-        this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength/2);
+        this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
+        this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
+        this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
     }
     
     public boolean isInside(double x, double y, double z){
@@ -159,11 +158,13 @@ public class DistancePatch {
             if(!isBetween(pos[0]-edgeLength/2, pos[0], x)){
                 return false;
             }
-        } else if(!isBetween(pos[1], pos[1]+edgeLength/2, y)){
+        }
+        if(!isBetween(pos[1], pos[1]+edgeLength/2, y)){
             if(!isBetween(pos[1]-edgeLength/2, pos[1], y)){
                 return false;
             }
-        } else if(!isBetween(pos[2], pos[2]+edgeLength/2, z)){
+        }
+        if(!isBetween(pos[2], pos[2]+edgeLength/2, z)){
             if(!isBetween(pos[2]-edgeLength/2, pos[2], z)){
                 return false;
             }
@@ -227,7 +228,6 @@ public class DistancePatch {
     private SEWorldID createAndAddSubPatch(SEActor actor){
         DistancePatch sub = new DistancePatch(this.level+1, actor.getOrientation().getPosition());
         subPatches.add(sub);
-        System.out.println("Adding Subpatch level "+sub.getLevel()+" at "+sub.getPostion()[0]+" "+sub.getPostion()[1]+" "+sub.getPostion()[2]);
         SEWorldID seid = sub.addActor(actor);
         return seid;
     }

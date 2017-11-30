@@ -101,6 +101,7 @@ public abstract class SEWorld {
     public final SEWorldID addSEActor(SEActor actor){
         if(distancePatchs.isEmpty()){
             DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+            double posAct[] = actor.getOrientation().getPosition();
             distancePatchs.add(dp);
             return dp.addActor(actor);
         } else {

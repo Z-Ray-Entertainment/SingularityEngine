@@ -56,21 +56,8 @@ public class GLDebugRenderer {
     }
     
     private void renderDistancePatches(SEWorld world){
+        glColor3f(10, 0, 0);
         for(DistancePatch dp : world.getDistancePatched()){
-            switch(dp.getLevel()){
-                case 0 :
-                    glColor3f(10, 0, 0);
-                    break;
-                case 1 :
-                    glColor3f(0, 10, 0);
-                    break;
-                case 2 :
-                    glColor3f(0, 0, 10);
-                    break;
-                default:
-                    glColor3f(1, 1, 1);
-                    break;
-            }
             double verts[][] = new double[8][3];
             int edge = dp.getEdgeLength();
             verts[0][0] = dp.getPostion()[0]-edge/2;
