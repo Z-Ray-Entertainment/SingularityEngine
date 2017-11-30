@@ -5,6 +5,7 @@
  */
 package de.zray.se.renderbackend.opengl;
 
+import de.zray.se.Settings;
 import de.zray.se.world.DistancePatch;
 import de.zray.se.world.SEWorld;
 import org.lwjgl.opengl.GL11;
@@ -25,13 +26,37 @@ import static org.lwjgl.opengl.GL11.glVertex3d;
  * @author vortex
  */
 public class GLDebugRenderer {
-    public void renderDistancePatches(SEWorld world){
+    public void render(SEWorld world){
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         glCullFace(GL_FALSE);
-        glDisable(GL11.GL_DEPTH_TEST);
+        if(Settings.get().debug.renderOnTop){
+            glDisable(GL11.GL_DEPTH_TEST);
+        }        
         glLineWidth(1);
-        int dps = world.getDistancePatched().size();
+        
+        if(Settings.get().debug.showDistancePatches){
+            renderDistancePatches(world);
+        }
+        if(Settings.get().debug.showGrid){
+            renderGrid();
+        }
+    }
+    
+    private void renderGrid(){
+        glColor3f(0.5f, 0.5f, 0.5f);
+        double edge = Settings.get().debug.gridSize;
+        double step = Settings.get().debug.gridStep;
+        
+        glBegin(GL_LINES);
+        for(int i = 0; i < (edge+1)/step; i++){
+            glVertex3d(-edge/2, 0, (-edge/2)+i*step); glVertex3d(edge/2, 0, (-edge/2)+i*step);
+            glVertex3d((-edge/2)+i*step, 0, -edge/2); glVertex3d((-edge/2)+i*step, 0, edge/2);
+        }
+        glEnd();
+    }
+    
+    private void renderDistancePatches(SEWorld world){
         for(DistancePatch dp : world.getDistancePatched()){
             switch(dp.getLevel()){
                 case 0 :

@@ -314,6 +314,6 @@ public class GLRenderer implements RenderBackend{
 
     @Override
     public void renderDebug() {
-        dRenderer.renderDistancePatches(currentWorld);
+        dRenderer.render(currentWorld);
     }
 }
