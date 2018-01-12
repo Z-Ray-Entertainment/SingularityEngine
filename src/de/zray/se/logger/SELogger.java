@@ -74,6 +74,14 @@ public class SELogger {
         }
     }
     
+    public void dispatchMsg(Object dispatcher, Exception e){
+        dispatchMsg(dispatcher, SELogType.ERROR, new String[]{e.getMessage()}, true);
+    }
+    
+    public void dispatchMsg(String dispatcher, Exception e){
+        dispatchMsg(dispatcher, SELogType.ERROR, new String[]{e.getMessage()}, true);
+    }
+    
     public void dispatchMsg(Object dispatcher, SELogType logType, String lines[], boolean saveToFile){
         dispatchMsg(dispatcher.toString(), logType, lines, saveToFile);
     }
