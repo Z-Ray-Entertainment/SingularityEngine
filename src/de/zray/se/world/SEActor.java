@@ -15,21 +15,19 @@ import java.util.List;
  *
  * @author Vortex Acherontic
  */
-public class SEActor implements Refreshable{
+public class SEActor extends SEEntity {
     private DistancePatch parentDP;
     private SEMesh mesh;
     private SEAI ai;
     private SEBulletObject bullet;
     private SEWorld parrentWorld;
     private SEWorldID seWorldID;
-    private SEOriantation ori;
     
     public SEActor(SEMesh mesh, SEAI ai, SEBulletObject bulletObj, SEWorld parrentWorld){
         this.ai = ai;
         this.bullet = bulletObj;
         this.mesh = mesh;
         this.parrentWorld = parrentWorld;
-        this.ori = new SEOriantation(this);
     }
     
     public List<SEMesh> getRendableSEMeshes(){
@@ -50,15 +48,6 @@ public class SEActor implements Refreshable{
    
    public SEMesh getRootMesh(){
        return mesh;
-   }
-   
-   public void setOriantation(SEOriantation ori){
-       this.ori = ori;
-       this.ori.forceNewRefreshable(this);
-   }
-   
-   public SEOriantation getOrientation(){
-       return this.ori;
    }
    
    public void setParentDistancePatch(DistancePatch parent){
