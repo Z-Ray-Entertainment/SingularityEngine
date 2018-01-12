@@ -13,6 +13,7 @@ import de.zray.se.graphics.semesh.SEOriantation;
  */
 public abstract class SEEntity implements Refreshable{
     private final SEOriantation orientation;
+    private DistancePatch parent;
     
     public SEEntity(){
         orientation = new SEOriantation(this);
@@ -20,5 +21,18 @@ public abstract class SEEntity implements Refreshable{
     
     public SEOriantation getOrientation(){
         return orientation;
+    }
+    
+    public void setParent(DistancePatch parent){
+        this.parent = parent;
+    }
+    
+    @Override
+    public void setRefreshNeeded(boolean b) {
+        if(b){
+            if(parent != null){
+                parent.setRefreshNeeded(b);
+            }
+        }
     }
 }
