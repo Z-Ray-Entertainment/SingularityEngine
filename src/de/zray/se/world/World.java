@@ -11,6 +11,7 @@ import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
+import de.zray.se.logger.SELogger;
 import de.zray.se.physics.SEBulletWorld;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,17 +51,16 @@ public abstract class World {
     }
     
     public final void addEntity(Entity ent){
+        SELogger.get().dispatchMsg("World", SELogger.SELogType.INFO, new String[]{"Adding new Entity to World"}, false);
         if(distancePatches.isEmpty()){
-            DistancePatch dp = new DistancePatch(0, ent.getPositionArray());
-            dp.setParentWorld(this);
-            double posAct[] = ent.getPositionArray();
+            DistancePatch dp = new DistancePatch(this, 0, ent.getPositionArray());
             distancePatches.add(dp);
             dp.addEntity(ent);
         } else {
             for(DistancePatch d : distancePatches){
                 d.addEntity(ent);
             }
-            DistancePatch dp = new DistancePatch(0, ent.getPositionArray());
+            DistancePatch dp = new DistancePatch(this, 0, ent.getPositionArray());
             dp.addEntity(ent);
         }
     }

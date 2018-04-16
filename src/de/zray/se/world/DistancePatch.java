@@ -6,6 +6,7 @@
 package de.zray.se.world;
 
 import de.zray.se.Settings;
+import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -25,14 +26,19 @@ public class DistancePatch {
     private List<Integer> freeEnts = new LinkedList<>();
     private boolean refreshNeeded = false;
     
-    public DistancePatch(int level, double pos[]){
-        this(null, level, pos);
+    public DistancePatch(World parent, int level, double pos[]){
+        this.parentWorld = parent;
+        initDistancePatch(level, pos);
     }
     
     public DistancePatch(DistancePatch parent, int level, double pos[]){
-        this.level = level;
         this.parent = parent;
+        initDistancePatch(level, pos);
+    }
+    
+    private void initDistancePatch(int level, double pos[]){
         calcPosition(pos);
+        this.level = level;
     }
     
     public void setRefreshNeeded(boolean b) {
@@ -45,10 +51,14 @@ public class DistancePatch {
     }
     
     public boolean addEntity(Entity ent){
+        System.out.println("[DP "+level+"]: Adding new entity");
         if(isLowestDistancePatch()){
+            System.out.println("[DP "+level+"]: I'm the lowest DP");
             double pos[] = ent.getPositionArray();
             if(isInside(pos[0], pos[1], pos[2])){
+                System.out.println("[DP "+level+"]: Entity It's inside me");
                 if(!addEntityToFreeSlot(ent)){
+                    System.out.println("[DP "+level+"]: Adding entity to new slot");
                     ent.setWorldID(new WorldID(uuid, ents.size()-1));
                     ents.add(ent);
                     return true;
@@ -56,9 +66,17 @@ public class DistancePatch {
                 return true;
             }
         } else {
+            if(subPatches.isEmpty()){
+                System.out.println("[DP "+level+"]: Creating new SubDP");
+                DistancePatch sub = new DistancePatch(this, level+1, ent.getPositionArray());
+                subPatches.add(sub);
+                sub.addEntity(ent);
+            } 
             if (subPatches.stream().anyMatch((sub) -> (sub.addEntity(ent)))) {
+                System.out.println("[DP "+level+"]: Adding entity to SubDP");
                 return true;
             }
+            
         }
         return false;
     }
@@ -120,10 +138,6 @@ public class DistancePatch {
             }
             refreshNeeded = false;
         }
-    }
-    
-    public void setParentWorld(World world){
-        this.parentWorld = world;
     }
     
     private void calcPosition(double pos[]){
