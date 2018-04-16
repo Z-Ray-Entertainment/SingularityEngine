@@ -69,8 +69,9 @@ public class DistancePatch {
             if(subPatches.isEmpty()){
                 System.out.println("[DP "+level+"]: Creating new SubDP");
                 DistancePatch sub = new DistancePatch(this, level+1, ent.getPositionArray());
-                subPatches.add(sub);
                 sub.addEntity(ent);
+                subPatches.add(sub);
+                return true;
             } 
             if (subPatches.stream().anyMatch((sub) -> (sub.addEntity(ent)))) {
                 System.out.println("[DP "+level+"]: Adding entity to SubDP");
@@ -83,6 +84,7 @@ public class DistancePatch {
     
     private boolean addEntityToFreeSlot(Entity ent){
         if(freeEnts.size() > 0){
+            System.out.println("[DP "+level+"]: Adding entity to free slot");
             ent.setWorldID(new WorldID(uuid, freeEnts.get(0)));
             ents.set(freeEnts.get(0), ent);
             freeEnts.remove(0);
