@@ -5,16 +5,16 @@
  */
 package de.zray.se.physics;
 
-import de.zray.se.world.SEActor;
+import de.zray.se.world.Actor;
 
 /**
  *
  * @author Vortex Acherontic
  */
 public class SEBulletObject {
-    private SEActor parrentActor;
+    private Actor parrentActor;
     
-    public SEBulletObject(SEActor parrent){
+    public SEBulletObject(Actor parrent){
         this.parrentActor = parrent;
     }
 }

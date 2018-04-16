@@ -9,10 +9,10 @@ package de.zray.se.graphics.semesh;
  *
  * @author Vortex Acherontic
  */
-public class SEUV {
+public class UV {
     public float u = 0, v = 0;
     
-    public SEUV(float u, float v){
+    public UV(float u, float v){
         this.u = u;
         this.v = v;
     }

@@ -12,26 +12,26 @@ import javax.vecmath.Vector3d;
  *
  * @author vortex
  */
-public class SEOriantation {
+public class Oriantation {
     private Vector3d pos = new Vector3d(0, 0, 0);
     private Vector3d rot = new Vector3d(0, 0, 0);
     private Vector3d scl = new Vector3d(0, 0, 0);
     private Refreshable refreshable;
     
-    public SEOriantation(Refreshable ref){
+    public Oriantation(Refreshable ref){
         initOrientation(0, 0, 0, 0, 0, 0, 1, 1, 1);
         refreshable = ref;
     }
     
-    public SEOriantation(Refreshable ref, float posX, float posY, float posZ){
+    public Oriantation(Refreshable ref, float posX, float posY, float posZ){
         initOrientation(posX, posY, posZ, 0, 0, 0, 1, 1, 1);
     }
     
-    public SEOriantation(Refreshable ref, float posX, float posY, float posZ, float rotX, float rotY, float rotZ){
+    public Oriantation(Refreshable ref, float posX, float posY, float posZ, float rotX, float rotY, float rotZ){
         initOrientation(posX, posY, posZ, rotX, rotY, rotZ, 1, 1, 1);
     }
     
-    public SEOriantation(Refreshable ref, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
+    public Oriantation(Refreshable ref, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
         initOrientation(posX, posY, posZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ);
     }
     

@@ -15,8 +15,8 @@ import javax.vecmath.Vector3d;
 public class BoundingBox{
     float xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = 0, zmax = 0;
     Vector3d v1, v2, v3, v4, v5, v6, v7, v8;
-    SEMesh cube;
-    SEOriantation ori = new SEOriantation(null, 0, 0, 0);
+    Mesh cube;
+    Oriantation ori = new Oriantation(null, 0, 0, 0);
     
     public BoundingBox(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax){
         this.xmax = xmax;
@@ -28,8 +28,8 @@ public class BoundingBox{
         buildBB();
     }
     
-    public void extendBoundingBox(List<SEVertex> newVertecies){
-        for(SEVertex tmp : newVertecies){
+    public void extendBoundingBox(List<Vertex> newVertecies){
+        for(Vertex tmp : newVertecies){
             if(tmp.vX < xmin){
                 xmin = tmp.vX;
             }
@@ -52,8 +52,8 @@ public class BoundingBox{
         buildBB();
     }
     
-    public BoundingBox(List<SEVertex> vertecies){
-        for(SEVertex tmp : vertecies){
+    public BoundingBox(List<Vertex> vertecies){
+        for(Vertex tmp : vertecies){
             if(tmp.vX < xmin){
                 xmin = tmp.vX;
             }
@@ -87,7 +87,7 @@ public class BoundingBox{
         v8 = new Vector3d(xmin, ymax, zmax);
     }
     
-    public void setOrientation(SEOriantation ori){
+    public void setOrientation(Oriantation ori){
         this.ori = ori;
     }
     
@@ -96,15 +96,15 @@ public class BoundingBox{
         return false;
     }
   
-    public boolean inside(Vector3d point, SEOriantation vecOri){
+    public boolean inside(Vector3d point, Oriantation vecOri){
         return realInside(point, vecOri);
     }
     
     public boolean inside(Vector3d point){
-        return realInside(point, new SEOriantation(null));
+        return realInside(point, new Oriantation(null));
     }
     
-    private boolean realInside(Vector3d point, SEOriantation vecOri){
+    private boolean realInside(Vector3d point, Oriantation vecOri){
         if(point.x+vecOri.getPositionVec().x >= xmin+ori.getPositionVec().x && point.x < xmax+ori.getPositionVec().x){
             return true;
         }

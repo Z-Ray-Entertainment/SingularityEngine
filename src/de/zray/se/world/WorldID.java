@@ -11,17 +11,13 @@ import java.util.UUID;
  *
  * @author vortex
  */
-public class SEWorldID {
-    public static enum EntityType {TYPE_ACTOR, TYPE_LIGHT};
-    
+public class WorldID {
     private UUID uuid;
     private int index;
-    private EntityType entType;
     
-    public SEWorldID(UUID uuid, int index, EntityType entType){
+    public WorldID(UUID uuid, int index){
         this.uuid = uuid;
         this.index = index;
-        this.entType = entType;
     }
     
     public UUID getUUID(){
@@ -30,9 +26,5 @@ public class SEWorldID {
     
     public int getIndex(){
         return index;
-    }
-    
-    public EntityType getEntityType(){
-        return entType;
     }
 }

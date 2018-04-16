@@ -5,12 +5,12 @@
  */
 package de.zray.se.graphics.shapes;
 
-import de.zray.se.graphics.semesh.SEMesh;
+import de.zray.se.graphics.semesh.Mesh;
 
 /**
  *
  * @author vortex
  */
 public interface SEMeshProvider {
-    public abstract SEMesh getSEMesh();
+    public abstract Mesh getSEMesh();
 }

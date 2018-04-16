@@ -5,7 +5,7 @@
  */
 package de.zray.se.inputmanager;
 
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.World;
 
 /**
  *
@@ -13,13 +13,13 @@ import de.zray.se.world.SEWorld;
  */
 public abstract class InputManager {
     public static final KeyMap KEY_MAP = new KeyMap(KeyMap.KeyBoardLayout.ENGLSIH);
-    private SEWorld parrent;
+    private World parrent;
     
-    public InputManager(SEWorld world){
+    public InputManager(World world){
         this.parrent = world;
     }
     
-    public SEWorld getWorld(){
+    public World getWorld(){
         return parrent;
     }
     

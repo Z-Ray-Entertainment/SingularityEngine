@@ -5,7 +5,7 @@
  */
 package de.zray.se.graphics.modelloader;
 
-import de.zray.se.graphics.semesh.SEMesh;
+import de.zray.se.graphics.semesh.Mesh;
 
 /**
  *
@@ -33,5 +33,5 @@ public abstract class LoaderModule {
         return false;
     }
     
-    public abstract SEMesh loadModel(String file);
+    public abstract Mesh loadModel(String file);
 }

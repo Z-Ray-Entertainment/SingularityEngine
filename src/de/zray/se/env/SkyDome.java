@@ -5,7 +5,7 @@
  */
 package de.zray.se.env;
 
-import de.zray.se.graphics.semesh.SEMaterial;
+import de.zray.se.graphics.semesh.Material;
 import java.io.IOException;
 
 /**
@@ -13,12 +13,12 @@ import java.io.IOException;
  * @author Vortex Acherontic
  */
 public class SkyDome {
-    private SEMaterial material;
+    private Material material;
     private float radius = 1;
     private int stacks = 32, slices = 16;
     private boolean disabledDepth = false, disabledLightting = false;
     
-    public SkyDome(SEMaterial material, float radius, int stacks, int slices){
+    public SkyDome(Material material, float radius, int stacks, int slices){
         this.material = material;
         this.radius = radius;
         this.stacks = stacks;

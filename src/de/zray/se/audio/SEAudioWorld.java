@@ -5,8 +5,8 @@
  */
 package de.zray.se.audio;
 
-import de.zray.se.world.SEModule;
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.Module;
+import de.zray.se.world.World;
 import de.zray.se.logger.SELogger;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,11 +54,11 @@ import sun.nio.ch.IOUtil;
  *
  * @author Vortex Acherontic
  */
-public class SEAudioWorld extends SEModule{
+public class SEAudioWorld extends Module{
     private List<AudioSource> sources = new LinkedList<>();
     private static long audioDevice, context;
 
-    public SEAudioWorld(SEWorld parrent) {
+    public SEAudioWorld(World parrent) {
         super(parrent);
         
         audioDevice = alcOpenDevice((ByteBuffer) null);

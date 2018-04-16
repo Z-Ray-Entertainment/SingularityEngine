@@ -9,12 +9,12 @@ package de.zray.se.graphics.semesh;
  *
  * @author vortex
  */
-public class SENormal {
-    public float nX, nY, nZ;
+public class Vertex {
+    public float vX, vY, vZ;
     
-    public SENormal(float x, float y, float z){
-        nX = x;
-        nY = y;
-        nZ = z;
+    public Vertex(float vX, float vY, float vz){
+        this.vX = vX;
+        this.vY = vY;
+        this.vZ = vz;
     }
 }

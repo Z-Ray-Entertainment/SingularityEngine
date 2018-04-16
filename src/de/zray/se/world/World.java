@@ -8,10 +8,9 @@ package de.zray.se.world;
 import de.zray.se.MainThread;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
-import de.zray.se.exceptions.UnknownEntityException;
 import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.LightSource;
-import de.zray.se.graphics.semesh.SEMesh;
+import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.physics.SEBulletWorld;
@@ -22,14 +21,14 @@ import java.util.List;
  *
  * @author vortex
  */
-public abstract class SEWorld {
+public abstract class World {
     private SEAIWorld aiWorld;
     private SEBulletWorld bulletWorld;
     private SEAudioWorld audioWorld;
     private List<Camera> views = new LinkedList<>();
     private List<InputManager> inputManages = new LinkedList<>();
     private int currentCamera = -1;
-    private List<SEMesh> rendableMeshes = new LinkedList<>();
+    private List<Mesh> rendableMeshes = new LinkedList<>();
     private List<DistancePatch> distancePatches = new LinkedList<>();
     
     public final void addInputManager(InputManager manager){
@@ -40,17 +39,42 @@ public abstract class SEWorld {
         for(InputManager man : inputManages){
             switch(mode){
                 case PRESSED :
-                    //System.out.println("PRESSED "+key);
                     man.keyPressed(key);
                     break;
                 case RELEASED :
-                    //System.out.println("RELEASED "+key);
                     man.keyReleased(key);
                     break;
                 case TIPED :
-                    //System.out.println("TIPED "+key);
                     man.keyTiped(key);
                     break;
+            }
+        }
+    }
+    
+    public WorldID addLightSource(LightSource src){
+        if(distancePatches.isEmpty()){
+            DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
+            distancePatches.add(dp);
+            return dp.addLightSource(src);
+        } else {
+            for(DistancePatch d : distancePatches){
+                WorldID seWorldID = d.addLightSource(src);
+                if(seWorldID == null){
+                    DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
+                    return dp.addLightSource(src);
+                } else{
+                    return seWorldID;
+                }
+            }
+            System.err.println("Unable to add light source! SEWorldID is null!!!");
+            return null;
+        }
+    }
+    
+    public void removeLight(WorldID seWorldID){
+        for(DistancePatch dp : distancePatches){
+            if(dp.removeLightSource(seWorldID)){
+                return;
             }
         }
     }
@@ -63,27 +87,27 @@ public abstract class SEWorld {
         return srcs;
     }
     
-    public final SEWorldID addEntity(SEEntity entity) throws UnknownEntityException{
+    public final WorldID addSEActor(Actor actor){
         if(distancePatches.isEmpty()){
-            DistancePatch dp = new DistancePatch(0, entity.getOrientation().getPosition());
+            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
             dp.setParentWorld(this);
-            double posAct[] = entity.getOrientation().getPosition();
+            double posAct[] = actor.getOrientation().getPosition();
             distancePatches.add(dp);
-            return dp.addEntity(entity);
+            return dp.addActor(actor);
         } else {
             for(DistancePatch d : distancePatches){
-                SEWorldID seWorldID = d.addEntity(entity);
+                WorldID seWorldID = d.addActor(actor);
                 if(seWorldID != null){
                     return seWorldID;
                 }
             }
-            DistancePatch dp = new DistancePatch(0, entity.getOrientation().getPosition());
-            return dp.addEntity(entity);
+            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+            return dp.addActor(actor);
         }
     }
     
-    public final List<SEActor> getActors(){
-        List<SEActor> collect = new LinkedList<>();
+    public final List<Actor> getActors(){
+        List<Actor> collect = new LinkedList<>();
         distancePatches.forEach((dp) -> {
             collect.addAll(dp.getActorts());
         });
@@ -126,24 +150,12 @@ public abstract class SEWorld {
     }
     
     public void optimizeScene(){
-        collectRefreshData();
-        reCacheSceneData();
-        if(views != null && currentCamera >= 0){
-            collectRendableMeshes();            
-        }
-    }
-    
-    private void collectRefreshData(){
         distancePatches.forEach((dp) -> {
             dp.refresh();
         });
-        
-    }
-    
-    private void reCacheSceneData(){
-        distancePatches.forEach((dp) -> {
-            dp.reCache();
-        });
+        if(views != null && currentCamera >= 0 && views.get(currentCamera).propsWhereChanged()){
+            collectRendableMeshes();            
+        }
     }
     
     private void collectRendableMeshes(){
@@ -153,7 +165,7 @@ public abstract class SEWorld {
         }
     }
     
-    public List<SEMesh> getRendableMeshes(){
+    public List<Mesh> getRendableMeshes(){
         return rendableMeshes;
     }
     

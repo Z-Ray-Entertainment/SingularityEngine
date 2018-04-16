@@ -6,8 +6,8 @@
 package de.zray.se.graphics.modelloader;
 
 import de.zray.se.graphics.modelloader.OBJLoader.OBJLoader;
-import de.zray.se.graphics.semesh.SEMaterial;
-import de.zray.se.graphics.semesh.SEMesh;
+import de.zray.se.graphics.semesh.Material;
+import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.logger.SELogger;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -22,8 +22,8 @@ public class Modelloader {
     private List<ModelCacheEntry> modelCache = new LinkedList<>();
     private static Modelloader mLoader;
     
-    public SEMesh loadModel(String file){
-        SEMesh tmp = checkForExisitingModels(file);
+    public Mesh loadModel(String file){
+        Mesh tmp = checkForExisitingModels(file);
         if(tmp == null){
             for(LoaderModule module : loaderModules){
                 if(module.meshSupported(file)){
@@ -48,12 +48,12 @@ public class Modelloader {
         return mLoader;
     }
     
-    private SEMesh checkForExisitingModels(String file){
+    private Mesh checkForExisitingModels(String file){
         for(ModelCacheEntry entry : modelCache){
             int meshDataID = entry.compareFile(file);
             if(meshDataID > -1){
                 SELogger.get().dispatchMsg("ModelLoader", SELogger.SELogType.INFO, new String[]{"MeshData for "+file+" already cached!"}, false);
-                return new SEMesh(new SEMaterial(), meshDataID);
+                return new Mesh(new Material(), meshDataID);
             }
         }
         return null;

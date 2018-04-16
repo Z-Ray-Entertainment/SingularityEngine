@@ -9,12 +9,6 @@ package de.zray.se.graphics.semesh;
  *
  * @author vortex
  */
-public class SEVertex {
-    public float vX, vY, vZ;
-    
-    public SEVertex(float vX, float vY, float vz){
-        this.vX = vX;
-        this.vY = vY;
-        this.vZ = vz;
-    }
+public class Amature {
+   
 }

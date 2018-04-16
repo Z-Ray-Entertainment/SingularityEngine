@@ -7,7 +7,7 @@ package de.zray.se.renderbackend.opengl;
 
 import de.zray.se.Settings;
 import de.zray.se.world.DistancePatch;
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.World;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class GLDebugRenderer {
     private int gridDisplayList = -1;
     
-    public void render(SEWorld world){
+    public void render(World world){
         glDisable(GL_LIGHTING);
         glDisable(GL_TEXTURE_2D);
         glCullFace(GL_FALSE);
@@ -55,7 +55,7 @@ public class GLDebugRenderer {
         
     }
     
-    private void renderDistancePatches(SEWorld world){
+    private void renderDistancePatches(World world){
         glColor3f(10, 0, 0);
         for(DistancePatch dp : world.getDistancePatched()){
             double verts[][] = new double[8][3];

@@ -8,7 +8,7 @@ package de.zray.se.world;
 import de.zray.se.Settings;
 import de.zray.se.exceptions.UnknownEntityException;
 import de.zray.se.graphics.LightSource;
-import de.zray.se.graphics.semesh.SEOriantation;
+import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,14 +23,13 @@ import javax.vecmath.Vector3d;
  */
 public class DistancePatch implements Refreshable{
     private UUID uuid = UUID.randomUUID();
-    private DistancePatch parentDP;
-    private SEWorld parentWorld;
+    private DistancePatch parent;
+    private World parentWorld;
     private int level;
     private List<DistancePatch> subPatches = new LinkedList<>();
     private double pos[] = new double[3];
-    private List<SEActor> actors = new LinkedList<>();
-    private List<LightSource> lights = new LinkedList<>();
-    private List<Integer> freeActors = new LinkedList<>(), freeLights = new LinkedList<>();
+    private List<Entity> ents = new LinkedList<>();
+    private List<Integer> freeEnts = new LinkedList<>();
     private boolean refreshNeeded = false;
     
     private List<ReCacheSceneData> reCacheData = new LinkedList<>();
@@ -65,13 +64,14 @@ public class DistancePatch implements Refreshable{
                 dp.refresh();
             });
             if(isLowestDistancePatch()){
-                for(int i = 0; i < actors.size(); i++){
-                    if(actors.get(i) != null){
-                        double posActor[] = actors.get(i).getOrientation().getPosition();
-                        if(!isInside(posActor[0], posActor[1], posActor[2])){
-                            //System.out.println("Actor left DP!");
-                            SEActor tmp = actors.get(i);
-                            reCacheData.add(new ReCacheSceneData(tmp.getSEWorldID(), tmp));
+                for(int i = 0; i < ents.size(); i++){
+                    if(ents.get(i) != null){
+                        double pos[] = ents.get(i).getPositionArray();
+                        if(!isInside(pos[0], pos[1], pos[2])){
+                            System.out.println("Actor left DP!");
+                            Entity tmp = ents.get(i);
+                            removeEntity(tmp.getSEWorldID());
+                            sortActor(tmp);
                         }
                     }
                 }
@@ -79,35 +79,9 @@ public class DistancePatch implements Refreshable{
         }
     }
     
-    /**
-     * Removes all Actors from the correspondening DP and afterwards at them to the scene
-     * to avoid DP changes while optimizing and coausing data missmatches
-     */
-    public void reCache(){
-        if(reCacheData != null && !reCacheData.isEmpty()){
-            if(subPatches.isEmpty() || subPatches == null){
-                if(!reCacheData.isEmpty()){
-                    reCacheData.stream().map((rcd) -> {
-                        removeEntity(rcd.getID());
-                        return rcd;
-                    }).forEachOrdered((rcd) -> {
-                        try {
-                            sortActor(rcd.getActor());
-                        } catch (UnknownEntityException ex) {
-                            SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{ex.getMessage()}, refreshNeeded);
-                            Logger.getLogger(DistancePatch.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    });
-                }
-            }
-            refreshNeeded = false;
-            reCacheData.clear();
-        }
-    }
-    
-    public void resortActor(SEActor actor) throws UnknownEntityException{
+    public void resortEntity(Entity ent){
         for(DistancePatch dp : subPatches){
-            SEWorldID id = dp.addEntity(actor);
+            WorldID id = dp.addActor(actor);
             if(id != null){
                 return;
             }
@@ -115,11 +89,11 @@ public class DistancePatch implements Refreshable{
         sortActor(actor);
     }
     
-    public void sortActor(SEActor act) throws UnknownEntityException{
+    public void sortActor(Actor act){
         System.out.println("Sorting Actor");
         if(parentDP != null){
             System.out.println("Sending to parent");
-            parentDP.resortActor(act);
+            parent.resortEntity(act);
         } else if(parentWorld != null){
             System.out.println("Sending to world");
             parentWorld.addEntity(act);
@@ -128,33 +102,68 @@ public class DistancePatch implements Refreshable{
         }
     }
     
-    public void setParentWorld(SEWorld world){
+    public void setParentWorld(World world){
         this.parentWorld = world;
     }
     
-    private SEWorldID addFreeActor(SEActor actor){
+    public WorldID addActor(Actor actor){
+        Oriantation ori = actor.getOrientation();
+        if(isInside(ori.getPosition()[0], ori.getPosition()[1], ori.getPosition()[2])){
+            if(isLowestDistancePatch()){
+                return addFreeActor(actor);
+            } else {
+                for(DistancePatch dp : subPatches){
+                    WorldID seid = dp.addActor(actor);
+                    if(seid != null){
+                        return seid;
+                    }
+                }
+                WorldID tmpID = createAndAddSubPatch(actor);
+                if(tmpID == null){
+                    SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"SEWorldID is null but should not be null! :("}, false);
+                }
+                return tmpID;
+            }
+        }
+        return null;
+    }
+    
+    private WorldID addFreeActor(Actor actor){
         double pos[] = actor.getOrientation().getPosition();
         if(isInside(pos[0], pos[1], pos[2])){
             if(!freeActors.isEmpty()){
                 int slot = freeActors.get(0);
                 freeActors.remove(slot);
                 actors.set(slot, actor);
-                actor.setSEWorldID(new SEWorldID(uuid, slot, SEWorldID.EntityType.TYPE_ACTOR));
-                actor.setParent(this);
+                actor.setSEWorldID(new WorldID(uuid, slot));
+                actor.setParentDistancePatch(this);
                 return actor.getSEWorldID();
             }
             else{
                 actors.add(actor);
-                actor.setParent(this);
-                actor.setSEWorldID(new SEWorldID(uuid, actors.size()-1, SEWorldID.EntityType.TYPE_ACTOR));
+                actor.setParentDistancePatch(this);
+                actor.setSEWorldID(new WorldID(uuid, actors.size()-1));
                 return actor.getSEWorldID();
             }
         }
         return null;
     }
-        
-    public SEWorldID addEntity(SEEntity ent) throws UnknownEntityException{
-        SEOriantation ori = ent.getOrientation();
+    
+    public boolean removeEntity(WorldID seWorldID){
+        if(uuid.compareTo(seWorldID.getUUID()) == 0){
+            int index = seWorldID.getIndex();
+            if(index == ents.size()-1){
+                ents.remove(index);
+            } else{
+                ents.set(index, null);
+                freeActors.add(index);
+            }
+        }
+        return false;
+    }
+    
+    public WorldID addLightSource(LightSource src){
+        Oriantation ori = src.getOrientation();
         if(isInside(ori.getPosition()[0], ori.getPosition()[1], ori.getPosition()[2])){
             if(isLowestDistancePatch()){
                 if(ent instanceof LightSource){
@@ -170,7 +179,7 @@ public class DistancePatch implements Refreshable{
                     return sub.addEntity(ent);
                 } else {
                     for(DistancePatch dp : subPatches){
-                        SEWorldID seid = dp.addEntity(ent);
+                        WorldID seid = dp.addLightSource(src);
                         if(seid != null) {
                             return seid;
                         }
@@ -181,53 +190,24 @@ public class DistancePatch implements Refreshable{
         return null;
     }
     
-    public boolean removeEntity(SEWorldID seWorldID){
-        if(uuid.compareTo(seWorldID.getUUID()) == 0){
-            int index = seWorldID.getIndex();
-            switch(seWorldID.getEntityType()){
-                case TYPE_ACTOR :
-                    if(uuid.compareTo(seWorldID.getUUID()) == 0){
-                        if(index == actors.size()-1){
-                            actors.remove(index);
-                        } else{
-                            actors.set(index, null);
-                            freeActors.add(index);
-                        }
-                    }
-                    return false;
-                case TYPE_LIGHT :
-                    if(index == lights.size()-1){
-                        lights.remove(index);
-                        return true;
-                    } else{
-                        lights.set(index, null);
-                        freeLights.add(index);
-                        return true;
-                    }
-            }
-            
-        }
-        return false;
-    }
-    
-    private SEWorldID addFreeLightSource(LightSource src){
+    private WorldID addFreeLightSource(LightSource src){
         double pos[] = src.getOrientation().getPosition();
         if(isInside(pos[0], pos[1], pos[2])){
             if(!freeLights.isEmpty()){
                 int slot = freeLights.get(0);
                 freeLights.remove(slot);
                 lights.set(slot, src);
-                return new SEWorldID(uuid, slot, SEWorldID.EntityType.TYPE_LIGHT);
+                return new WorldID(uuid, slot);
             }
             else{
                 lights.add(src);
-                return new SEWorldID(uuid, lights.size()-1, SEWorldID.EntityType.TYPE_LIGHT);
+                return new WorldID(uuid, lights.size()-1);
             }
         }
         return null;
     }
     
-    public boolean removeLightSource(SEWorldID seWorldID){
+    public boolean removeLightSource(WorldID seWorldID){
         if(uuid.compareTo(seWorldID.getUUID()) == 0){
             int index = seWorldID.getIndex();
             if(index == lights.size()-1){
@@ -274,11 +254,11 @@ public class DistancePatch implements Refreshable{
         return val <= end && val >= start;
     }
     
-    public List<SEActor> getActorts(){
+    public List<Actor> getActorts(){
         if(isLowestDistancePatch()){
             return actors;
         } else {
-            List<SEActor> tmp = new LinkedList<>();
+            List<Actor> tmp = new LinkedList<>();
             subPatches.forEach((dp) -> {
                 tmp.addAll(dp.getActorts());
             });
@@ -323,10 +303,10 @@ public class DistancePatch implements Refreshable{
         return level;
     }
     
-    private SEWorldID createAndAddSubPatch(SEActor actor) throws UnknownEntityException{
+    private WorldID createAndAddSubPatch(Actor actor){
         DistancePatch sub = new DistancePatch(this, this.level+1, actor.getOrientation().getPosition());
         subPatches.add(sub);
-        SEWorldID seid = sub.addEntity(actor);
+        WorldID seid = sub.addActor(actor);
         Vector3d subPos = new Vector3d(sub.getPostion());
         System.out.println("New DP at "+subPos.toString()+" for "+actor.getOrientation().getPositionVec().toString());
         return seid;

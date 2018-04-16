@@ -5,10 +5,10 @@
  */
 package de.zray.se.renderbackend.opengl;
 
-import de.zray.se.graphics.semesh.SEFace;
-import de.zray.se.graphics.semesh.SEMaterial;
-import de.zray.se.graphics.semesh.SEMesh;
-import de.zray.se.graphics.semesh.SEMeshData;
+import de.zray.se.graphics.semesh.Face;
+import de.zray.se.graphics.semesh.Material;
+import de.zray.se.graphics.semesh.Mesh;
+import de.zray.se.graphics.semesh.MeshData;
 import de.zray.se.logger.SELogger;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
@@ -20,11 +20,11 @@ import static org.lwjgl.opengl.GL15.*;
  * @author vortex
  */
 public class GLUtils {
-    public void generateVBO(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+    public void generateVBO(MeshData mesh, RenderDataCacheEntry rDataCache){
         rDataCache.vboSize = mesh.getFaces().size()*3*8;
         FloatBuffer vboData = BufferUtils.createFloatBuffer(rDataCache.vboSize);
         
-        for(SEFace face : mesh.getFaces()){
+        for(Face face : mesh.getFaces()){
             vboData.put(mesh.getVertecies().get(face.v1).vX);
             vboData.put(mesh.getVertecies().get(face.v1).vY);
             vboData.put(mesh.getVertecies().get(face.v1).vZ);
@@ -61,11 +61,11 @@ public class GLUtils {
         SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid VBO: "+ rDataCache.vboID}, false);
     }
     
-    public void generateVBOWired(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+    public void generateVBOWired(MeshData mesh, RenderDataCacheEntry rDataCache){
         rDataCache.vboSizeWired = mesh.getFaces().size()*6*8; //Größe für den FloatBuffer (8 Werte pro Vertex)
         FloatBuffer vboData = BufferUtils.createFloatBuffer(rDataCache.vboSizeWired);
         
-        for(SEFace face : mesh.getFaces()){
+        for(Face face : mesh.getFaces()){
             vboData.put(mesh.getVertecies().get(face.v1).vX);
             vboData.put(mesh.getVertecies().get(face.v1).vY);
             vboData.put(mesh.getVertecies().get(face.v1).vZ);
@@ -161,9 +161,9 @@ public class GLUtils {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     
-    public void drawObject(SEMeshData mesh){
+    public void drawObject(MeshData mesh){
         glBegin(GL_TRIANGLES);
-        for(SEFace face : mesh.getFaces()){
+        for(Face face : mesh.getFaces()){
             glNormal3f(mesh.getNormals().get(face.n1).nX, mesh.getNormals().get(face.n1).nY, mesh.getNormals().get(face.n1).nZ);
             glTexCoord2f(mesh.getUVs().get(face.uv1).u, mesh.getUVs().get(face.uv1).v);
             glVertex3f(mesh.getVertecies().get(face.v1).vX, mesh.getVertecies().get(face.v1).vY, mesh.getVertecies().get(face.v1).vZ);
@@ -179,9 +179,9 @@ public class GLUtils {
         glEnd();
     }
     
-    public void drawObjectWired(SEMeshData mesh){
+    public void drawObjectWired(MeshData mesh){
         glBegin(GL_LINES);
-        for(SEFace face : mesh.getFaces()){
+        for(Face face : mesh.getFaces()){
             glTexCoord2f(mesh.getUVs().get(face.uv1).u, mesh.getUVs().get(face.uv1).v);
             glVertex3f(mesh.getVertecies().get(face.v1).vX, mesh.getVertecies().get(face.v1).vY, mesh.getVertecies().get(face.v1).vZ);
             glTexCoord2f(mesh.getUVs().get(face.uv2).u, mesh.getUVs().get(face.uv2).v);
@@ -198,7 +198,7 @@ public class GLUtils {
         glEnd();
     }
     
-    public void generateDisplayListWired(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+    public void generateDisplayListWired(MeshData mesh, RenderDataCacheEntry rDataCache){
         rDataCache.displayListIDWired = glGenLists(1);
         glNewList(rDataCache.displayListIDWired, GL_COMPILE);
         drawObjectWired(mesh);
@@ -218,7 +218,7 @@ public class GLUtils {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
     
-    private void applyTextures(SEMaterial mat, OpenGLRenderData rData){
+    private void applyTextures(Material mat, OpenGLRenderData rData){
         if(mat.getTexture() != null && !mat.getTexture().isEmpty()){
             if(rData.getDiffuseTextureID() == -1){
                 loadTexture(mat.getTexture(), rData);
@@ -231,7 +231,7 @@ public class GLUtils {
         }
     }
     
-    public void applyMaterial(SEMaterial mat, OpenGLRenderData rData){
+    public void applyMaterial(Material mat, OpenGLRenderData rData){
         if(mat.cullBackfaces() && !glIsEnabled(GL_CULL_FACE)){
             glEnable(GL_CULL_FACE);
         }
@@ -261,7 +261,7 @@ public class GLUtils {
         applyTextures(mat, rData);
     }
     
-    public void generateDisplayList(SEMeshData mesh, RenderDataCacheEntry rDataCache){
+    public void generateDisplayList(MeshData mesh, RenderDataCacheEntry rDataCache){
         rDataCache.displayListID = glGenLists(1);
         glNewList(rDataCache.displayListID, GL_COMPILE);
         drawObject(mesh);

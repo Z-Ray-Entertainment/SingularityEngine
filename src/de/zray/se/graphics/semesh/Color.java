@@ -12,10 +12,10 @@ import org.lwjgl.BufferUtils;
  *
  * @author vortex
  */
-public class SEColor {
+public class Color {
     FloatBuffer colorData;
     
-    public SEColor(){
+    public Color(){
         colorData = BufferUtils.createFloatBuffer(4);
         colorData.put(255);
         colorData.put(255);
@@ -24,7 +24,7 @@ public class SEColor {
         colorData.flip();
     }
     
-    public SEColor(float red, float green, float blue, float alpha){
+    public Color(float red, float green, float blue, float alpha){
         colorData = BufferUtils.createFloatBuffer(4);
         colorData.put(red);
         colorData.put(green);

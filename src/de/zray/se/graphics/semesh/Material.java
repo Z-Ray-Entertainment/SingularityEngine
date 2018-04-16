@@ -11,7 +11,7 @@ import javax.vecmath.Color3f;
  *
  * @author vortex
  */
-public class SEMaterial {
+public class Material {
     public static enum ReflectionMode {BLEND_INTO_MATERIAL, BLEND_INTO_SKY, NO_BLEND};
     
     private String texture, specMap, bumpMap, displaceMap, parallaxMap;
@@ -22,40 +22,40 @@ public class SEMaterial {
     private boolean cullBackFaces = false, shadeless = false;
     private ReflectionMode refMode = ReflectionMode.NO_BLEND;
     
-    public SEMaterial(){}
+    public Material(){}
     
-    public SEMaterial(Color3f diffuseColor){
+    public Material(Color3f diffuseColor){
         this.diffuseColor = diffuseColor;
     }
     
-    public SEMaterial(Color3f diffuseColor, Color3f specColor){
+    public Material(Color3f diffuseColor, Color3f specColor){
         this.diffuseColor = diffuseColor;
         this.specularColor = specColor;
     }
     
-    public SEMaterial(Color3f diffuseColor, Color3f specColor, Color3f reflectionColor){
+    public Material(Color3f diffuseColor, Color3f specColor, Color3f reflectionColor){
         this.diffuseColor = diffuseColor;
         this.specularColor = specColor;
         this.reflectionColor = reflectionColor;
     }
     
-    public SEMaterial(String diffuseTexture){
+    public Material(String diffuseTexture){
         setTextures(diffuseTexture, "", "", "", "");
     }
     
-    public SEMaterial(String diffuseTexture, String bumpMap){
+    public Material(String diffuseTexture, String bumpMap){
         setTextures(diffuseTexture, "", bumpMap, "", "");
     }
     
-    public SEMaterial(String diffuseTexture, String bumpMap, String specMap){
+    public Material(String diffuseTexture, String bumpMap, String specMap){
         setTextures(diffuseTexture, specMap, bumpMap, "", "");
     }
     
-    public SEMaterial(String diffuseTexture, String bumpMap, String specMap, String paralax){
+    public Material(String diffuseTexture, String bumpMap, String specMap, String paralax){
         setTextures(diffuseTexture, specMap, bumpMap, "", paralax);
     }
     
-    public SEMaterial(String diffuseTexture, String bumpMap, String specMap, String paralax, String displaceMap){
+    public Material(String diffuseTexture, String bumpMap, String specMap, String paralax, String displaceMap){
         setTextures(diffuseTexture, specMap, bumpMap, displaceMap, paralax);
     }
     

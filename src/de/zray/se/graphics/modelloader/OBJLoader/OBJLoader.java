@@ -5,14 +5,14 @@
  */
 package de.zray.se.graphics.modelloader.OBJLoader;
 
-import de.zray.se.graphics.semesh.SEMaterial;
+import de.zray.se.graphics.semesh.Material;
 import de.zray.se.graphics.modelloader.LoaderModule;
-import de.zray.se.graphics.semesh.SEFace;
-import de.zray.se.graphics.semesh.SEMesh;
-import de.zray.se.graphics.semesh.SEMeshData;
-import de.zray.se.graphics.semesh.SENormal;
-import de.zray.se.graphics.semesh.SEUV;
-import de.zray.se.graphics.semesh.SEVertex;
+import de.zray.se.graphics.semesh.Face;
+import de.zray.se.graphics.semesh.Mesh;
+import de.zray.se.graphics.semesh.MeshData;
+import de.zray.se.graphics.semesh.Normal;
+import de.zray.se.graphics.semesh.UV;
+import de.zray.se.graphics.semesh.Vertex;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,11 +32,11 @@ public class OBJLoader extends LoaderModule{
     }
     
     @Override
-    public SEMesh loadModel(String file) {
+    public Mesh loadModel(String file) {
         try {
             String objFile = loadTextFile(file);
             List<OBJGroup> groups = readGroups(objFile);
-            SEMesh root = objGroupToSEMesh(groups.get(0));
+            Mesh root = objGroupToSEMesh(groups.get(0));
             for(int i = 1; i < groups.size(); i++){
                 root.addSubMesh(objGroupToSEMesh(groups.get(i)));
             }
@@ -51,27 +51,27 @@ public class OBJLoader extends LoaderModule{
         return null;
     }
     
-    private SEMesh objGroupToSEMesh(OBJGroup group){
-        List<SEVertex> seVerts = new ArrayList<>();
-        List<SEUV> seUVs = new ArrayList<>();
-        List<SENormal> seNormals = new ArrayList<>();
-        List<SEFace> faces = new ArrayList<>();
+    private Mesh objGroupToSEMesh(OBJGroup group){
+        List<Vertex> seVerts = new ArrayList<>();
+        List<UV> seUVs = new ArrayList<>();
+        List<Normal> seNormals = new ArrayList<>();
+        List<Face> faces = new ArrayList<>();
         
         for(int i = 0; i < group.verts.size(); i++){
-            seVerts.add(new SEVertex(group.verts.get(i).x, group.verts.get(i).y, group.verts.get(i).z));
+            seVerts.add(new Vertex(group.verts.get(i).x, group.verts.get(i).y, group.verts.get(i).z));
         }
         for(int i = 0; i < group.uvs.size(); i++){
-            seUVs.add(new SEUV(group.uvs.get(i).u, group.uvs.get(i).v));
+            seUVs.add(new UV(group.uvs.get(i).u, group.uvs.get(i).v));
         }
         for(int i = 0; i < group.normlas.size(); i++){
-            seNormals.add(new SENormal(group.normlas.get(i).x, group.normlas.get(i).y, group.normlas.get(i).z));
+            seNormals.add(new Normal(group.normlas.get(i).x, group.normlas.get(i).y, group.normlas.get(i).z));
         }
         for(OBJGroup.Face tmp : group.faces){
-            faces.add(new SEFace(tmp.v1-1, tmp.v2-1, tmp.v3-1, tmp.uv1-1, tmp.uv2-1, tmp.uv3-1, tmp.n1-1, tmp.n2-1, tmp.n3-1));//-1 da OBJ Format mit 1 Indiziert
+            faces.add(new Face(tmp.v1-1, tmp.v2-1, tmp.v3-1, tmp.uv1-1, tmp.uv2-1, tmp.uv3-1, tmp.n1-1, tmp.n2-1, tmp.n3-1));//-1 da OBJ Format mit 1 Indiziert
         }
-        SEMeshData mData = new SEMeshData(seVerts, seUVs, seNormals, faces, null);
+        MeshData mData = new MeshData(seVerts, seUVs, seNormals, faces, null);
         int mDataID = AssetLibrary.get().addMesh(mData);
-        return new SEMesh(new SEMaterial(), mDataID);
+        return new Mesh(new Material(), mDataID);
     }
     
     private String loadTextFile(String file) throws FileNotFoundException,

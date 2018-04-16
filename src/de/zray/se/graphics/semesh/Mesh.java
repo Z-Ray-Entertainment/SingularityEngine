@@ -7,7 +7,7 @@ package de.zray.se.graphics.semesh;
 
 import de.zray.se.graphics.Camera;
 import de.zray.se.world.Refreshable;
-import de.zray.se.world.SEActor;
+import de.zray.se.world.Actor;
 import java.util.LinkedList;
 import java.util.List;
 import javax.vecmath.Vector3f;
@@ -16,26 +16,26 @@ import javax.vecmath.Vector3f;
  *
  * @author vortex
  */
-public class SEMesh{
+public class Mesh{
     public static enum RenderMode{DIRECT, DISPLAY_LIST, VBO}
     public static enum DisplayMode{SOLID, WIRED, DOTS};
     
     private int renderData = -1;
     private RenderMode renderMode = RenderMode.DIRECT;
     private DisplayMode displayMode = DisplayMode.SOLID;
-    private SEOriantation offset = new SEOriantation(null);
-    private SEMaterial material = new SEMaterial();
+    private Oriantation offset = new Oriantation(null);
+    private Material material = new Material();
     private boolean isAnimated = false;
-    private SEMesh lod;
-    private List<SEMesh> subMeshes = new LinkedList<>();
+    private Mesh lod;
+    private List<Mesh> subMeshes = new LinkedList<>();
     private int meshData = -1;
     private Vector3f direction;
     private float renderDist = -1;
     private BoundingBox bb;
     
-    public SEMesh(SEMaterial material, int seMeshData){
+    public Mesh(Material material, int seMeshData){
         this.material = material;
-        offset = new SEOriantation(null);
+        offset = new Oriantation(null);
         meshData = seMeshData;
         this.direction = new Vector3f(0, 0, -1);
     }
@@ -68,15 +68,15 @@ public class SEMesh{
         return direction;
     }
     
-    public void addSubMesh(SEMesh subMesh){
+    public void addSubMesh(Mesh subMesh){
         subMeshes.add(subMesh);
     }
     
-    public void setMaterial(SEMaterial mat){
+    public void setMaterial(Material mat){
         this.material = mat;
     }
     
-    public SEMaterial getMaterial(){
+    public Material getMaterial(){
         return material;
     }
     
@@ -88,20 +88,20 @@ public class SEMesh{
         return renderMode;
     }
         
-    public void addLOD(SEMesh mesh){
+    public void addLOD(Mesh mesh){
         mesh.setOrientation(offset);
-        SEMesh freeLOD = lod;
+        Mesh freeLOD = lod;
         while(freeLOD != null){
             freeLOD = freeLOD.lod;
         }
         freeLOD = mesh;
     }
     
-    public void setOrientation(SEOriantation offset){
+    public void setOrientation(Oriantation offset){
         this.offset = offset;
     }
     
-    public SEOriantation getOffset(){
+    public Oriantation getOffset(){
         return offset;
     }
     
@@ -147,14 +147,14 @@ public class SEMesh{
      * @param activeCam the cmarera which is used to determine the ditance to the player
      * @return visible Meshes
      */
-    public List<SEMesh> getRendableMeshes(Camera activeCam){
-        List<SEMesh> rMeshes = new LinkedList<>();
+    public List<Mesh> getRendableMeshes(Camera activeCam){
+        List<Mesh> rMeshes = new LinkedList<>();
         if(inView(activeCam)){
             rMeshes.add(this);
-            for(SEMesh sub : subMeshes){
-                List<SEMesh> rendableSubMeshes = sub.getRendableMeshes(activeCam);
+            for(Mesh sub : subMeshes){
+                List<Mesh> rendableSubMeshes = sub.getRendableMeshes(activeCam);
                 if(rendableSubMeshes != null){
-                    for(SEMesh tmp : rendableSubMeshes){
+                    for(Mesh tmp : rendableSubMeshes){
                         if(tmp != null){
                             rMeshes.add(tmp);
                         }
@@ -164,7 +164,7 @@ public class SEMesh{
             return rMeshes;
         }
         else {
-            SEMesh currentdLOD = lod;
+            Mesh currentdLOD = lod;
             while(currentdLOD != null && !currentdLOD.inView(activeCam)){
                 currentdLOD = currentdLOD.lod;
             }

@@ -5,15 +5,14 @@
  */
 package de.zray.se.graphics;
 
-import de.zray.se.world.SEEntity;
+import de.zray.se.graphics.semesh.Oriantation;
+import de.zray.se.world.Entity;
 
 /**
  *
  * @author Vortex Acherontic
  */
-public class LightSource extends SEEntity{
-
-    
+public class LightSource extends Entity {
     public static enum Type{SPOT, POINT, SUN, VOLUME};
     public static enum FallOf{LINEAR, CUBIC, INVERSE_CUBIC, INFINITY}
     public static final int DIFFUSE = 0, SPECULAR = 1, AMBIENT = 2;
