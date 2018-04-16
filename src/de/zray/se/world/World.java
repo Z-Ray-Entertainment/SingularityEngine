@@ -5,11 +5,9 @@
  */
 package de.zray.se.world;
 
-import de.zray.se.MainThread;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.graphics.Camera;
-import de.zray.se.graphics.LightSource;
 import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
@@ -51,65 +49,26 @@ public abstract class World {
         }
     }
     
-    public WorldID addLightSource(LightSource src){
+    public final void addEntity(Entity ent){
         if(distancePatches.isEmpty()){
-            DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
-            distancePatches.add(dp);
-            return dp.addLightSource(src);
-        } else {
-            for(DistancePatch d : distancePatches){
-                WorldID seWorldID = d.addLightSource(src);
-                if(seWorldID == null){
-                    DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
-                    return dp.addLightSource(src);
-                } else{
-                    return seWorldID;
-                }
-            }
-            System.err.println("Unable to add light source! SEWorldID is null!!!");
-            return null;
-        }
-    }
-    
-    public void removeLight(WorldID seWorldID){
-        for(DistancePatch dp : distancePatches){
-            if(dp.removeLightSource(seWorldID)){
-                return;
-            }
-        }
-    }
-    
-    public List<LightSource> getClosestLightsToActiveCamera(int amount){
-        List<LightSource> srcs = new LinkedList<>();
-        distancePatches.forEach((dp) -> {
-            srcs.addAll(dp.getLights());
-        });
-        return srcs;
-    }
-    
-    public final WorldID addSEActor(Actor actor){
-        if(distancePatches.isEmpty()){
-            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+            DistancePatch dp = new DistancePatch(0, ent.getPositionArray());
             dp.setParentWorld(this);
-            double posAct[] = actor.getOrientation().getPosition();
+            double posAct[] = ent.getPositionArray();
             distancePatches.add(dp);
-            return dp.addActor(actor);
+            dp.addEntity(ent);
         } else {
             for(DistancePatch d : distancePatches){
-                WorldID seWorldID = d.addActor(actor);
-                if(seWorldID != null){
-                    return seWorldID;
-                }
+                d.addEntity(ent);
             }
-            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
-            return dp.addActor(actor);
+            DistancePatch dp = new DistancePatch(0, ent.getPositionArray());
+            dp.addEntity(ent);
         }
     }
     
-    public final List<Actor> getActors(){
-        List<Actor> collect = new LinkedList<>();
+    public final List<Entity> getEntities(){
+        List<Entity> collect = new LinkedList<>();
         distancePatches.forEach((dp) -> {
-            collect.addAll(dp.getActorts());
+            collect.addAll(dp.getEntities());
         });
         return collect;
     }
@@ -132,13 +91,8 @@ public abstract class World {
     
     public final void act(double delta){
         distancePatches.forEach((DistancePatch dp) -> {
-            dp.getActorts().stream().filter((actor) -> (actor != null)).forEachOrdered((actor) -> {
-                try{
-                    actor.getSEAI().act(MainThread.getDeltaInSec());
-                }
-                catch(NullPointerException e){
-                    //Null AI
-                }
+            dp.getEntities().stream().filter((ent) -> (ent instanceof Actor)).forEachOrdered((ent) -> {
+                ((Actor) ent).getSEAI().act(delta);
             });
         });
         if(audioWorld != null){
@@ -203,5 +157,15 @@ public abstract class World {
         });
         
         return tmp;
+    }
+
+    public Iterable<Actor> getActors() {
+        List<Actor> actors = new LinkedList<>();
+        distancePatches.forEach((dp) -> {
+            dp.getEntities().stream().filter((ent) -> (ent instanceof Actor)).forEachOrdered((ent) -> {
+                actors.add((Actor) ent);
+            });
+        });
+        return actors;
     }
 }

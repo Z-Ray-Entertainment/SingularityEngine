@@ -12,9 +12,11 @@ import javax.vecmath.Vector3d;
  *
  * @author vortex
  */
-public abstract class Entity implements Refreshable{
+public abstract class Entity{
     private Oriantation orientation;
     private WorldID id;
+    private boolean refreshNeeded = false;
+    private DistancePatch parent;
     
     public Entity(){
         orientation = new Oriantation(this);
@@ -32,12 +34,24 @@ public abstract class Entity implements Refreshable{
         return orientation.getPosition();
     }
 
-    @Override
     public void setRefreshNeeded(boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        refreshNeeded = b;
+        parent.setRefreshNeeded(b);
+    }
+    
+    public void setParentDP(DistancePatch parent){
+        this.parent = parent;
     }
     
     public void setWorldID(WorldID id){
         this.id = id;
+    }
+    
+    public WorldID getWorldID(){
+        return id;
+    }
+    
+    public boolean isRefreshNedded(){
+        return refreshNeeded;
     }
 }
