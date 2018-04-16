@@ -3,18 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se.physics;
-
-import de.zray.se.world.SEActor;
+package de.zray.se.graphics.semesh;
 
 /**
  *
  * @author Vortex Acherontic
  */
-public class SEBulletObject {
-    private SEActor parrentActor;
+public class SEUV {
+    public float u = 0, v = 0;
     
-    public SEBulletObject(SEActor parrent){
-        this.parrentActor = parrent;
+    public SEUV(float u, float v){
+        this.u = u;
+        this.v = v;
     }
 }

@@ -5,10 +5,8 @@
  */
 package de.zray.se.env;
 
-import de.zray.se.grapics.material.SEMaterial;
+import de.zray.se.graphics.semesh.SEMaterial;
 import java.io.IOException;
-import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.util.glu.Sphere;
 
 /**
  *
@@ -28,7 +26,7 @@ public class SkyDome {
     }
     
     public void render() throws IOException{
-        glPushMatrix();
+        /*glPushMatrix();
         if(glIsEnabled(GL_DEPTH_TEST)){
             glDisable(GL_DEPTH_TEST);
             disabledDepth = true;
@@ -48,7 +46,7 @@ public class SkyDome {
         if(disabledLightting){
             glEnable(GL_LIGHTING);
         }
-        glPopMatrix();
+        glPopMatrix();*/
     }
     
     public void update(float delta){

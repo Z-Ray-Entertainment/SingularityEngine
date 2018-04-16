@@ -5,22 +5,30 @@
  */
 package de.zray.se.ai;
 
-import de.zray.se.SEActor;
-import de.zray.se.SEWorld;
+import de.zray.se.world.SEActor;
+import de.zray.se.world.SEWorld;
 
 /**
  *
  * @author Vortex Acherontic
  */
 public abstract class SEAI {
-    public SEActor parrentActor;
-    public SEWorld parrentWorld;
+    public SEActor parentActor;
+    public SEWorld parentWorld;
     
-    public SEAI(SEWorld world, SEActor actor, SEAIModule aiMod){
-        this.parrentWorld = world;
-        this.parrentActor = actor;
+    public SEAI(SEWorld world, SEActor actor, SEAIWorld aiMod){
+        this.parentWorld = world;
+        this.parentActor = actor;
         aiMod.addAI(this);
     }
     
-    public abstract void act(float delta);
+    public final SEActor getActor(){
+        return parentActor;
+    }
+    
+    public void setActor(SEActor actor){
+        this.parentActor = actor;
+    }
+    
+    public abstract void act(double delta);
 }

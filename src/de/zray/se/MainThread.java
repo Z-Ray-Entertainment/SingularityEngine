@@ -5,79 +5,93 @@
  */
 package de.zray.se;
 
-import de.zray.se.commands.Mute;
-import de.zray.se.logger.SELogger;
-import de.zray.coretex.Console;
-import de.zray.coretex.exceptions.DublicateCommandException;
+import de.zray.se.world.SEWorld;
+import de.zray.se.renderbackend.RenderBackend;
 import java.io.IOException;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import org.lwjgl.opengl.PixelFormat;
 
 /**
  *
  * @author vortex
  */
 public class MainThread {
-    private static boolean closeRequested = false;
-    private static SEWorld currentWorld;
-    private static Console console;
+    private static double fpsUpdate = 0;
+    private static long delta = 0, timeBeforeAct = 0;
+    private static int fps = 0, countedFrames;
     
-    public static void loop(SEWorld world) throws IOException{
+    private RenderBackend backend;
+    private SEWorld currentWorld;
+    
+    private static void updateDelta(){
+        delta =  getTimeInMillis() - timeBeforeAct;
+        timeBeforeAct = getTimeInMillis();
+        calcFPS(delta);
+    }
+    
+    private static void calcFPS(double delta){
+        fpsUpdate += delta;
+        countedFrames++;
+        if(fpsUpdate >= 1000){
+            fps = countedFrames;
+            countedFrames = 0;
+            fpsUpdate = 0;
+        }
+    }
+    
+    public static final double getDeltaInSec(){
+        return delta/100f;
+    }
+    
+    public static final double getDeltaInMs(){
+        return delta;
+    }
+          
+    public static final long getTimeInMillis(){
+        return System.currentTimeMillis();
+    }
+    
+    public static final int getFPS(){
+        return fps;
+    }
+    
+    public void setRenderBackend(RenderBackend backend){
+        this.backend = backend;
+    }
+    
+    public void switchWorld(SEWorld world){
         currentWorld = world;
-        if(console == null){
-            createConsole();
-        }
-        if(!Display.isCreated()){
-            createDisplay();
-        }
-        
-        while(!closeRequested){
-            world.act();
-            Display.update();
-        }
     }
     
-    public static SEWorld getCurrentWorld(){
-        return currentWorld;
+    public void loop() throws IOException{
+        Thread loop = new Thread(() -> {
+            while(!backend.closeRequested()){
+                if(!backend.isInited()){
+                    backend.init();
+                }
+                if(currentWorld != null){
+                    currentWorld.act(getDeltaInSec());
+                    currentWorld.optimizeScene();
+                }
+                if(backend.isReady()){
+                    backend.setCurrentWorld(currentWorld);
+                    backend.renderWorld(Settings.get().debug.debugMode);
+                    
+                }
+                updateDelta();
+            }
+            shutdown();
+        });
+        loop.start();
     }
     
-    public static Console getConsole(){
-        if(console == null){
-            createConsole();
+    public void shutdown(){
+        if(currentWorld.getAudioWorld() != null){
+            currentWorld.getAudioWorld().shutdown();
         }
-        return console;
-    }
-    
-    public static void shutdown(){
+        backend.shutdown();
         System.exit(0);
     }
     
-    private static void createConsole(){
-        try {
-            console = new Console();
-            console.addCommand(new Mute());
-        } catch (DublicateCommandException ex) {
-            SELogger.get().dispatchMsg("MainThread", SELogger.SELogType.ERROR, new String[]{ex.getMessage()}, false);
-        }
-    }
-    
-    private static void createDisplay(){
-        PixelFormat pixelFormat = new PixelFormat();
-        ContextAttribs contextAtrributes = new ContextAttribs(3, 0);
-        
-        try {
-                Display.setDisplayMode(new DisplayMode(Settings.get().window.resX, Settings.get().window.resY));
-                Display.setTitle(Settings.get().title+" "+Settings.get().version);
-                Display.setResizable(Settings.get().window.displayRezisable);
-                Display.create(pixelFormat, contextAtrributes);
-        } catch (LWJGLException e) {
-                e.printStackTrace();
-                System.exit(-1);
-        }
-        glClearColor(0.1f, 0.1f, 0.1f, 0f);
+    public SEWorld getCurrentWorld(){
+        return currentWorld;
     }
 }

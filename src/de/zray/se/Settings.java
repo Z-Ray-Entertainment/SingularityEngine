@@ -14,7 +14,7 @@ import java.util.Date;
 public class Settings {
     private static Settings SETTINGS = new Settings();
     public static enum DebugMode{DEBUG_ON, DEBUG_AND_OBJECTS, DEBUG_OFF};
-    
+        
     public static Settings get(){
         return SETTINGS;
     }
@@ -23,7 +23,7 @@ public class Settings {
         SETTINGS = set;
     }
     
-    public String title = "SingularityEngine", version = "0.0.5 Currendum";
+    public String title = "SingularityEngine", version = "0.0.8 Currendum";
     public String logfile = System.getProperty("user.home")+"/.se/loggs/SE-Log"+new Date().toString()+".log";
     public DebugSettings debug = new DebugSettings();
     public SoundSettings sound = new SoundSettings();
@@ -45,7 +45,7 @@ public class Settings {
     }
     
     public class SceneSettings{
-        public float dbSize = 50;
+        public int[] dpSizes = {1000, 100, 10, 1};
     }
     
     public class WindowSettings{
@@ -54,7 +54,7 @@ public class Settings {
     }
     
     public class ViewSettings{
-        public float nearClip = 0.1f, farClip = 100, fov = 75;
+        public float nearClip = 0.1f, farClip = 1000, fov = 75;
     }
     
     public class SoundSettings{
@@ -63,5 +63,9 @@ public class Settings {
     
     public class DebugSettings{
         public DebugMode debugMode = DebugMode.DEBUG_OFF;
+        public boolean showDistancePatches = true, showGrid = true,
+                showWorldCoordSystem = true, showBoundingBoxes = true,
+                showLocalCoordSystems = true, renderOnTop = true;
+        public double gridSize = 1000, gridStep = 1;
     }
 }
