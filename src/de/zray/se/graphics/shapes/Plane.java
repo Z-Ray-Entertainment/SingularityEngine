@@ -5,13 +5,13 @@
  */
 package de.zray.se.graphics.shapes;
 
-import de.zray.se.graphics.semesh.SEMaterial;
-import de.zray.se.graphics.semesh.SEFace;
-import de.zray.se.graphics.semesh.SEMesh;
-import de.zray.se.graphics.semesh.SEMeshData;
-import de.zray.se.graphics.semesh.SENormal;
-import de.zray.se.graphics.semesh.SEUV;
-import de.zray.se.graphics.semesh.SEVertex;
+import de.zray.se.graphics.semesh.Material;
+import de.zray.se.graphics.semesh.Face;
+import de.zray.se.graphics.semesh.Mesh;
+import de.zray.se.graphics.semesh.MeshData;
+import de.zray.se.graphics.semesh.Normal;
+import de.zray.se.graphics.semesh.UV;
+import de.zray.se.graphics.semesh.Vertex;
 import java.util.ArrayList;
 import java.util.List;
 import de.zray.se.storages.AssetLibrary;
@@ -22,39 +22,39 @@ import de.zray.se.storages.AssetLibrary;
  * @author vortex
  */
 public class Plane implements SEMeshProvider{
-    private SEMesh plane;
+    private Mesh plane;
     
     public Plane(float width, float height, boolean backfaceculling){
-        List<SEVertex> vertecies = new ArrayList();
-        List<SEUV> uvs = new ArrayList<>();
-        List<SENormal> normals = new ArrayList<>();
-        List<SEFace> faces = new ArrayList();
+        List<Vertex> vertecies = new ArrayList();
+        List<UV> uvs = new ArrayList<>();
+        List<Normal> normals = new ArrayList<>();
+        List<Face> faces = new ArrayList();
         
-        vertecies.add(new SEVertex(-width, 0, height));
-        vertecies.add(new SEVertex(width, 0, height));
-        vertecies.add(new SEVertex(width, 0, -height));
+        vertecies.add(new Vertex(-width, 0, height));
+        vertecies.add(new Vertex(width, 0, height));
+        vertecies.add(new Vertex(width, 0, -height));
         
-        vertecies.add(new SEVertex(-width, 0, height));
-        vertecies.add(new SEVertex(width, 0, -height));
-        vertecies.add(new SEVertex(-width, 0, -height));
+        vertecies.add(new Vertex(-width, 0, height));
+        vertecies.add(new Vertex(width, 0, -height));
+        vertecies.add(new Vertex(-width, 0, -height));
         
-        uvs.add(new SEUV(0, 0));
-        uvs.add(new SEUV(1, 0));
-        uvs.add(new SEUV(1, 1));
-        uvs.add(new SEUV(0, 1));
+        uvs.add(new UV(0, 0));
+        uvs.add(new UV(1, 0));
+        uvs.add(new UV(1, 1));
+        uvs.add(new UV(0, 1));
         
-        normals.add(new SENormal(0, 1, 0));
+        normals.add(new Normal(0, 1, 0));
         
-        faces.add(new SEFace(0, 1, 2, 0, 1, 2, 0, 0, 0));
-        faces.add(new SEFace(3, 4, 5, 0, 2, 3, 0, 0, 0));
+        faces.add(new Face(0, 1, 2, 0, 1, 2, 0, 0, 0));
+        faces.add(new Face(3, 4, 5, 0, 2, 3, 0, 0, 0));
         
-        SEMeshData mData = new SEMeshData(vertecies, uvs, normals, faces, null);
+        MeshData mData = new MeshData(vertecies, uvs, normals, faces, null);
         int mDataID = AssetLibrary.get().addMesh(mData);
-        plane = new SEMesh(new SEMaterial(), mDataID);
+        plane = new Mesh(new Material(), mDataID);
     }
 
     @Override
-    public SEMesh getSEMesh(){
+    public Mesh getSEMesh(){
         return plane;
     }
 }

@@ -13,16 +13,16 @@ import java.util.List;
  *
  * @author vortex
  */
-public class SEMeshData {
-    private List<SEVertex> vertecies = new LinkedList<>();
-    private List<SEUV> uvs = new LinkedList<>();
-    private List<SENormal> normals = new LinkedList<>();
-    private List<SEFace> faces = new LinkedList<>();
-    private SEAmature amature = new SEAmature();
+public class MeshData {
+    private List<Vertex> vertecies = new LinkedList<>();
+    private List<UV> uvs = new LinkedList<>();
+    private List<Normal> normals = new LinkedList<>();
+    private List<Face> faces = new LinkedList<>();
+    private Amature amature = new Amature();
     private boolean cleared = false;
     private BoundingBox bb;
     
-    public SEMeshData(List<SEVertex> vertexList, List<SEUV> uvs, List<SENormal> normals, List<SEFace> faceList, SEAmature amature){
+    public MeshData(List<Vertex> vertexList, List<UV> uvs, List<Normal> normals, List<Face> faceList, Amature amature){
         this.amature = amature;
         this.faces = faceList;
         
@@ -51,19 +51,19 @@ public class SEMeshData {
         return cleared;
     }
     
-     public List<SEFace> getFaces(){
+     public List<Face> getFaces(){
         return faces;
     }
     
-    public List<SEVertex> getVertecies(){
+    public List<Vertex> getVertecies(){
         return vertecies;
     }
     
-    public List<SEUV> getUVs(){
+    public List<UV> getUVs(){
         return uvs;
     }
     
-    public List<SENormal> getNormals(){
+    public List<Normal> getNormals(){
         return normals;
     }
 }

@@ -6,7 +6,7 @@
 package de.zray.se.renderbackend;
 
 import de.zray.se.Settings;
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.World;
 import javax.vecmath.Vector3d;
 
 /**
@@ -37,7 +37,7 @@ public interface RenderBackend {
     public abstract boolean isInited();
     public abstract void renderWorld(Settings.DebugMode dMode);
     public abstract void renderDebug();
-    public abstract void setCurrentWorld(SEWorld world);
+    public abstract void setCurrentWorld(World world);
     public abstract void shutdown();
     public abstract void requestClose();
     public abstract boolean closeRequested();

@@ -5,16 +5,16 @@
  */
 package de.zray.se.physics;
 
-import de.zray.se.world.SEModule;
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.Module;
+import de.zray.se.world.World;
 
 /**
  *
  * @author vortex
  */
-public class SEBulletWorld extends SEModule{
+public class SEBulletWorld extends Module{
 
-    public SEBulletWorld(SEWorld parrent){
+    public SEBulletWorld(World parrent){
         super(parrent);
     }
     

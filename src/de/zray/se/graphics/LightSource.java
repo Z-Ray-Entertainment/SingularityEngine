@@ -5,15 +5,14 @@
  */
 package de.zray.se.graphics;
 
-import de.zray.se.graphics.semesh.SEOriantation;
-import java.nio.FloatBuffer;
-import org.lwjgl.BufferUtils;
+import de.zray.se.graphics.semesh.Oriantation;
+import de.zray.se.world.Entity;
 
 /**
  *
  * @author Vortex Acherontic
  */
-public class LightSource {
+public class LightSource extends Entity {
     public static enum Type{SPOT, POINT, SUN, VOLUME};
     public static enum FallOf{LINEAR, CUBIC, INVERSE_CUBIC, INFINITY}
     public static final int DIFFUSE = 0, SPECULAR = 1, AMBIENT = 2;
@@ -23,15 +22,6 @@ public class LightSource {
     private boolean castShadows = false;
     private float[][] colors = new float[3][3];
     private FallOf fallOf = FallOf.CUBIC;
-    private SEOriantation orientation;
-    
-    public SEOriantation getOrientation(){
-        return orientation;
-    }
-    
-    public void setOrientation(SEOriantation ori){
-        orientation = ori;
-    }
     
     public void setColor(int type, float red, float green, float blue) throws ArrayIndexOutOfBoundsException{
         colors[type][RED] = red;

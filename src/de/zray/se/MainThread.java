@@ -5,7 +5,7 @@
  */
 package de.zray.se;
 
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.World;
 import de.zray.se.renderbackend.RenderBackend;
 import java.io.IOException;
 
@@ -19,7 +19,7 @@ public class MainThread {
     private static int fps = 0, countedFrames;
     
     private RenderBackend backend;
-    private SEWorld currentWorld;
+    private World currentWorld;
     
     private static void updateDelta(){
         delta =  getTimeInMillis() - timeBeforeAct;
@@ -57,7 +57,7 @@ public class MainThread {
         this.backend = backend;
     }
     
-    public void switchWorld(SEWorld world){
+    public void switchWorld(World world){
         currentWorld = world;
     }
     
@@ -91,7 +91,7 @@ public class MainThread {
         System.exit(0);
     }
     
-    public SEWorld getCurrentWorld(){
+    public World getCurrentWorld(){
         return currentWorld;
     }
 }

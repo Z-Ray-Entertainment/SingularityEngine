@@ -9,6 +9,12 @@ package de.zray.se.graphics.semesh;
  *
  * @author vortex
  */
-public class SEAmature {
-   
+public class Normal {
+    public float nX, nY, nZ;
+    
+    public Normal(float x, float y, float z){
+        nX = x;
+        nY = y;
+        nZ = z;
+    }
 }

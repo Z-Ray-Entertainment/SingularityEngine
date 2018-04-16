@@ -5,14 +5,14 @@
  */
 package de.zray.se.graphics.shapes;
 
-import de.zray.se.graphics.semesh.SEMesh;
+import de.zray.se.graphics.semesh.Mesh;
 
 /**
  *
  * @author vortex
  */
 public class UVSphere implements SEMeshProvider{
-    private SEMesh mesh;
+    private Mesh mesh;
         
     public UVSphere(float radius, int slices, int stacks){
         float angleBetweenSlices = 360f/slices;
@@ -20,7 +20,7 @@ public class UVSphere implements SEMeshProvider{
     }
     
     @Override
-    public SEMesh getSEMesh() {
+    public Mesh getSEMesh() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

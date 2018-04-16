@@ -6,12 +6,12 @@
 package de.zray.se.renderbackend.opengl;
 
 import de.zray.se.MainThread;
-import de.zray.se.world.SEActor;
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.Actor;
+import de.zray.se.world.World;
 import de.zray.se.Settings;
 import de.zray.se.graphics.Camera;
-import de.zray.se.graphics.semesh.SEMesh;
-import de.zray.se.graphics.semesh.SEMeshData;
+import de.zray.se.graphics.semesh.Mesh;
+import de.zray.se.graphics.semesh.MeshData;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
@@ -44,7 +44,7 @@ public class GLRenderer implements RenderBackend{
     private boolean closeRequested = false;
     private List<OpenGLRenderData> oglRenderDatas = new LinkedList<>();
     private GLUtils glUtils = new GLUtils();
-    private SEWorld currentWorld;
+    private World currentWorld;
     private int keyTimes[] = new int[349], threshold = 32;
     private GLRenderDataCache glCache = new GLRenderDataCache();
     private GLDebugRenderer dRenderer = new GLDebugRenderer();
@@ -110,12 +110,12 @@ public class GLRenderer implements RenderBackend{
         glEnable(GL_DEPTH_TEST);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        for(SEActor actor : currentWorld.getActors()){
+        for(Actor actor : currentWorld.getActors()){
             if(actor != null){
-                List<SEMesh> rendables = actor.getRendableSEMeshes();
+                List<Mesh> rendables = actor.getRendableSEMeshes();
                 if(rendables != null){
                     for(int i = 0; i < rendables.size(); i++){
-                        SEMesh mesh = rendables.get(i);
+                        Mesh mesh = rendables.get(i);
                         if(mesh != null){
                             glPushMatrix();
                             renderMesh(mesh, actor);
@@ -161,7 +161,7 @@ public class GLRenderer implements RenderBackend{
     }
     
     @Override
-    public void setCurrentWorld(SEWorld world){
+    public void setCurrentWorld(World world){
         this.currentWorld = world;
     }
     
@@ -223,7 +223,7 @@ public class GLRenderer implements RenderBackend{
         glfwSetWindowShouldClose(window, true);
     }
     
-    private void renderMesh(SEMesh mesh, SEActor parent){
+    private void renderMesh(Mesh mesh, Actor parent){
         double posX = parent.getOrientation().getPositionVec().x+mesh.getOffset().getPositionVec().x;
         double posY = parent.getOrientation().getPositionVec().y+mesh.getOffset().getPositionVec().y;
         double posZ = parent.getOrientation().getPositionVec().z+mesh.getOffset().getPositionVec().z;
@@ -250,7 +250,7 @@ public class GLRenderer implements RenderBackend{
         OpenGLRenderData rData = oglRenderDatas.get(mesh.getRenderData());
         glUtils.applyMaterial(mesh.getMaterial(), rData);
         
-        SEMeshData mData = AssetLibrary.get().getMesh(mesh.getSEMeshData());
+        MeshData mData = AssetLibrary.get().getMesh(mesh.getSEMeshData());
         RenderDataCacheEntry rDataCache = glCache.getCacheEntry(rData.getRenderDataCacheID());
         switch(mesh.getRenderMode()){
             case DIRECT :

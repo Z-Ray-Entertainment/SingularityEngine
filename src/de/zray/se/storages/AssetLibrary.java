@@ -5,7 +5,7 @@
  */
 package de.zray.se.storages;
 
-import de.zray.se.graphics.semesh.SEMeshData;
+import de.zray.se.graphics.semesh.MeshData;
 
 /**
  *
@@ -23,15 +23,15 @@ public class AssetLibrary {
         return lib;
     }
     
-    public int addMesh(SEMeshData mesh){
+    public int addMesh(MeshData mesh){
         return meshLib.addMesh(mesh);
     }
     
-    public int getMesh(SEMeshData mesh){
+    public int getMesh(MeshData mesh){
         return meshLib.getMesh(mesh);
     }
     
-    public SEMeshData getMesh(int id){
+    public MeshData getMesh(int id){
         return meshLib.getMesh(id);
     }
     

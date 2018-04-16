@@ -11,11 +11,11 @@ import java.util.UUID;
  *
  * @author vortex
  */
-public class SEWorldID {
+public class WorldID {
     private UUID uuid;
     private int index;
     
-    public SEWorldID(UUID uuid, int index){
+    public WorldID(UUID uuid, int index){
         this.uuid = uuid;
         this.index = index;
     }

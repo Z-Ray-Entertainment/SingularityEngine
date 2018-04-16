@@ -5,11 +5,11 @@
  */
 package de.zray.se.storages;
 
-import de.zray.se.graphics.semesh.SEFace;
-import de.zray.se.graphics.semesh.SEMeshData;
-import de.zray.se.graphics.semesh.SENormal;
-import de.zray.se.graphics.semesh.SEUV;
-import de.zray.se.graphics.semesh.SEVertex;
+import de.zray.se.graphics.semesh.Face;
+import de.zray.se.graphics.semesh.MeshData;
+import de.zray.se.graphics.semesh.Normal;
+import de.zray.se.graphics.semesh.UV;
+import de.zray.se.graphics.semesh.Vertex;
 import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +19,10 @@ import java.util.List;
  * @author vortex
  */
 public class MeshLibrary {
-    private List<SEMeshData> meshLibrary = new LinkedList<>();
+    private List<MeshData> meshLibrary = new LinkedList<>();
     private List<Integer> freeSlots = new LinkedList<>();
     
-    public SEMeshData getMesh(int id){
+    public MeshData getMesh(int id){
         if(id >= meshLibrary.size()){
             return null;
         }
@@ -41,7 +41,7 @@ public class MeshLibrary {
         }
     }
     
-    public int addMesh(SEMeshData mesh){
+    public int addMesh(MeshData mesh){
         int meshID = getMesh(mesh);
         if(meshID == -1){
             if(!freeSlots.isEmpty()){
@@ -60,7 +60,7 @@ public class MeshLibrary {
         }
     }
     
-    public int getMesh(SEMeshData mesh){
+    public int getMesh(MeshData mesh){
         for(int i = 0; i < meshLibrary.size(); i++){
             if(compareMesh(meshLibrary.get(i), mesh)){
                 return i;
@@ -70,7 +70,7 @@ public class MeshLibrary {
         return -1;
     }
     
-    private boolean compareMesh(SEMeshData original, SEMeshData compare){
+    private boolean compareMesh(MeshData original, MeshData compare){
         if(original != null && compare != null){
             if(compareVertecies(original, compare)){
                 if(compareNormals(original, compare)){
@@ -88,10 +88,10 @@ public class MeshLibrary {
         return false;
     }
     
-    private boolean compareVertecies(SEMeshData original, SEMeshData compare){
+    private boolean compareVertecies(MeshData original, MeshData compare){
         for(int i = 0; i < original.getVertecies().size(); i++){
-            SEVertex v1 = original.getVertecies().get(i);
-            SEVertex v2 = compare.getVertecies().get(i);
+            Vertex v1 = original.getVertecies().get(i);
+            Vertex v2 = compare.getVertecies().get(i);
             if(v1.vX != v2.vX){
                 return false;
             }
@@ -105,10 +105,10 @@ public class MeshLibrary {
         return true;
     }
     
-    private boolean compareNormals(SEMeshData original, SEMeshData compare){
+    private boolean compareNormals(MeshData original, MeshData compare){
         for(int i = 0; i < original.getNormals().size(); i++){
-            SENormal n1 = original.getNormals().get(i);
-            SENormal n2 = compare.getNormals().get(i);
+            Normal n1 = original.getNormals().get(i);
+            Normal n2 = compare.getNormals().get(i);
             if(n1.nX != n2.nX){
                 return false;
             }
@@ -122,10 +122,10 @@ public class MeshLibrary {
         return true;
     }
     
-    private boolean compareUVs(SEMeshData original, SEMeshData compare){
+    private boolean compareUVs(MeshData original, MeshData compare){
         for(int i = 0; i < original.getUVs().size(); i++){
-            SEUV uv1 = original.getUVs().get(i);
-            SEUV uv2 = compare.getUVs().get(i);
+            UV uv1 = original.getUVs().get(i);
+            UV uv2 = compare.getUVs().get(i);
             if(uv1.u != uv2.u){
                 return false;
             }
@@ -136,10 +136,10 @@ public class MeshLibrary {
         return true;
     }
     
-    private boolean compareFaces(SEMeshData original, SEMeshData compare){
+    private boolean compareFaces(MeshData original, MeshData compare){
         for(int i = 0; i < original.getFaces().size(); i++){
-            SEFace f1 = original.getFaces().get(i);
-            SEFace f2 = compare.getFaces().get(i);
+            Face f1 = original.getFaces().get(i);
+            Face f2 = compare.getFaces().get(i);
             if(f1.v1 != f2.v1){
                 return false;
             }

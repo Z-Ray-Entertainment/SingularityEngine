@@ -9,9 +9,9 @@ package de.zray.se.world;
  *
  * @author vortex
  */
-public abstract class SEModule {
-    public SEWorld parrent;
-    public SEModule(SEWorld parrent){
+public abstract class Module {
+    public World parrent;
+    public Module(World parrent){
         this.parrent = parrent;
     }
     

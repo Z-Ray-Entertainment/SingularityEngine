@@ -6,8 +6,8 @@
 package de.zray.se.world;
 
 import de.zray.se.ai.SEAI;
-import de.zray.se.graphics.semesh.SEMesh;
-import de.zray.se.graphics.semesh.SEOriantation;
+import de.zray.se.graphics.semesh.Mesh;
+import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.physics.SEBulletObject;
 import java.util.List;
 
@@ -15,24 +15,24 @@ import java.util.List;
  *
  * @author Vortex Acherontic
  */
-public class SEActor implements Refreshable{
+public class Actor implements Refreshable{
     private DistancePatch parentDP;
-    private SEMesh mesh;
+    private Mesh mesh;
     private SEAI ai;
     private SEBulletObject bullet;
-    private SEWorld parrentWorld;
-    private SEWorldID seWorldID;
-    private SEOriantation ori;
+    private World parrentWorld;
+    private WorldID seWorldID;
+    private Oriantation ori;
     
-    public SEActor(SEMesh mesh, SEAI ai, SEBulletObject bulletObj, SEWorld parrentWorld){
+    public Actor(Mesh mesh, SEAI ai, SEBulletObject bulletObj, World parrentWorld){
         this.ai = ai;
         this.bullet = bulletObj;
         this.mesh = mesh;
         this.parrentWorld = parrentWorld;
-        this.ori = new SEOriantation(this);
+        this.ori = new Oriantation(this);
     }
     
-    public List<SEMesh> getRendableSEMeshes(){
+    public List<Mesh> getRendableSEMeshes(){
         return mesh.getRendableMeshes(parrentWorld.getCurrentCamera());
     }
     
@@ -48,16 +48,16 @@ public class SEActor implements Refreshable{
        return bullet;
    }
    
-   public SEMesh getRootMesh(){
+   public Mesh getRootMesh(){
        return mesh;
    }
    
-   public void setOriantation(SEOriantation ori){
+   public void setOriantation(Oriantation ori){
        this.ori = ori;
        this.ori.forceNewRefreshable(this);
    }
    
-   public SEOriantation getOrientation(){
+   public Oriantation getOrientation(){
        return this.ori;
    }
    
@@ -74,11 +74,11 @@ public class SEActor implements Refreshable{
         }
     }
     
-    public void setSEWorldID(SEWorldID id){
+    public void setSEWorldID(WorldID id){
         this.seWorldID = id;
     }
     
-    public SEWorldID getSEWorldID(){
+    public WorldID getSEWorldID(){
         return seWorldID;
     }
 }
