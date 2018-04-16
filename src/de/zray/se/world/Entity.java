@@ -6,6 +6,7 @@
 package de.zray.se.world;
 
 import de.zray.se.graphics.semesh.Oriantation;
+import de.zray.se.logger.SELogger;
 import javax.vecmath.Vector3d;
 
 /**
@@ -36,11 +37,14 @@ public abstract class Entity{
 
     public void setRefreshNeeded(boolean b) {
         refreshNeeded = b;
-        parent.setRefreshNeeded(b);
+        if(parent != null){
+            parent.setRefreshNeeded(b);
+        }
     }
     
     public void setParentDP(DistancePatch parent){
         this.parent = parent;
+        SELogger.get().dispatchMsg("Entity", SELogger.SELogType.INFO, new String[]{"Seted parent"}, false);
     }
     
     public void setWorldID(WorldID id){
