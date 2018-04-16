@@ -17,10 +17,6 @@ public class GLRenderDataCache {
     private List<RenderDataCacheEntry> rCache = new LinkedList<>();
     
     public int lookUpCache(int meshDataID){
-        return lookUpCacheFast(meshDataID);
-    }
-    
-    private int lookUpCacheFast(int meshDataID){
         if(rCache.size()-1 < meshDataID || rCache.get(meshDataID) == null){
             alloc(meshDataID-rCache.size()+1);
             RenderDataCacheEntry entry = new RenderDataCacheEntry();

@@ -8,6 +8,7 @@ package de.zray.se.world;
 import de.zray.se.MainThread;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
+import de.zray.se.exceptions.UnknownEntityException;
 import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.LightSource;
 import de.zray.se.graphics.semesh.SEMesh;
@@ -39,42 +40,17 @@ public abstract class SEWorld {
         for(InputManager man : inputManages){
             switch(mode){
                 case PRESSED :
+                    //System.out.println("PRESSED "+key);
                     man.keyPressed(key);
                     break;
                 case RELEASED :
+                    //System.out.println("RELEASED "+key);
                     man.keyReleased(key);
                     break;
                 case TIPED :
+                    //System.out.println("TIPED "+key);
                     man.keyTiped(key);
                     break;
-            }
-        }
-    }
-    
-    public SEWorldID addLightSource(LightSource src){
-        if(distancePatches.isEmpty()){
-            DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
-            distancePatches.add(dp);
-            return dp.addLightSource(src);
-        } else {
-            for(DistancePatch d : distancePatches){
-                SEWorldID seWorldID = d.addLightSource(src);
-                if(seWorldID == null){
-                    DistancePatch dp = new DistancePatch(0, src.getOrientation().getPosition());
-                    return dp.addLightSource(src);
-                } else{
-                    return seWorldID;
-                }
-            }
-            System.err.println("Unable to add light source! SEWorldID is null!!!");
-            return null;
-        }
-    }
-    
-    public void removeLight(SEWorldID seWorldID){
-        for(DistancePatch dp : distancePatches){
-            if(dp.removeLightSource(seWorldID)){
-                return;
             }
         }
     }
@@ -87,22 +63,22 @@ public abstract class SEWorld {
         return srcs;
     }
     
-    public final SEWorldID addSEActor(SEActor actor){
+    public final SEWorldID addEntity(SEEntity entity) throws UnknownEntityException{
         if(distancePatches.isEmpty()){
-            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
+            DistancePatch dp = new DistancePatch(0, entity.getOrientation().getPosition());
             dp.setParentWorld(this);
-            double posAct[] = actor.getOrientation().getPosition();
+            double posAct[] = entity.getOrientation().getPosition();
             distancePatches.add(dp);
-            return dp.addActor(actor);
+            return dp.addEntity(entity);
         } else {
             for(DistancePatch d : distancePatches){
-                SEWorldID seWorldID = d.addActor(actor);
+                SEWorldID seWorldID = d.addEntity(entity);
                 if(seWorldID != null){
                     return seWorldID;
                 }
             }
-            DistancePatch dp = new DistancePatch(0, actor.getOrientation().getPosition());
-            return dp.addActor(actor);
+            DistancePatch dp = new DistancePatch(0, entity.getOrientation().getPosition());
+            return dp.addEntity(entity);
         }
     }
     
@@ -150,12 +126,24 @@ public abstract class SEWorld {
     }
     
     public void optimizeScene(){
+        collectRefreshData();
+        reCacheSceneData();
+        if(views != null && currentCamera >= 0){
+            collectRendableMeshes();            
+        }
+    }
+    
+    private void collectRefreshData(){
         distancePatches.forEach((dp) -> {
             dp.refresh();
         });
-        if(views != null && currentCamera >= 0 && views.get(currentCamera).propsWhereChanged()){
-            collectRendableMeshes();            
-        }
+        
+    }
+    
+    private void reCacheSceneData(){
+        distancePatches.forEach((dp) -> {
+            dp.reCache();
+        });
     }
     
     private void collectRendableMeshes(){
