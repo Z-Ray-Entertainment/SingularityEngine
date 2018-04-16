@@ -87,7 +87,6 @@ public class Oriantation {
     }
     
     public void forceNewParent(Entity parent){
-        System.out.println("Ori: forced new Refreshable!");
         this.parent = parent;
     }
 }

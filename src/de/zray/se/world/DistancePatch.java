@@ -39,6 +39,7 @@ public class DistancePatch {
     private void initDistancePatch(int level, double pos[]){
         calcPosition(pos);
         this.level = level;
+        System.out.println("[DP "+level+"]: New DP at: "+pos[0]+" "+pos[1]+" "+pos[2]);
     }
     
     public void setRefreshNeeded(boolean b) {
@@ -54,7 +55,7 @@ public class DistancePatch {
         System.out.println("[DP "+level+"]: Adding new entity");
         if(isLowestDistancePatch()){
             System.out.println("[DP "+level+"]: I'm the lowest DP");
-            double pos[] = ent.getPositionArray();
+            double pos[] = ent.getOrientation().getPosition();
             if(isInside(pos[0], pos[1], pos[2])){
                 System.out.println("[DP "+level+"]: Entity It's inside me");
                 if(!addEntityToFreeSlot(ent)){
@@ -68,7 +69,7 @@ public class DistancePatch {
         } else {
             if(subPatches.isEmpty()){
                 System.out.println("[DP "+level+"]: Creating new SubDP");
-                DistancePatch sub = new DistancePatch(this, level+1, ent.getPositionArray());
+                DistancePatch sub = new DistancePatch(this, level+1, ent.getOrientation().getPosition());
                 sub.addEntity(ent);
                 subPatches.add(sub);
                 return true;
@@ -128,7 +129,7 @@ public class DistancePatch {
             if(isLowestDistancePatch()){
                 for(int i = 0; i < ents.size(); i++){
                     if(ents.get(i) != null && ents.get(i).isRefreshNedded()){
-                        double pos[] = ents.get(i).getPositionArray();
+                        double pos[] = ents.get(i).getOrientation().getPosition();
                         if(!isInside(pos[0], pos[1], pos[2])){
                             System.out.println("Actor left DP!");
                             Entity tmp = ents.get(i);

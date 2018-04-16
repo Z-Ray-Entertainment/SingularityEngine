@@ -53,14 +53,14 @@ public abstract class World {
     public final void addEntity(Entity ent){
         SELogger.get().dispatchMsg("World", SELogger.SELogType.INFO, new String[]{"Adding new Entity to World"}, false);
         if(distancePatches.isEmpty()){
-            DistancePatch dp = new DistancePatch(this, 0, ent.getPositionArray());
+            DistancePatch dp = new DistancePatch(this, 0, ent.getOrientation().getPosition());
             distancePatches.add(dp);
             dp.addEntity(ent);
         } else {
             for(DistancePatch d : distancePatches){
                 d.addEntity(ent);
             }
-            DistancePatch dp = new DistancePatch(this, 0, ent.getPositionArray());
+            DistancePatch dp = new DistancePatch(this, 0, ent.getOrientation().getPosition());
             dp.addEntity(ent);
         }
     }

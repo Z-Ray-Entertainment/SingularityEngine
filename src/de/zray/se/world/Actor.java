@@ -22,14 +22,12 @@ public class Actor extends Entity {
     private SEBulletObject bullet;
     private World parrentWorld;
     private WorldID seWorldID;
-    private Oriantation ori;
 
     public Actor(Mesh mesh, SEAI ai, SEBulletObject bulletObj, World parrentWorld) {
         this.ai = ai;
         this.bullet = bulletObj;
         this.mesh = mesh;
         this.parrentWorld = parrentWorld;
-        this.ori = new Oriantation(this);
     }
 
     public List<Mesh> getRendableSEMeshes() {
@@ -50,15 +48,6 @@ public class Actor extends Entity {
 
     public Mesh getRootMesh() {
         return mesh;
-    }
-
-    public void setOriantation(Oriantation ori) {
-        this.ori = ori;
-        this.ori.forceNewParent(this);
-    }
-
-    public Oriantation getOrientation() {
-        return this.ori;
     }
 
     public void setSEWorldID(WorldID id) {

@@ -23,18 +23,15 @@ public abstract class Entity{
         orientation = new Oriantation(this);
     }
     
-    public void setPostion(double x, double y, double z){
-        orientation.setPosition(x, y, z);
+    public Oriantation getOrientation(){
+        return orientation;
     }
     
-    public Vector3d getPositionVector(){
-        return orientation.getPositionVec();
+    public void setOrientation(Oriantation oriantation){
+        this.orientation = oriantation;
+        this.orientation.forceNewParent(this);
     }
     
-    public double[] getPositionArray(){
-        return orientation.getPosition();
-    }
-
     public void setRefreshNeeded(boolean b) {
         refreshNeeded = b;
         if(parent != null){
