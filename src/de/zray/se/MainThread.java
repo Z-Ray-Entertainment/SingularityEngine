@@ -17,6 +17,7 @@ public class MainThread {
     private static double fpsUpdate = 0;
     private static long delta = 0, timeBeforeAct = System.nanoTime();
     private static int fps = 0, countedFrames;
+    private boolean firstCycle = true;
     
     private RenderBackend backend;
     private World currentWorld;
@@ -71,6 +72,10 @@ public class MainThread {
                     backend.setCurrentWorld(currentWorld);
                     backend.renderWorld(Settings.get().debug.debugMode);
                     
+                }
+                if(firstCycle){
+                    timeBeforeAct = System.nanoTime();
+                    firstCycle = false;
                 }
                 updateDelta();
             }
