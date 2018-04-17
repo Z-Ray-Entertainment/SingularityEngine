@@ -6,38 +6,53 @@
 package de.zray.se.world;
 
 import de.zray.se.graphics.semesh.Oriantation;
+import de.zray.se.logger.SELogger;
 import javax.vecmath.Vector3d;
 
 /**
  *
  * @author vortex
  */
-public abstract class Entity implements Refreshable{
+public abstract class Entity{
     private Oriantation orientation;
     private WorldID id;
+    private boolean refreshNeeded = false;
+    private DistancePatch parent;
     
     public Entity(){
         orientation = new Oriantation(this);
     }
     
-    public void setPostion(double x, double y, double z){
-        orientation.setPosition(x, y, z);
+    public Oriantation getOrientation(){
+        return orientation;
     }
     
-    public Vector3d getPositionVector(){
-        return orientation.getPositionVec();
+    public void setOrientation(Oriantation oriantation){
+        this.orientation = oriantation;
+        this.orientation.forceNewParent(this);
     }
     
-    public double[] getPositionArray(){
-        return orientation.getPosition();
-    }
-
-    @Override
     public void setRefreshNeeded(boolean b) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        refreshNeeded = b;
+        if(parent != null){
+            parent.setRefreshNeeded(b);
+        }
+    }
+    
+    public void setParentDP(DistancePatch parent){
+        this.parent = parent;
+        SELogger.get().dispatchMsg("Entity", SELogger.SELogType.INFO, new String[]{"Added Parent: "+id.getUUID()}, false);
     }
     
     public void setWorldID(WorldID id){
         this.id = id;
+    }
+    
+    public WorldID getWorldID(){
+        return id;
+    }
+    
+    public boolean isRefreshNedded(){
+        return refreshNeeded;
     }
 }

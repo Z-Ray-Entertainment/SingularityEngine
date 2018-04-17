@@ -6,22 +6,16 @@
 package de.zray.se.world;
 
 import de.zray.se.Settings;
-import de.zray.se.exceptions.UnknownEntityException;
-import de.zray.se.graphics.LightSource;
-import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.vecmath.Vector3d;
 
 /**
  *
  * @author vortex
  */
-public class DistancePatch implements Refreshable{
+public class DistancePatch {
     private UUID uuid = UUID.randomUUID();
     private DistancePatch parent;
     private World parentWorld;
@@ -32,19 +26,22 @@ public class DistancePatch implements Refreshable{
     private List<Integer> freeEnts = new LinkedList<>();
     private boolean refreshNeeded = false;
     
-    private List<ReCacheSceneData> reCacheData = new LinkedList<>();
-    
-    public DistancePatch(int level, double pos[]){
-        this(null, level, pos);
+    public DistancePatch(World parent, int level, double pos[]){
+        this.parentWorld = parent;
+        initDistancePatch(level, pos);
     }
     
     public DistancePatch(DistancePatch parent, int level, double pos[]){
-        this.level = level;
-        this.parentDP = parent;
-        calcPosition(pos);
+        this.parent = parent;
+        initDistancePatch(level, pos);
     }
     
-    @Override
+    private void initDistancePatch(int level, double pos[]){
+        calcPosition(pos);
+        this.level = level;
+        System.out.println("[DP "+level+"]: New DP at: "+pos[0]+" "+pos[1]+" "+pos[2]);
+    }
+    
     public void setRefreshNeeded(boolean b) {
         if(b){
             refreshNeeded = true;
@@ -54,172 +51,96 @@ public class DistancePatch implements Refreshable{
         }
     }
     
-    /**
-     * Collects all Actors which left this or its subDPs and adds them
-     * to te reCahceList
-     */
+    public boolean addEntity(Entity ent){
+        System.out.println("[DP "+level+"]: Adding new entity");
+        if(isLowestDistancePatch()){
+            System.out.println("[DP "+level+"]: I'm the lowest DP");
+            double pos[] = ent.getOrientation().getPosition();
+            if(isInside(pos[0], pos[1], pos[2])){
+                System.out.println("[DP "+level+"]: Entity It's inside me");
+                if(!addEntityToFreeSlot(ent)){
+                    System.out.println("[DP "+level+"]: Adding entity to new slot");
+                    ent.setWorldID(new WorldID(uuid, ents.size()-1));
+                    ents.add(ent);
+                    return true;
+                }
+                return true;
+            }
+        } else {
+            if(subPatches.isEmpty()){
+                System.out.println("[DP "+level+"]: Creating new SubDP");
+                DistancePatch sub = new DistancePatch(this, level+1, ent.getOrientation().getPosition());
+                sub.addEntity(ent);
+                subPatches.add(sub);
+                return true;
+            } 
+            if (subPatches.stream().anyMatch((sub) -> (sub.addEntity(ent)))) {
+                System.out.println("[DP "+level+"]: Adding entity to SubDP");
+                return true;
+            }
+            
+        }
+        return false;
+    }
+    
+    private boolean addEntityToFreeSlot(Entity ent){
+        if(freeEnts.size() > 0){
+            System.out.println("[DP "+level+"]: Adding entity to free slot");
+            ent.setWorldID(new WorldID(uuid, freeEnts.get(0)));
+            ents.set(freeEnts.get(0), ent);
+            freeEnts.remove(0);
+            return true;
+        }
+        return false;
+    }
+    
+    public List<Entity> getEntities(){
+        if(!isLowestDistancePatch()){
+            List<Entity> allEnts = new LinkedList<>();
+            subPatches.forEach((sub) -> {
+                allEnts.addAll(sub.getEntities());
+            });
+            return allEnts;
+        } else {
+            return ents;
+        }
+    }
+    
+    public boolean removeEntity(WorldID id){
+        if(id.getUUID().compareTo(uuid) == 0){
+            int index = id.getIndex();
+            if(index == ents.size()-1){
+                ents.remove(index);
+                return true;
+            } else {
+                freeEnts.add(index);
+                ents.set(index, null);
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void refresh(){
         if(refreshNeeded){
-            subPatches.forEach((dp) -> {
+            for(DistancePatch dp : subPatches){
                 dp.refresh();
-            });
+            }
             if(isLowestDistancePatch()){
                 for(int i = 0; i < ents.size(); i++){
-                    if(ents.get(i) != null){
-                        double pos[] = ents.get(i).getPositionArray();
+                    if(ents.get(i) != null && ents.get(i).isRefreshNedded()){
+                        double pos[] = ents.get(i).getOrientation().getPosition();
                         if(!isInside(pos[0], pos[1], pos[2])){
                             System.out.println("Actor left DP!");
                             Entity tmp = ents.get(i);
-                            removeEntity(tmp.getSEWorldID());
-                            sortActor(tmp);
+                            parent.addEntity(tmp);
+                            removeEntity(tmp.getWorldID());
                         }
                     }
                 }
             }
+            refreshNeeded = false;
         }
-    }
-    
-    public void resortEntity(Entity ent){
-        for(DistancePatch dp : subPatches){
-            WorldID id = dp.addActor(actor);
-            if(id != null){
-                return;
-            }
-        }
-        sortActor(actor);
-    }
-    
-    public void sortActor(Actor act){
-        System.out.println("Sorting Actor");
-        if(parentDP != null){
-            System.out.println("Sending to parent");
-            parent.resortEntity(act);
-        } else if(parentWorld != null){
-            System.out.println("Sending to world");
-            parentWorld.addEntity(act);
-        } else {
-            SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"DistanceOatch without parent!"}, false);
-        }
-    }
-    
-    public void setParentWorld(World world){
-        this.parentWorld = world;
-    }
-    
-    public WorldID addActor(Actor actor){
-        Oriantation ori = actor.getOrientation();
-        if(isInside(ori.getPosition()[0], ori.getPosition()[1], ori.getPosition()[2])){
-            if(isLowestDistancePatch()){
-                return addFreeActor(actor);
-            } else {
-                for(DistancePatch dp : subPatches){
-                    WorldID seid = dp.addActor(actor);
-                    if(seid != null){
-                        return seid;
-                    }
-                }
-                WorldID tmpID = createAndAddSubPatch(actor);
-                if(tmpID == null){
-                    SELogger.get().dispatchMsg(this, SELogger.SELogType.ERROR, new String[]{"SEWorldID is null but should not be null! :("}, false);
-                }
-                return tmpID;
-            }
-        }
-        return null;
-    }
-    
-    private WorldID addFreeActor(Actor actor){
-        double pos[] = actor.getOrientation().getPosition();
-        if(isInside(pos[0], pos[1], pos[2])){
-            if(!freeActors.isEmpty()){
-                int slot = freeActors.get(0);
-                freeActors.remove(slot);
-                actors.set(slot, actor);
-                actor.setSEWorldID(new WorldID(uuid, slot));
-                actor.setParentDistancePatch(this);
-                return actor.getSEWorldID();
-            }
-            else{
-                actors.add(actor);
-                actor.setParentDistancePatch(this);
-                actor.setSEWorldID(new WorldID(uuid, actors.size()-1));
-                return actor.getSEWorldID();
-            }
-        }
-        return null;
-    }
-    
-    public boolean removeEntity(WorldID seWorldID){
-        if(uuid.compareTo(seWorldID.getUUID()) == 0){
-            int index = seWorldID.getIndex();
-            if(index == ents.size()-1){
-                ents.remove(index);
-            } else{
-                ents.set(index, null);
-                freeActors.add(index);
-            }
-        }
-        return false;
-    }
-    
-    public WorldID addLightSource(LightSource src){
-        Oriantation ori = src.getOrientation();
-        if(isInside(ori.getPosition()[0], ori.getPosition()[1], ori.getPosition()[2])){
-            if(isLowestDistancePatch()){
-                if(ent instanceof LightSource){
-                    return addFreeLightSource((LightSource) ent);
-                } else if(ent instanceof SEActor){
-                    return addFreeActor((SEActor) ent);
-                }
-                throw new UnknownEntityException(ent);
-            } else {
-                if(subPatches.isEmpty()){
-                    DistancePatch sub = new DistancePatch(this.level+1, ori.getPosition());
-                    subPatches.add(sub);
-                    return sub.addEntity(ent);
-                } else {
-                    for(DistancePatch dp : subPatches){
-                        WorldID seid = dp.addLightSource(src);
-                        if(seid != null) {
-                            return seid;
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-    
-    private WorldID addFreeLightSource(LightSource src){
-        double pos[] = src.getOrientation().getPosition();
-        if(isInside(pos[0], pos[1], pos[2])){
-            if(!freeLights.isEmpty()){
-                int slot = freeLights.get(0);
-                freeLights.remove(slot);
-                lights.set(slot, src);
-                return new WorldID(uuid, slot);
-            }
-            else{
-                lights.add(src);
-                return new WorldID(uuid, lights.size()-1);
-            }
-        }
-        return null;
-    }
-    
-    public boolean removeLightSource(WorldID seWorldID){
-        if(uuid.compareTo(seWorldID.getUUID()) == 0){
-            int index = seWorldID.getIndex();
-            if(index == lights.size()-1){
-                lights.remove(index);
-                return true;
-            } else{
-                lights.set(index, null);
-                freeLights.add(index);
-                return true;
-            }
-        }
-        return false;
     }
     
     private void calcPosition(double pos[]){
@@ -254,30 +175,6 @@ public class DistancePatch implements Refreshable{
         return val <= end && val >= start;
     }
     
-    public List<Actor> getActorts(){
-        if(isLowestDistancePatch()){
-            return actors;
-        } else {
-            List<Actor> tmp = new LinkedList<>();
-            subPatches.forEach((dp) -> {
-                tmp.addAll(dp.getActorts());
-            });
-            return tmp;
-        }
-    }
-    
-    public List<LightSource> getLights(){
-        if(isLowestDistancePatch()){
-            return lights;
-        } else {
-            List<LightSource> tmp = new LinkedList<>();
-            subPatches.forEach((dp) -> {
-                tmp.addAll(dp.getLights());
-            });
-            return tmp;
-        }
-    }
-    
     private boolean isLowestDistancePatch(){
         return level == Settings.get().scene.dpSizes.length-1;
     }
@@ -301,14 +198,5 @@ public class DistancePatch implements Refreshable{
     
     public int getLevel(){
         return level;
-    }
-    
-    private WorldID createAndAddSubPatch(Actor actor){
-        DistancePatch sub = new DistancePatch(this, this.level+1, actor.getOrientation().getPosition());
-        subPatches.add(sub);
-        WorldID seid = sub.addActor(actor);
-        Vector3d subPos = new Vector3d(sub.getPostion());
-        System.out.println("New DP at "+subPos.toString()+" for "+actor.getOrientation().getPositionVec().toString());
-        return seid;
     }
 }

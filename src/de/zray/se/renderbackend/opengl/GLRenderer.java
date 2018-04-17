@@ -234,6 +234,11 @@ public class GLRenderer implements RenderBackend{
         double scaleY = parent.getOrientation().getScaleVec().y+mesh.getOffset().getScaleVec().y;
         double scaleZ = parent.getOrientation().getScaleVec().z+mesh.getOffset().getScaleVec().z;
         
+        /*System.out.println("[GLRenderer]: Rendering Mesh");
+        System.out.println("[GLRenderer]: -> Position: "+posX+" "+posY+" "+posZ);
+        System.out.println("[GLRenderer]: -> Rotation: "+rotX+" "+rotY+" "+rotZ);
+        System.out.println("[GLRenderer]: -> Scale: "+scaleX+" "+scaleY+" "+scaleZ);*/
+        
         glTranslated(posX, posY, posZ);
         glRotated(rotX, 1, 0, 0);
         glRotated(rotY, 0, 1, 0);

@@ -5,7 +5,7 @@
  */
 package de.zray.se;
 
-import de.zray.se.world.SEWorld;
+import de.zray.se.world.World;
 import de.zray.se.renderbackend.RenderBackend;
 import java.io.IOException;
 
@@ -15,38 +15,36 @@ import java.io.IOException;
  */
 public class MainThread {
     private static double fpsUpdate = 0;
-    private static long delta = 0, timeBeforeAct = 0;
+    private static long delta = 0, timeBeforeAct = System.nanoTime();
     private static int fps = 0, countedFrames;
+    private boolean firstCycle = true;
     
     private RenderBackend backend;
-    private SEWorld currentWorld;
+    private World currentWorld;
     
     private static void updateDelta(){
-        delta =  getTimeInMillis() - timeBeforeAct;
-        timeBeforeAct = getTimeInMillis();
-        calcFPS(delta);
+        delta =  System.nanoTime() - timeBeforeAct;
+        timeBeforeAct = System.nanoTime();
+        calcFPS(getDeltaInSec());
     }
     
     private static void calcFPS(double delta){
         fpsUpdate += delta;
         countedFrames++;
-        if(fpsUpdate >= 1000){
+        if(fpsUpdate >= 1){
             fps = countedFrames;
             countedFrames = 0;
             fpsUpdate = 0;
+            System.out.println("FPS: "+fps);
         }
     }
     
     public static final double getDeltaInSec(){
-        return delta/100f;
+        return delta / 1000000000.0;
     }
     
     public static final double getDeltaInMs(){
         return delta;
-    }
-          
-    public static final long getTimeInMillis(){
-        return System.currentTimeMillis();
     }
     
     public static final int getFPS(){
@@ -57,7 +55,7 @@ public class MainThread {
         this.backend = backend;
     }
     
-    public void switchWorld(SEWorld world){
+    public void switchWorld(World world){
         currentWorld = world;
     }
     
@@ -76,6 +74,10 @@ public class MainThread {
                     backend.renderWorld(Settings.get().debug.debugMode);
                     
                 }
+                if(firstCycle){
+                    timeBeforeAct = System.nanoTime();
+                    firstCycle = false;
+                }
                 updateDelta();
             }
             shutdown();
@@ -91,7 +93,7 @@ public class MainThread {
         System.exit(0);
     }
     
-    public SEWorld getCurrentWorld(){
+    public World getCurrentWorld(){
         return currentWorld;
     }
 }
