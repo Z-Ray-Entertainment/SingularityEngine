@@ -297,11 +297,8 @@ public class GLRenderer implements RenderBackend{
         glDisable(GL_TEXTURE_2D);
     }
     
-    private void pollInputs(){
-        for(int i = 32; i < keyTimes.length; i++){
-            /*if(i == GLFW_KEY_LEFT_SHIFT){
-                System.out.println(GLFW_KEY_LEFT_SHIFT);
-            }*/
+    private final void pollInputs(){
+        for(int i = 32; i < keyTimes.length; i++){ //32 because of invalid keys < 32
             if(glfwGetKey(window, i) == 1){
                 if(keyTimes[i] == 0){
                     currentWorld.hanldeKeyInputs(i, KeyMap.MODE.TIPED);

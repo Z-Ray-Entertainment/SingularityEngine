@@ -45,8 +45,8 @@ public class DistancePatch {
     public void setRefreshNeeded(boolean b) {
         if(b){
             refreshNeeded = true;
-            if(parent != null){
-                parent.setRefreshNeeded(b);
+            if(parentDP != null){
+                parentDP.setRefreshNeeded(b);
             }
         }
     }
