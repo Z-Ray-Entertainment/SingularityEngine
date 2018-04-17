@@ -25,16 +25,17 @@ public class MainThread {
     private static void updateDelta(){
         delta =  System.nanoTime() - timeBeforeAct;
         timeBeforeAct = System.nanoTime();
-        calcFPS(delta);
+        calcFPS(getDeltaInSec());
     }
     
     private static void calcFPS(double delta){
         fpsUpdate += delta;
         countedFrames++;
-        if(fpsUpdate >= 1000){
+        if(fpsUpdate >= 1){
             fps = countedFrames;
             countedFrames = 0;
             fpsUpdate = 0;
+            System.out.println("FPS: "+fps);
         }
     }
     
