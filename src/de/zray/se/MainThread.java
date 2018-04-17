@@ -15,15 +15,15 @@ import java.io.IOException;
  */
 public class MainThread {
     private static double fpsUpdate = 0;
-    private static long delta = 0, timeBeforeAct = 0;
+    private static long delta = 0, timeBeforeAct = System.nanoTime();
     private static int fps = 0, countedFrames;
     
     private RenderBackend backend;
     private World currentWorld;
     
     private static void updateDelta(){
-        delta =  getTimeInMillis() - timeBeforeAct;
-        timeBeforeAct = getTimeInMillis();
+        delta =  System.nanoTime() - timeBeforeAct;
+        timeBeforeAct = System.nanoTime();
         calcFPS(delta);
     }
     
@@ -38,15 +38,11 @@ public class MainThread {
     }
     
     public static final double getDeltaInSec(){
-        return delta/100f;
+        return delta / 1000000000.0;
     }
     
     public static final double getDeltaInMs(){
         return delta;
-    }
-          
-    public static final long getTimeInMillis(){
-        return System.currentTimeMillis();
     }
     
     public static final int getFPS(){
