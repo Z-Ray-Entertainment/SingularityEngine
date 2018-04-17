@@ -36,9 +36,8 @@ public class DistancePatch {
     }
     
     private void initDistancePatch(int level, double pos[]){
-        calcPosition(pos);
         this.level = level;
-        System.out.println("[DP "+level+"]: New DP at: "+pos[0]+" "+pos[1]+" "+pos[2]);
+        calcPosition(pos);
     }
     
     public void setRefreshNeeded(boolean b) {
@@ -51,14 +50,14 @@ public class DistancePatch {
     }
     
     public boolean addEntity(Entity ent){
-        System.out.println("[DP "+level+"]: Adding new entity");
+        //System.out.println("[DP "+level+"]: Adding new entity");
         if(isLowestDistancePatch()){
-            System.out.println("[DP "+level+"]: I'm the lowest DP");
+            //System.out.println("[DP "+level+"]: I'm the lowest DP");
             double pos[] = ent.getOrientation().getPosition();
             if(isInside(pos[0], pos[1], pos[2])){
-                System.out.println("[DP "+level+"]: Entity It's inside me");
+                //System.out.println("[DP "+level+"]: Entity It's inside me");
                 if(!addEntityToFreeSlot(ent)){
-                    System.out.println("[DP "+level+"]: Adding entity to new slot");
+                    //System.out.println("[DP "+level+"]: Adding entity to new slot");
                     ent.setWorldID(new WorldID(uuid, ents.size()-1));
                     ents.add(ent);
                     return true;
@@ -67,14 +66,14 @@ public class DistancePatch {
             }
         } else {
             if(subPatches.isEmpty()){
-                System.out.println("[DP "+level+"]: Creating new SubDP");
+                //System.out.println("[DP "+level+"]: Creating new SubDP");
                 DistancePatch sub = new DistancePatch(this, level+1, ent.getOrientation().getPosition());
-                sub.addEntity(ent);
                 subPatches.add(sub);
+                sub.addEntity(ent);
                 return true;
             } 
             if (subPatches.stream().anyMatch((sub) -> (sub.addEntity(ent)))) {
-                System.out.println("[DP "+level+"]: Adding entity to SubDP");
+                //System.out.println("[DP "+level+"]: Adding entity to SubDP");
                 return true;
             }
             
@@ -147,6 +146,9 @@ public class DistancePatch {
         this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
         this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
         this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
+        System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
+        System.out.println("=> for pos: "+pos[0]+" "+pos[1]+" "+pos[2]);
+        System.out.println("=> edgeLenght: "+edgeLength);
     }
     
     public boolean isInside(double x, double y, double z){
