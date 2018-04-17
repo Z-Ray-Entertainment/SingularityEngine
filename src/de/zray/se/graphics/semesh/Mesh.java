@@ -6,8 +6,6 @@
 package de.zray.se.graphics.semesh;
 
 import de.zray.se.graphics.Camera;
-import de.zray.se.world.Refreshable;
-import de.zray.se.world.Actor;
 import java.util.LinkedList;
 import java.util.List;
 import javax.vecmath.Vector3f;
