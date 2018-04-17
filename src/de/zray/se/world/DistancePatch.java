@@ -6,7 +6,6 @@
 package de.zray.se.world;
 
 import de.zray.se.Settings;
-import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -45,8 +44,8 @@ public class DistancePatch {
     public void setRefreshNeeded(boolean b) {
         if(b){
             refreshNeeded = true;
-            if(parentDP != null){
-                parentDP.setRefreshNeeded(b);
+            if(parent != null){
+                parent.setRefreshNeeded(b);
             }
         }
     }
