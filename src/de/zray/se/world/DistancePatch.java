@@ -83,7 +83,7 @@ public class DistancePatch {
     
     private boolean addEntityToFreeSlot(Entity ent){
         if(freeEnts.size() > 0){
-            System.out.println("[DP "+level+"]: Adding entity to free slot");
+            //System.out.println("[DP "+level+"]: Adding entity to free slot");
             ent.setWorldID(new WorldID(uuid, freeEnts.get(0)));
             ents.set(freeEnts.get(0), ent);
             freeEnts.remove(0);
@@ -146,9 +146,9 @@ public class DistancePatch {
         this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
         this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
         this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
-        System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
+        /*System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
         System.out.println("=> for pos: "+pos[0]+" "+pos[1]+" "+pos[2]);
-        System.out.println("=> edgeLenght: "+edgeLength);
+        System.out.println("=> edgeLenght: "+edgeLength);*/
     }
     
     public boolean isInside(double x, double y, double z){
