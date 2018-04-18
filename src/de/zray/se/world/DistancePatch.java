@@ -24,8 +24,8 @@ public class DistancePatch {
     private List<DistancePatch> subPatchesToBeAdded = new LinkedList<>();
     private double pos[] = new double[3];
     private List<Entity> ents = new LinkedList<>();
-    private List<Integer> freeEnts = new LinkedList<>();
-    private boolean refreshNeeded = false, isEmpty = false;
+    private List<Integer> freeEnts = new LinkedList<>(), distancePatchesToBeDeleted = new LinkedList<>();
+    private boolean refreshNeeded = false;
     
     public DistancePatch(World parent, int level, double pos[]){
         this.parentWorld = parent;
@@ -122,9 +122,6 @@ public class DistancePatch {
                 int index = id.getIndex();
                 if(index == ents.size()-1){
                     ents.remove(index);
-                    if(ents.isEmpty()){
-                        isEmpty = true;
-                    }
                     return true;
                 } else {
                     freeEnts.add(index);
@@ -157,14 +154,23 @@ public class DistancePatch {
                     }
                 }
             }
-            for(DistancePatch dp : subPatches){
+            for(int i = 0; i < subPatches.size(); i++){
+                DistancePatch dp = subPatches.get(i);
                 dp.refresh();
+                if(dp.isEmpty()){
+                    System.out.println("[DP "+level+"]: Found empty DP index: "+i);
+                    distancePatchesToBeDeleted.add(i);
+                }
             }
             if(subPatchesToBeAdded != null || !subPatchesToBeAdded.isEmpty()){
                 subPatches.addAll(subPatchesToBeAdded);
                 //System.out.println("[DP "+level+"]: Added "+subPatchesToBeAdded.size()+" new sub patches");
                 subPatchesToBeAdded.clear();
             }
+            for(int i = distancePatchesToBeDeleted.size()-1; i >= 0; i--){
+                subPatches.remove(distancePatchesToBeDeleted.get(i).intValue());
+            }
+            distancePatchesToBeDeleted.clear();
             refreshNeeded = false;
         }
     }
@@ -234,5 +240,18 @@ public class DistancePatch {
     
     public int getLevel(){
         return level;
+    }
+    
+    public boolean isEmpty(){
+        if(isLowestDistancePatch()){
+            return ents.isEmpty();
+        } else {
+            for(DistancePatch sub : subPatches){
+                if(!sub.isEmpty()){
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

@@ -31,6 +31,7 @@ public abstract class World {
     private List<Mesh> rendableMeshes = new LinkedList<>();
     private List<DistancePatch> distancePatches = new LinkedList<>();
     private List<DistancePatch> patchesToBeAdded = new LinkedList<>();
+    private List<Integer> distancePatchesToBeRemoved = new LinkedList<>();
     
     public final void addInputManager(InputManager manager){
         inputManages.add(manager);
@@ -116,9 +117,17 @@ public abstract class World {
     }
     
     public void optimizeScene(){
-        distancePatches.forEach((dp) -> {
+        for(int i = 0; i < distancePatches.size(); i++){
+            DistancePatch dp = distancePatches.get(i);
             dp.refresh();
+            if(dp.isEmpty()){
+                distancePatchesToBeRemoved.add(i);
+            }
+        }
+        distancePatchesToBeRemoved.forEach((i) -> {
+            distancePatches.remove(i.intValue());
         });
+        distancePatchesToBeRemoved.clear();
         if(!patchesToBeAdded.isEmpty()){
             distancePatches.addAll(patchesToBeAdded);
             patchesToBeAdded.clear();
