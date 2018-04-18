@@ -35,7 +35,7 @@ public class MainThread {
             fps = countedFrames;
             countedFrames = 0;
             fpsUpdate = 0;
-            System.out.println("FPS: "+fps);
+            //System.out.println("FPS: "+fps);
         }
     }
     
@@ -57,6 +57,7 @@ public class MainThread {
     
     public void switchWorld(World world){
         currentWorld = world;
+        firstCycle = true;
     }
     
     public void loop() throws IOException{

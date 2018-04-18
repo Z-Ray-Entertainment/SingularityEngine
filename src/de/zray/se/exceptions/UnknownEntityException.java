@@ -5,14 +5,14 @@
  */
 package de.zray.se.exceptions;
 
-import de.zray.se.world.SEEntity;
+import de.zray.se.world.Entity;
 
 /**
  *
  * @author vortex
  */
 public class UnknownEntityException extends Exception{
-    public UnknownEntityException(SEEntity ent){
+    public UnknownEntityException(Entity ent){
         super(ent.toString()+" is an UnknownEntityType!");
     }
 }

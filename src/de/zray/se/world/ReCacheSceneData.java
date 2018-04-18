@@ -10,19 +10,19 @@ package de.zray.se.world;
  * @author vortex
  */
 public class ReCacheSceneData {
-    private final SEWorldID sewID;
-    private final SEActor actor;
+    private final WorldID sewID;
+    private final Actor actor;
     
-    public ReCacheSceneData(SEWorldID sewID, SEActor actor){
+    public ReCacheSceneData(WorldID sewID, Actor actor){
         this.actor = actor;
         this.sewID = sewID;
     }
     
-    public final SEWorldID getID(){
+    public final WorldID getID(){
         return sewID;
     }
     
-    public final SEActor getActor(){
+    public final Actor getActor(){
         return actor;
     }
 }

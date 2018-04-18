@@ -86,7 +86,6 @@ public class GLRenderer implements RenderBackend{
         glfwShowWindow(window);
         GL.createCapabilities();
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        glEnable(GL_DEPTH_TEST);
         calcWindowProps(windowW, windowH);
         return true;
     }
