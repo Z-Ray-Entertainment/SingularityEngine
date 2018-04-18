@@ -5,6 +5,7 @@
  */
 package de.zray.se.world;
 
+import de.zray.se.ai.SEAI;
 import de.zray.se.ai.SEAIWorld;
 import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.graphics.Camera;
@@ -29,6 +30,7 @@ public abstract class World {
     private int currentCamera = -1;
     private List<Mesh> rendableMeshes = new LinkedList<>();
     private List<DistancePatch> distancePatches = new LinkedList<>();
+    private List<DistancePatch> patchesToBeAdded = new LinkedList<>();
     
     public final void addInputManager(InputManager manager){
         inputManages.add(manager);
@@ -51,6 +53,7 @@ public abstract class World {
     }
     
     public final void addEntity(Entity ent){
+        double pos[] = ent.getOrientation().getPosition();
         SELogger.get().dispatchMsg("World", SELogger.SELogType.INFO, new String[]{"Adding new Entity to World"}, false);
         if(distancePatches.isEmpty()){
             DistancePatch dp = new DistancePatch(this, 0, ent.getOrientation().getPosition());
@@ -58,10 +61,14 @@ public abstract class World {
             dp.addEntity(ent);
         } else {
             for(DistancePatch d : distancePatches){
-                d.addEntity(ent);
+                if(d.isInside(pos[0], pos[1], pos[2])){
+                    d.addEntity(ent);
+                    return;
+                }
             }
             DistancePatch dp = new DistancePatch(this, 0, ent.getOrientation().getPosition());
             dp.addEntity(ent);
+            patchesToBeAdded.add(dp);
         }
     }
     
@@ -92,7 +99,12 @@ public abstract class World {
     public final void act(double delta){
         distancePatches.forEach((DistancePatch dp) -> {
             dp.getEntities().stream().filter((ent) -> (ent instanceof Actor)).forEachOrdered((ent) -> {
-                ((Actor) ent).getSEAI().act(delta);
+                if(ent != null){
+                    SEAI ai = ((Actor) ent).getSEAI();
+                    if(ai != null){
+                        ai.act(delta);
+                    }
+                }
             });
         });
         if(audioWorld != null){
@@ -107,6 +119,10 @@ public abstract class World {
         distancePatches.forEach((dp) -> {
             dp.refresh();
         });
+        if(!patchesToBeAdded.isEmpty()){
+            distancePatches.addAll(patchesToBeAdded);
+            patchesToBeAdded.clear();
+        }
         if(views != null && currentCamera >= 0 && views.get(currentCamera).propsWhereChanged()){
             collectRendableMeshes();            
         }
