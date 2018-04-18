@@ -44,14 +44,9 @@ public abstract class Entity{
         }
     }
     
-    public void setParentDP(DistancePatch parent){
-        this.parent = parent;
-        SELogger.get().dispatchMsg("Entity", SELogger.SELogType.INFO, new String[]{"Added Parent: "+id.getUUID()}, false);
-    }
-    
     public void setWorldID(WorldID id){
         this.id = id;
-        System.out.println("[Entity]: New WorldID "+id.getUUID()+" "+id.getIndex());
+        //System.out.println("[Entity]: New WorldID "+id.getUUID()+" "+id.getIndex());
     }
     
     public WorldID getWorldID(){
