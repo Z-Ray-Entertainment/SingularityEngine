@@ -232,10 +232,10 @@ public class GLUtils {
     }
     
     public void applyMaterial(Material mat, OpenGLRenderData rData){
-        if(mat.cullBackfaces() && !glIsEnabled(GL_CULL_FACE)){
+        if(mat.cullBackfaces()){
             glEnable(GL_CULL_FACE);
         }
-        else if(glIsEnabled(GL_CULL_FACE)){
+        else {
             glDisable(GL_CULL_FACE);
         }
         if(mat.isShadeless()){

@@ -7,7 +7,6 @@ package de.zray.se.world;
 
 import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.logger.SELogger;
-import javax.vecmath.Vector3d;
 
 /**
  *
@@ -23,6 +22,10 @@ public abstract class Entity{
         orientation = new Oriantation(this);
     }
     
+    public void setParent(DistancePatch parent){
+        this.parent = parent;
+    }
+    
     public Oriantation getOrientation(){
         return orientation;
     }
@@ -33,19 +36,17 @@ public abstract class Entity{
     }
     
     public void setRefreshNeeded(boolean b) {
-        refreshNeeded = b;
-        if(parent != null){
-            parent.setRefreshNeeded(b);
+        if(b){
+            refreshNeeded = b;
+            if(parent != null){
+                parent.setRefreshNeeded(b);
+            }
         }
-    }
-    
-    public void setParentDP(DistancePatch parent){
-        this.parent = parent;
-        SELogger.get().dispatchMsg("Entity", SELogger.SELogType.INFO, new String[]{"Added Parent: "+id.getUUID()}, false);
     }
     
     public void setWorldID(WorldID id){
         this.id = id;
+        //System.out.println("[Entity]: New WorldID "+id.getUUID()+" "+id.getIndex());
     }
     
     public WorldID getWorldID(){
