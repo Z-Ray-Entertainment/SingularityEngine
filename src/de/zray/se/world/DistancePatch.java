@@ -54,9 +54,9 @@ public class DistancePatch {
     public boolean addEntity(Entity ent){
         double pos[] = ent.getOrientation().getPosition();
         if(isInside(pos[0], pos[1], pos[2])){
-            System.out.println("[DP "+level+"]: Entity is inside");
+            //System.out.println("[DP "+level+"]: Entity is inside");
             if(isLowestDistancePatch()){
-                System.out.println("[DP "+level+"]: Lowest DP");
+                //System.out.println("[DP "+level+"]: Lowest DP");
                 if(!addEntityToFreeSlot(ent)){
                     ents.add(ent);
                     ent.setWorldID(new WorldID(uuid, ents.size()-1));
@@ -65,7 +65,7 @@ public class DistancePatch {
                 }
             } else {
                 if(subPatches.isEmpty()){
-                    System.out.println("[DP "+level+"]: No sub patches, creating new");
+                    //System.out.println("[DP "+level+"]: No sub patches, creating new");
                     createAndAddtoNewSubPatch(ent);
                     subPatches.addAll(subPatchesToBeAdded);
                     return true;
@@ -73,7 +73,7 @@ public class DistancePatch {
                 else {
                     for(DistancePatch sub : subPatches){
                         if(sub.isInside(pos[0], pos[1], pos[2])){
-                            System.out.println("[DP "+level+"]: Found matching sub patch, adding Entity");
+                            //System.out.println("[DP "+level+"]: Found matching sub patch, adding Entity");
                             sub.addEntity(ent);
                             return true;
                         }
@@ -82,7 +82,7 @@ public class DistancePatch {
                 }
             }
         } else if(parent != null){
-            System.out.println("[DP "+level+"]: Entity is not inside, sending to parent DP");
+            //System.out.println("[DP "+level+"]: Entity is not inside, sending to parent DP");
             return parent.addEntity(ent);
         } else if(parentWorld != null){
             parentWorld.addEntity(ent);
@@ -146,7 +146,7 @@ public class DistancePatch {
                     if(ents.get(i) != null && ents.get(i).isRefreshNedded()){
                         double pos[] = ents.get(i).getOrientation().getPosition();
                         if(!isInside(pos[0], pos[1], pos[2])){
-                            System.out.println("[DP "+level+"]: Entity left dp");
+                            //System.out.println("[DP "+level+"]: Entity left dp");
                             Entity tmp = ents.get(i);
                             removeEntity(tmp.getWorldID());
                             parent.addEntity(tmp);
@@ -158,7 +158,7 @@ public class DistancePatch {
                 DistancePatch dp = subPatches.get(i);
                 dp.refresh();
                 if(dp.isEmpty()){
-                    System.out.println("[DP "+level+"]: Found empty DP index: "+i);
+                    //System.out.println("[DP "+level+"]: Found empty DP index: "+i);
                     distancePatchesToBeDeleted.add(i);
                 }
             }
@@ -176,7 +176,7 @@ public class DistancePatch {
     }
     
     private boolean createAndAddtoNewSubPatch(Entity ent){
-        System.out.println("[DP "+level+"]: Building new sub patch");
+        //System.out.println("[DP "+level+"]: Building new sub patch");
         DistancePatch sub = new DistancePatch(this, level+1, ent.getOrientation().getPosition());
         subPatchesToBeAdded.add(sub);
         return sub.addEntity(ent);
@@ -187,9 +187,9 @@ public class DistancePatch {
         this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
         this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
         this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
-        System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
+        /*System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
         System.out.println("=> for pos: "+pos[0]+" "+pos[1]+" "+pos[2]);
-        System.out.println("=> edgeLenght: "+edgeLength);
+        System.out.println("=> edgeLenght: "+edgeLength);*/
     }
     
     public boolean isInside(double x, double y, double z){
