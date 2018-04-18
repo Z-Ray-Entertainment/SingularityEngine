@@ -5,7 +5,6 @@
  */
 package de.zray.se.commands;
 
-import de.zray.se.MainThread;
 import de.zray.coretex.AbstractCommand;
 import de.zray.coretex.Parameter;
 import java.util.List;
@@ -22,7 +21,7 @@ public class Mute extends AbstractCommand{
 
     @Override
     public String action(List<Parameter> params) {
-        MainThread.getCurrentWorld().getAudioModule().setBGMMuted(!MainThread.getCurrentWorld().getAudioModule().isBGMMuted());
+        //MainThread.getCurrentWorld().getAudioModule().setBGMMuted(!MainThread.getCurrentWorld().getAudioModule().isBGMMuted());
         return "Music muted";
     }
     
