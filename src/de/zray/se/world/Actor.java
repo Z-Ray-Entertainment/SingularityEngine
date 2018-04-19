@@ -7,7 +7,6 @@ package de.zray.se.world;
 
 import de.zray.se.ai.SEAI;
 import de.zray.se.graphics.semesh.Mesh;
-import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.physics.SEBulletObject;
 import java.util.List;
 

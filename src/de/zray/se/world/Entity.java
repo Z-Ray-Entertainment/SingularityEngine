@@ -6,7 +6,6 @@
 package de.zray.se.world;
 
 import de.zray.se.graphics.semesh.Oriantation;
-import de.zray.se.logger.SELogger;
 
 /**
  *
