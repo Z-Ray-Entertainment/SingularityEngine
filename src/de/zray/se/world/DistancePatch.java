@@ -6,6 +6,8 @@
 package de.zray.se.world;
 
 import de.zray.se.Settings;
+import de.zray.se.graphics.Camera;
+import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
@@ -251,5 +253,31 @@ public class DistancePatch {
             }
             return true;
         }
+    }
+    
+    public List<Actor> getVisibleActors(Camera curCam){
+        List<Entity> visibleEnts = getVisibleEntities(curCam);
+        List<Actor> visibleActors = new LinkedList<>();
+        for(Entity ent : visibleEnts){
+            if(ent instanceof Actor){
+                visibleActors.add((Actor) ent);
+            }
+        }
+        return visibleActors;
+    }
+    
+    public List<LightSource> getVisibleLights(Camera curCam){
+        List<Entity> visibleEnts = getVisibleEntities(curCam);
+        List<LightSource> visibleLights = new LinkedList<>();
+        for(Entity ent : visibleEnts){
+            if(ent instanceof LightSource){
+                visibleLights.add((LightSource) ent);
+            }
+        }
+        return visibleLights;
+    }
+    
+    public List<Entity> getVisibleEntities(Camera curCam){
+        return getEntities();
     }
 }

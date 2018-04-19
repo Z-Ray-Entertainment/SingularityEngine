@@ -144,7 +144,7 @@ public abstract class World {
         return master.getSubPatches();
     }
 
-    public Iterable<Actor> getAllActors() {
+    public List<Actor> getAllActors() {
         List<Actor> actors = new LinkedList<>();
         master.getEntities().stream().filter((ent) -> (ent instanceof Actor)).forEachOrdered((ent) -> {
             actors.add((Actor) ent);
@@ -152,11 +152,11 @@ public abstract class World {
         return actors;
     }
     
-    public Iterable<Actor> getVisibleActors(){
-        return null;
+    public List<Actor> getVisibleActors(){
+        return master.getVisibleActors(views.get(currentCamera));
     }
     
-    public Iterable<LightSource> getAllLights(){
+    public List<LightSource> getAllLights(){
         return null;
     }
 }
