@@ -9,7 +9,7 @@ import de.zray.se.Settings;
 import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,11 +21,11 @@ public class DistancePatch {
     private UUID uuid = UUID.randomUUID();
     private DistancePatch parent;
     private int level;
-    private List<DistancePatch> subPatches = new LinkedList<>();
-    private List<DistancePatch> subPatchesToBeAdded = new LinkedList<>();
+    private List<DistancePatch> subPatches = new ArrayList<>();
+    private List<DistancePatch> subPatchesToBeAdded = new ArrayList<>();
     private double pos[] = new double[3];
-    private List<Entity> ents = new LinkedList<>();
-    private List<Integer> freeEnts = new LinkedList<>(), distancePatchesToBeDeleted = new LinkedList<>();
+    private List<Entity> ents = new ArrayList<>();
+    private List<Integer> freeEnts = new ArrayList<>(), distancePatchesToBeDeleted = new ArrayList<>();
     private boolean refreshNeeded = false;
     
     public DistancePatch(DistancePatch parent, int level, double pos[]){
@@ -99,7 +99,7 @@ public class DistancePatch {
     
     public List<Entity> getEntities(){
         if(!isLowestDistancePatch()){
-            List<Entity> allEnts = new LinkedList<>();
+            List<Entity> allEnts = new ArrayList<>();
             subPatches.forEach((sub) -> {
                 allEnts.addAll(sub.getEntities());
             });
@@ -222,7 +222,7 @@ public class DistancePatch {
     }
     
     public List<DistancePatch> getSubPatches(){
-        List<DistancePatch> subs = new LinkedList<>();
+        List<DistancePatch> subs = new ArrayList<>();
         subs.addAll(subPatches);
         for(DistancePatch subsub : subPatches){
             subs.addAll(subsub.getSubPatches());
@@ -257,7 +257,7 @@ public class DistancePatch {
     
     public List<Actor> getVisibleActors(Camera curCam){
         List<Entity> visibleEnts = getVisibleEntities(curCam);
-        List<Actor> visibleActors = new LinkedList<>();
+        List<Actor> visibleActors = new ArrayList<>();
         for(Entity ent : visibleEnts){
             if(ent instanceof Actor){
                 visibleActors.add((Actor) ent);
@@ -268,7 +268,7 @@ public class DistancePatch {
     
     public List<LightSource> getVisibleLights(Camera curCam){
         List<Entity> visibleEnts = getVisibleEntities(curCam);
-        List<LightSource> visibleLights = new LinkedList<>();
+        List<LightSource> visibleLights = new ArrayList<>();
         for(Entity ent : visibleEnts){
             if(ent instanceof LightSource){
                 visibleLights.add((LightSource) ent);
