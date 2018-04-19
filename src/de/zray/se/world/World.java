@@ -14,7 +14,7 @@ import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.inputmanager.InputManager;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.physics.SEBulletWorld;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +25,10 @@ public abstract class World {
     private SEAIWorld aiWorld;
     private SEBulletWorld bulletWorld;
     private SEAudioWorld audioWorld;
-    private List<Camera> views = new LinkedList<>();
-    private List<InputManager> inputManages = new LinkedList<>();
+    private List<Camera> views = new ArrayList<>();
+    private List<InputManager> inputManages = new ArrayList<>();
     private int currentCamera = -1;
-    private List<Mesh> rendableMeshes = new LinkedList<>();
+    private List<Mesh> rendableMeshes = new ArrayList<>();
     private DistancePatch master;
     
     public World(){
@@ -60,7 +60,7 @@ public abstract class World {
     }
     
     public final List<Entity> getEntities(){
-        List<Entity> collect = new LinkedList<>();
+        List<Entity> collect = new ArrayList<>();
         collect.addAll(master.getEntities());
         return collect;
     }
@@ -107,7 +107,7 @@ public abstract class World {
     }
     
     private void collectRendableMeshes(){
-        rendableMeshes = new LinkedList<>();
+        rendableMeshes = new ArrayList<>();
     }
     
     public List<Mesh> getRendableMeshes(){
@@ -145,7 +145,7 @@ public abstract class World {
     }
 
     public List<Actor> getAllActors() {
-        List<Actor> actors = new LinkedList<>();
+        List<Actor> actors = new ArrayList<>();
         master.getEntities().stream().filter((ent) -> (ent instanceof Actor)).forEachOrdered((ent) -> {
             actors.add((Actor) ent);
         });
