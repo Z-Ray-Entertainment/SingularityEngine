@@ -10,11 +10,15 @@ import de.zray.se.world.DistancePatch;
 import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.opengl.GL11;
+import static org.lwjgl.opengl.GL11.GL_COMPILE;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glCallList;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glEndList;
+import static org.lwjgl.opengl.GL11.glGenLists;
+import static org.lwjgl.opengl.GL11.glNewList;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glTranslated;
@@ -87,14 +91,16 @@ public class GLDebugDistnacePatch {
             
             glTranslated(dp.getPostion()[0], dp.getPostion()[1], dp.getPostion()[2]);
                 if(dpLists[dp.getLevel()] == -1){
-                    createDisplayList(verts);
+                    createDisplayList(verts, dp.getLevel());
                 } else {
                     glCallList(dpLists[dp.getLevel()]);
                 }
             glPopMatrix();
     }
     
-    private void createDisplayList(double verts[][]){
+    private void createDisplayList(double verts[][], int level){
+        dpLists[level] = glGenLists(1);
+        glNewList(dpLists[level], GL_COMPILE);
         glBegin(GL_LINES);
             glVertex3d(verts[0][0], verts[0][1], verts[0][2]); glVertex3d(verts[1][0], verts[1][1], verts[1][2]);
             glVertex3d(verts[0][0], verts[0][1], verts[0][2]); glVertex3d(verts[3][0], verts[3][1], verts[3][2]);
@@ -114,5 +120,6 @@ public class GLDebugDistnacePatch {
             glVertex3d(verts[5][0], verts[5][1], verts[5][2]); glVertex3d(verts[4][0], verts[4][1], verts[4][2]);
             glVertex3d(verts[5][0], verts[5][1], verts[5][2]); glVertex3d(verts[6][0], verts[6][1], verts[6][2]);
         glEnd();
+        glEndList();
     }
 }
