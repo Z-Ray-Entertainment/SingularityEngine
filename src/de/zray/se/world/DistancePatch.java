@@ -18,7 +18,6 @@ import java.util.UUID;
 public class DistancePatch {
     private UUID uuid = UUID.randomUUID();
     private DistancePatch parent;
-    private World parentWorld;
     private int level;
     private List<DistancePatch> subPatches = new LinkedList<>();
     private List<DistancePatch> subPatchesToBeAdded = new LinkedList<>();
@@ -26,11 +25,6 @@ public class DistancePatch {
     private List<Entity> ents = new LinkedList<>();
     private List<Integer> freeEnts = new LinkedList<>(), distancePatchesToBeDeleted = new LinkedList<>();
     private boolean refreshNeeded = false;
-    
-    public DistancePatch(World parent, int level, double pos[]){
-        this.parentWorld = parent;
-        initDistancePatch(level, pos);
-    }
     
     public DistancePatch(DistancePatch parent, int level, double pos[]){
         this.parent = parent;
@@ -84,11 +78,8 @@ public class DistancePatch {
         } else if(parent != null){
             //System.out.println("[DP "+level+"]: Entity is not inside, sending to parent DP");
             return parent.addEntity(ent);
-        } else if(parentWorld != null){
-            parentWorld.addEntity(ent);
-            return true;
         } else {
-            SELogger.get().dispatchMsg("DistancePatch", SELogger.SELogType.ERROR, new String[]{"Distancepatch without parent"}, true);
+            SELogger.get().dispatchMsg("DistancePatch", SELogger.SELogType.ERROR, new String[]{"Unable to sort Entiy in DisntacePatch level:"+level}, true);
         }
         return false;
     }
@@ -183,31 +174,35 @@ public class DistancePatch {
     }
     
     private void calcPosition(double pos[]){
-        int edgeLength = Settings.get().scene.dpSizes[level];
-        this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
-        this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
-        this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
+        if(level > -1){
+            int edgeLength = Settings.get().scene.dpSizes[level];
+            this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
+            this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
+            this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
+        }
         /*System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
         System.out.println("=> for pos: "+pos[0]+" "+pos[1]+" "+pos[2]);
         System.out.println("=> edgeLenght: "+edgeLength);*/
     }
     
     public boolean isInside(double x, double y, double z){
-        double edgeLength = Settings.get().scene.dpSizes[level];
+        if(level > -1){
+            double edgeLength = Settings.get().scene.dpSizes[level];
         
-        if(!isBetween(pos[0], pos[0]+edgeLength/2., x)){
-            if(!isBetween(pos[0]-edgeLength/2., pos[0], x)){
-                return false;
+            if(!isBetween(pos[0], pos[0]+edgeLength/2., x)){
+                if(!isBetween(pos[0]-edgeLength/2., pos[0], x)){
+                    return false;
+                }
             }
-        }
-        if(!isBetween(pos[1], pos[1]+edgeLength/2., y)){
-            if(!isBetween(pos[1]-edgeLength/2., pos[1], y)){
-                return false;
+            if(!isBetween(pos[1], pos[1]+edgeLength/2., y)){
+                if(!isBetween(pos[1]-edgeLength/2., pos[1], y)){
+                    return false;
+                }
             }
-        }
-        if(!isBetween(pos[2], pos[2]+edgeLength/2., z)){
-            if(!isBetween(pos[2]-edgeLength/2., pos[2], z)){
-                return false;
+            if(!isBetween(pos[2], pos[2]+edgeLength/2., z)){
+                if(!isBetween(pos[2]-edgeLength/2., pos[2], z)){
+                    return false;
+                }
             }
         }
         return true;
@@ -218,7 +213,10 @@ public class DistancePatch {
     }
     
     private boolean isLowestDistancePatch(){
-        return level == Settings.get().scene.dpSizes.length-1;
+        if(level > -1){
+            return level == Settings.get().scene.dpSizes.length-1;
+        }
+        return false;
     }
     
     public List<DistancePatch> getSubPatches(){

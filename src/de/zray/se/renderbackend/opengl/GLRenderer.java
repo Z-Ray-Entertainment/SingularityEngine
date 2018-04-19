@@ -109,7 +109,7 @@ public class GLRenderer implements RenderBackend{
         glEnable(GL_DEPTH_TEST);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        for(Actor actor : currentWorld.getActors()){
+        for(Actor actor : currentWorld.getAllActors()){
             if(actor != null){
                 List<Mesh> rendables = actor.getRendableSEMeshes();
                 if(rendables != null){
