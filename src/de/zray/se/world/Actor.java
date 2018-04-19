@@ -6,6 +6,7 @@
 package de.zray.se.world;
 
 import de.zray.se.ai.SEAI;
+import de.zray.se.graphics.semesh.BoundingBox;
 import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.physics.SEBulletObject;
 import java.util.List;
@@ -27,6 +28,7 @@ public class Actor extends Entity {
         this.bullet = bulletObj;
         this.mesh = mesh;
         this.parrentWorld = parrentWorld;
+        bBox = new BoundingBox(this);
     }
 
     public List<Mesh> getRendableSEMeshes() {

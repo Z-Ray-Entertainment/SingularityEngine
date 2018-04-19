@@ -5,86 +5,76 @@
  */
 package de.zray.se.graphics.semesh;
 
-import java.util.List;
+import de.zray.se.storages.AssetLibrary;
+import de.zray.se.utils.SEUtils;
+import de.zray.se.world.Actor;
+import de.zray.se.world.Entity;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
 /**
  *
  * @author Vortex Acherontic
  */
 public class BoundingBox{
-    float xmin = 0, xmax = 0, ymin = 0, ymax = 0, zmin = 0, zmax = 0;
-    Vector3d v1, v2, v3, v4, v5, v6, v7, v8;
-    Mesh cube;
-    Oriantation ori = new Oriantation(null, 0, 0, 0);
+    float radius = 0;
+    Vertex verts[] = new Vertex[8];
+    Oriantation ori;
     
-    public BoundingBox(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax){
-        this.xmax = xmax;
-        this.xmin = xmin;
-        this.ymin = ymin;
-        this.ymax = ymax;
-        this.zmin = zmin;
-        this.zmax = zmax;
-        buildBB();
+    public BoundingBox(Entity parent){
+        calculateBoindingBox(parent);
     }
     
-    public void extendBoundingBox(List<Vertex> newVertecies){
-        for(Vertex tmp : newVertecies){
-            if(tmp.vX < xmin){
-                xmin = tmp.vX;
+    private void calculateBoindingBox(Entity parent){
+        this.ori = parent.getOrientation();
+        if(parent instanceof Actor){
+            Actor parentActor = (Actor) parent;
+            int mDataID =  parentActor.getRootMesh().getSEMeshData();
+            MeshData mData = AssetLibrary.get().getMesh(mDataID);
+            float minX = 0, maxX = 0, minY = 0, maxY = 0, minZ = 0, maxZ = 0;
+            Vector3f center = new Vector3f(0, 0, 0);
+            for(Vertex v : mData.getVertecies()){
+                if(v.vX < minX){
+                    minX = v.vX;
+                }
+                if(v.vX > maxX){
+                    maxX = v.vX;
+                }
+                if(v.vY < minY){
+                    minY = v.vY;
+                }
+                if(v.vY > maxY){
+                    maxY = v.vY;
+                }
+                if(v.vZ < minZ){
+                    minZ = v.vZ;
+                }
+                if(v.vZ > maxZ){
+                    maxZ = v.vZ;
+                }
+                Vector3f vertex = new Vector3f(v.vX, v.vY, v.vZ);
+                Vector3f path = SEUtils.getVector(center, vertex);
+                float rad = SEUtils.getLenght(path);
+                if(rad > radius){
+                    radius = rad;
+                }
             }
-            else if(tmp.vX > xmax){
-                xmax = tmp.vX;
-            }
-            if(tmp.vY < ymin){
-                ymin = tmp.vY;
-            }
-            else if(tmp.vY > ymax){
-                ymax = tmp.vY;
-            }
-            if(tmp.vZ < zmin){
-                zmin = tmp.vZ;
-            }
-            else if(tmp.vZ > zmax){
-                zmax = tmp.vZ;
+            verts[0] = new Vertex(minX, minY, minZ);
+            verts[1] = new Vertex(maxX, minY, minZ);
+            verts[2] = new Vertex(minX, maxY, minZ);
+            verts[3] = new Vertex(maxX, maxY, minZ);
+            verts[4] = new Vertex(minX, minY, maxZ);
+            verts[5] = new Vertex(maxX, minY, maxZ);
+            verts[6] = new Vertex(minX, minY, maxZ);
+            verts[7] = new Vertex(maxX, minY, maxZ);
+            System.out.println("[BoundingBox]: Builded BBox");
+            System.out.println("=> radius: "+radius);
+            System.out.println("=> Vertecies:");
+            for(Vertex v : verts){
+                System.out.println("=> => "+v.vX+" "+v.vY+" "+v.vZ);
+                System.out.println("=> => <= <= ");
             }
         }
-        buildBB();
-    }
-    
-    public BoundingBox(List<Vertex> vertecies){
-        for(Vertex tmp : vertecies){
-            if(tmp.vX < xmin){
-                xmin = tmp.vX;
-            }
-            else if(tmp.vX > xmax){
-                xmax = tmp.vX;
-            }
-            if(tmp.vY < ymin){
-                ymin = tmp.vY;
-            }
-            else if(tmp.vY > ymax){
-                ymax = tmp.vY;
-            }
-            if(tmp.vZ < zmin){
-                zmin = tmp.vZ;
-            }
-            else if(tmp.vZ > zmax){
-                zmax = tmp.vZ;
-            }
-        }
-        buildBB();
-    }
-    
-    private void buildBB(){
-        v1 = new Vector3d(xmin, ymin, zmin);
-        v2 = new Vector3d(xmax, ymin, zmin);
-        v3 = new Vector3d(xmax, ymin, zmax);
-        v4 = new Vector3d(xmin, ymin, zmax);
-        v5 = new Vector3d(xmin, ymax, zmin);
-        v6 = new Vector3d(xmax, ymax, zmin);
-        v7 = new Vector3d(xmax, ymax, zmax);
-        v8 = new Vector3d(xmin, ymax, zmax);
     }
     
     public void setOrientation(Oriantation ori){
@@ -105,15 +95,23 @@ public class BoundingBox{
     }
     
     private boolean realInside(Vector3d point, Oriantation vecOri){
-        if(point.x+vecOri.getPositionVec().x >= xmin+ori.getPositionVec().x && point.x < xmax+ori.getPositionVec().x){
-            return true;
+        /*if(point.x+vecOri.getPositionVec().x >= xmin+ori.getPositionVec().x && point.x < xmax+ori.getPositionVec().x){
+        return true;
         }
         if(point.y+vecOri.getPositionVec().y >= ymin+ori.getPositionVec().y && point.y < ymax+ori.getPositionVec().y+vecOri.getPositionVec().y){
-            return true;
+        return true;
         }
         if(point.z+vecOri.getPositionVec().z >= zmin+ori.getPositionVec().z && point.z < zmax+ori.getPositionVec().z+vecOri.getPositionVec().z){
-            return true;
-        }
+        return true;
+        }*/
         return false;
+    }
+    
+    /**
+     * 
+     * @return The lagest radius from a sphere containing this box
+     */
+    public double getRadius(){
+        return radius;
     }
 }

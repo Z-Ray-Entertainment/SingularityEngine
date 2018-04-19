@@ -5,6 +5,7 @@
  */
 package de.zray.se.world;
 
+import de.zray.se.graphics.semesh.BoundingBox;
 import de.zray.se.graphics.semesh.Oriantation;
 
 /**
@@ -16,6 +17,7 @@ public abstract class Entity{
     private WorldID id;
     private boolean refreshNeeded = false;
     private DistancePatch parent;
+    BoundingBox bBox;
     
     public Entity(){
         orientation = new Oriantation(this);
@@ -54,5 +56,9 @@ public abstract class Entity{
     
     public boolean isRefreshNedded(){
         return refreshNeeded;
+    }
+    
+    public BoundingBox getBoundingBox(){
+        return bBox;
     }
 }
