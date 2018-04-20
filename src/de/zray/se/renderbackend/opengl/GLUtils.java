@@ -7,7 +7,6 @@ package de.zray.se.renderbackend.opengl;
 
 import de.zray.se.graphics.semesh.Face;
 import de.zray.se.graphics.semesh.Material;
-import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.graphics.semesh.MeshData;
 import de.zray.se.logger.SELogger;
 import java.nio.FloatBuffer;
