@@ -10,6 +10,7 @@ import de.zray.se.world.Actor;
 import de.zray.se.world.World;
 import de.zray.se.Settings;
 import de.zray.se.graphics.Camera;
+import de.zray.se.graphics.LightSource;
 import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.graphics.semesh.MeshData;
 import de.zray.se.inputmanager.KeyMap;
@@ -109,6 +110,16 @@ public class GLRenderer implements RenderBackend{
         glEnable(GL_DEPTH_TEST);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        if(currentWorld.getAllLights() != null || !currentWorld.getAllLights().isEmpty()){
+            glEnable(GL_LIGHTING);
+            //glEnable(GL_COLOR_MATERIAL);
+            for(int i = 0; i < 8; i++){
+                renderLight(currentWorld.getAllLights().get(i), i);
+            }
+            
+        } else {
+            glDisable(GL_LIGHTING);
+        }
         for(Actor actor : currentWorld.getVisibleActors()){
             if(actor != null){
                 List<Mesh> rendables = actor.getRendableSEMeshes();
@@ -294,6 +305,37 @@ public class GLRenderer implements RenderBackend{
                 break;
         }
         glDisable(GL_TEXTURE_2D);
+        //glUtils.applyNullifyMaterial();
+    }
+    
+    private void renderLight(LightSource light, int num){
+        int lighNum = GL_LIGHT0+num;
+        if(lighNum > GL_LIGHT7 || lighNum < GL_LIGHT0){
+            SELogger.get().dispatchMsg("GLRenderer", SELogger.SELogType.WARNING, new String[]{"Lightnuber dose not exist!"}, false);
+        }
+        
+        glEnable(lighNum);
+        float position[] = new float[4];
+        position[0] = (float) light.getOrientation().getPosition()[0];
+        position[1] = (float) light.getOrientation().getPosition()[1];
+        position[2] = (float) light.getOrientation().getPosition()[2];
+        position[3] = 1;
+        
+        glLightfv(lighNum, GL_POSITION, position);
+        glLightfv(lighNum, GL_DIFFUSE, light.getColor(LightSource.DIFFUSE));
+        glLightfv(lighNum, GL_AMBIENT, light.getColor(LightSource.AMBIENT));
+        glLightfv(lighNum, GL_SPECULAR, light.getColor(LightSource.SPECULAR));
+        switch(light.getLightType()){
+            case POINT :
+                break;
+            case SPOT :
+                break;
+            case SUN :
+                glLightf(lighNum, GL_CONSTANT_ATTENUATION, 1);
+                break;
+            case VOLUME :
+                break;
+        }
     }
     
     private final void pollInputs(){

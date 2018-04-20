@@ -251,12 +251,12 @@ public class GLUtils {
                 glEnable(GL_BLEND);
                 glBlendFunc(GL_ONE, GL_SRC_COLOR);
             }
+            float[] diffuse = new float[]{mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency()};
+            float[] spec = new float[]{mat.getSpecularColor().x, mat.getSpecularColor().y, mat.getSpecularColor().z, mat.getTransparency()};
+
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
         }
-        float[] diffuse = new float[]{mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency()};
-        float[] spec = new float[]{mat.getSpecularColor().x, mat.getSpecularColor().y, mat.getSpecularColor().z, mat.getTransparency()};
-        
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
-        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
         applyTextures(mat, rData);
     }
     
@@ -266,5 +266,13 @@ public class GLUtils {
         drawObject(mesh);
         glEndList();
         SELogger.get().dispatchMsg("GLUtils", SELogger.SELogType.INFO, new String[]{"Generated new solid displaylist: "+rDataCache.displayListID}, false);
+    }
+    
+    public void applyNullifyMaterial(){
+        glColor4f(1, 1, 1, 1);
+        float[] diffuse = new float[]{1, 1, 1, 0};
+        float[] spec = new float[]{1, 1, 1, 0};
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
     }
 }
