@@ -157,6 +157,10 @@ public abstract class World {
     }
     
     public List<LightSource> getAllLights(){
-        return null;
+        List<LightSource> source = new ArrayList<>();
+        master.getEntities().stream().filter((ent) -> (ent instanceof LightSource)).forEachOrdered((ent) -> {
+            source.add((LightSource) ent);
+        });
+        return source;
     }
 }

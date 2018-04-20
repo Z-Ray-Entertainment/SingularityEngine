@@ -78,13 +78,13 @@ public class BoundingBox{
             defaultVerts[5] = new Vertex(maxX, minY, maxZ);
             defaultVerts[6] = new Vertex(minX, maxY, maxZ);
             defaultVerts[7] = new Vertex(maxX, maxY, maxZ);
-            System.out.println("[BoundingBox]: Builded BBox");
+            /*System.out.println("[BoundingBox]: Builded BBox");
             System.out.println("=> radius: "+radius);
             System.out.println("=> Vertecies:");
             for(Vertex v : verts){
-                System.out.println("=> => "+v.vX+" "+v.vY+" "+v.vZ);
-                System.out.println("=> => <= <= ");
-            }
+            System.out.println("=> => "+v.vX+" "+v.vY+" "+v.vZ);
+            System.out.println("=> => <= <= ");
+            }*/
         }
     }
     
