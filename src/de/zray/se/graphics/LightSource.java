@@ -5,7 +5,6 @@
  */
 package de.zray.se.graphics;
 
-import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.world.Entity;
 
 /**

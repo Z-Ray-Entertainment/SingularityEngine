@@ -12,25 +12,25 @@ import javax.vecmath.Vector3d;
  *
  * @author vortex
  */
-public class Oriantation {
+public class Orientation {
     private Vector3d pos = new Vector3d(0, 0, 0);
     private Vector3d rot = new Vector3d(0, 0, 0);
     private Vector3d scl = new Vector3d(0, 0, 0);
     private Entity parent;
     
-    public Oriantation(Entity parent){
+    public Orientation(Entity parent){
         initOrientation(parent, 0, 0, 0, 0, 0, 0, 1, 1, 1);
     }
     
-    public Oriantation(Entity parent, float posX, float posY, float posZ){
+    public Orientation(Entity parent, float posX, float posY, float posZ){
         initOrientation(parent, posX, posY, posZ, 0, 0, 0, 1, 1, 1);
     }
     
-    public Oriantation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ){
+    public Orientation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ){
         initOrientation(parent, posX, posY, posZ, rotX, rotY, rotZ, 1, 1, 1);
     }
     
-    public Oriantation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
+    public Orientation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
         initOrientation(parent, posX, posY, posZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ);
     }
     

@@ -9,6 +9,8 @@ import de.zray.se.storages.AssetLibrary;
 import de.zray.se.utils.SEUtils;
 import de.zray.se.world.Actor;
 import de.zray.se.world.Entity;
+import javax.vecmath.Tuple2f;
+import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
@@ -18,8 +20,8 @@ import javax.vecmath.Vector3f;
  */
 public class BoundingBox{
     float radius = 0;
-    Vertex verts[] = new Vertex[8];
-    Oriantation ori;
+    Vertex verts[] = new Vertex[8], defaultVerts[] = new Vertex[8];
+    Orientation ori;
     
     public BoundingBox(Entity parent){
         calculateBoindingBox(parent);
@@ -65,8 +67,17 @@ public class BoundingBox{
             verts[3] = new Vertex(maxX, maxY, minZ);
             verts[4] = new Vertex(minX, minY, maxZ);
             verts[5] = new Vertex(maxX, minY, maxZ);
-            verts[6] = new Vertex(minX, minY, maxZ);
-            verts[7] = new Vertex(maxX, minY, maxZ);
+            verts[6] = new Vertex(minX, maxY, maxZ);
+            verts[7] = new Vertex(maxX, maxY, maxZ);
+            
+            defaultVerts[0] = new Vertex(minX, minY, minZ);
+            defaultVerts[1] = new Vertex(maxX, minY, minZ);
+            defaultVerts[2] = new Vertex(minX, maxY, minZ);
+            defaultVerts[3] = new Vertex(maxX, maxY, minZ);
+            defaultVerts[4] = new Vertex(minX, minY, maxZ);
+            defaultVerts[5] = new Vertex(maxX, minY, maxZ);
+            defaultVerts[6] = new Vertex(minX, maxY, maxZ);
+            defaultVerts[7] = new Vertex(maxX, maxY, maxZ);
             System.out.println("[BoundingBox]: Builded BBox");
             System.out.println("=> radius: "+radius);
             System.out.println("=> Vertecies:");
@@ -77,7 +88,7 @@ public class BoundingBox{
         }
     }
     
-    public void setOrientation(Oriantation ori){
+    public void setOrientation(Orientation ori){
         this.ori = ori;
     }
     
@@ -86,15 +97,15 @@ public class BoundingBox{
         return false;
     }
   
-    public boolean inside(Vector3d point, Oriantation vecOri){
+    public boolean inside(Vector3d point, Orientation vecOri){
         return realInside(point, vecOri);
     }
     
     public boolean inside(Vector3d point){
-        return realInside(point, new Oriantation(null));
+        return realInside(point, new Orientation(null));
     }
     
-    private boolean realInside(Vector3d point, Oriantation vecOri){
+    private boolean realInside(Vector3d point, Orientation vecOri){
         /*if(point.x+vecOri.getPositionVec().x >= xmin+ori.getPositionVec().x && point.x < xmax+ori.getPositionVec().x){
         return true;
         }
@@ -113,5 +124,22 @@ public class BoundingBox{
      */
     public double getRadius(){
         return radius;
+    }
+    
+    public Vertex[] getVertecies(){
+        return verts;
+    }
+    
+    public Orientation getOrientation(){
+        return ori;
+    }
+    
+    public void reCalc(){
+        double scale[] = ori.getScale();
+        for(int i = 0; i < verts.length; i++){
+            Vector3f vertex = new Vector3f(defaultVerts[i].vX, defaultVerts[i].vY, defaultVerts[i].vZ);
+            Vector3f scaleVec = new Vector3f((float) scale[0], (float) scale[1], (float) scale[2]);
+            vertex.scale(radius, scaleVec);
+        }
     }
 }

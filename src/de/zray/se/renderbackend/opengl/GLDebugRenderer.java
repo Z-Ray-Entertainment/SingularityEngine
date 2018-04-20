@@ -7,6 +7,7 @@ package de.zray.se.renderbackend.opengl;
 
 import de.zray.se.Settings;
 import de.zray.se.world.DistancePatch;
+import de.zray.se.world.Entity;
 import de.zray.se.world.World;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -17,6 +18,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class GLDebugRenderer {
     private GLDebugGrid gridRenderer = new GLDebugGrid();
     private GLDebugDistnacePatch dpRenderer = new GLDebugDistnacePatch();
+    private GLDebugBBox bBoxRender = new GLDebugBBox();
     
     public void render(World world){
         glDisable(GL_LIGHTING);
@@ -32,6 +34,11 @@ public class GLDebugRenderer {
         }
         if(Settings.get().debug.showDistancePatches){
             renderDistancePatches(world);
+        }
+        for(Entity ent : world.getVisibleActors()){
+            if(ent.getBoundingBox() != null){
+                bBoxRender.renderBoundingBox(ent.getBoundingBox());
+            }
         }
     }
     
