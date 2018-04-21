@@ -24,7 +24,7 @@ public class Camera {
     };
 
     private CameraMode camMode = CameraMode.PERSPECTIVE;
-    private Vector3f pos = new Vector3f(0, 1, 0), rot = new Vector3f(90, 0, 0);
+    private Vector3f pos = new Vector3f(0, 1, 0), rot = new Vector3f(0, 0, 0);
     private float near = Settings.get().view.nearClip, far = Settings.get().view.farClip, ratio = 1, fov = 50;
     private String camName = "Camera";
     private ViewMode viewMode = ViewMode.THIRDPERSON;

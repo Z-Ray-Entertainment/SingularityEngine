@@ -106,6 +106,7 @@ public class GLRenderer implements RenderBackend{
         glEnable(GL_DEPTH_TEST);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+        applyCameraPositioning(currentWorld.getCurrentCamera());
         lightRender.renderLightSources(currentWorld);
         meshRender.renderActors(currentWorld);
         if(dMode == Settings.DebugMode.DEBUG_AND_OBJECTS){
@@ -146,6 +147,19 @@ public class GLRenderer implements RenderBackend{
         this.currentWorld = world;
     }
     
+    private void applyCameraPositioning(Camera cam){
+        switch(cam.getViewMode()){
+            case EGO :
+                glRotated(cam.getRotation().x, 1, 0, 0);
+                glRotated(cam.getRotation().y, 0, 1, 0);
+                glRotated(cam.getRotation().z, 0, 0, 1);
+                glTranslatef(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
+                break;
+            case THIRDPERSON :
+                break;
+        }
+    }
+    
     private void applyCamera(Camera cam){
         if(cam == null){
             applayEmptyCamera();
@@ -159,8 +173,6 @@ public class GLRenderer implements RenderBackend{
                 break;
             case PERSPECTIVE:
                 GLUProject.gluPerspective(cam.getFOV(), aspectRatio, cam.getNear(), cam.getFar());
-                //applyRotations(cam);
-                glTranslated(-cam.getPosition().x, -cam.getPosition().y, -cam.getPosition().z);
                 break;
         }
         glMatrixMode(GL_MODELVIEW);
@@ -173,19 +185,6 @@ public class GLRenderer implements RenderBackend{
         glOrtho(0, windowW, windowH, 0, 1, 100);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-    }
-    
-    private void applyRotations(Camera cam) {
-        if (!cam.getRotationLocks()[0]) {
-            glRotated(cam.getRotation().x, 1, 0, 0);
-        }
-        if (!cam.getRotationLocks()[1]) {
-            glRotated(cam.getRotation().y, 0, 1, 0);
-        }
-        if (!cam.getRotationLocks()[2]) {
-            glRotated(cam.getRotation().z, 0, 0, 1);
-        }
-
     }
 
     @Override
