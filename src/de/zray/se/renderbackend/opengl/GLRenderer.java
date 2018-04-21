@@ -10,9 +10,7 @@ import de.zray.se.world.Actor;
 import de.zray.se.world.World;
 import de.zray.se.Settings;
 import de.zray.se.graphics.Camera;
-import de.zray.se.graphics.LightSource;
 import de.zray.se.graphics.semesh.Mesh;
-import de.zray.se.graphics.semesh.MeshData;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
@@ -20,7 +18,6 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
-import java.util.LinkedList;
 import java.util.List;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -29,7 +26,6 @@ import org.lwjgl.opengl.GL;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
-import de.zray.se.storages.AssetLibrary;
 import javax.vecmath.Vector3d;
 
 /**
@@ -43,12 +39,12 @@ public class GLRenderer implements RenderBackend{
     private int windowW = Settings.get().window.resX;
     private int windowH = Settings.get().window.resY;
     private boolean closeRequested = false;
-    private List<OpenGLRenderData> oglRenderDatas = new LinkedList<>();
-    private GLUtils glUtils = new GLUtils();
     private World currentWorld;
     private int keyTimes[] = new int[349], threshold = 32;
-    private GLRenderDataCache glCache = new GLRenderDataCache();
+    
     private GLDebugRenderer dRenderer = new GLDebugRenderer();
+    private GLRenderLight lightRender = new GLRenderLight();
+    private GLRendererMesh meshRender = new GLRendererMesh();
     
     
     @Override
@@ -110,31 +106,8 @@ public class GLRenderer implements RenderBackend{
         glEnable(GL_DEPTH_TEST);
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
-        if(currentWorld.getAllLights() != null || !currentWorld.getAllLights().isEmpty()){
-            glEnable(GL_LIGHTING);
-            //glEnable(GL_COLOR_MATERIAL);
-            for(int i = 0; i < 8; i++){
-                renderLight(currentWorld.getAllLights().get(i), i);
-            }
-            
-        } else {
-            glDisable(GL_LIGHTING);
-        }
-        for(Actor actor : currentWorld.getVisibleActors()){
-            if(actor != null){
-                List<Mesh> rendables = actor.getRendableSEMeshes();
-                if(rendables != null){
-                    for(int i = 0; i < rendables.size(); i++){
-                        Mesh mesh = rendables.get(i);
-                        if(mesh != null){
-                            glPushMatrix();
-                            renderMesh(mesh, actor);
-                            glPopMatrix();
-                        }
-                    }
-                }
-            }
-        }
+        lightRender.renderLightSources(currentWorld);
+        meshRender.renderActors(currentWorld);
         if(dMode == Settings.DebugMode.DEBUG_AND_OBJECTS){
             renderDebug();
         }
@@ -146,9 +119,7 @@ public class GLRenderer implements RenderBackend{
 
     @Override
     public void shutdown() {
-        oglRenderDatas.forEach((rData) -> {
-            rData.destroy(glCache.getCacheEntry(rData.getRenderDataCacheID()));
-        });
+        
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -233,110 +204,9 @@ public class GLRenderer implements RenderBackend{
         glfwSetWindowShouldClose(window, true);
     }
     
-    private void renderMesh(Mesh mesh, Actor parent){
-        double posX = parent.getOrientation().getPositionVec().x+mesh.getOffset().getPositionVec().x;
-        double posY = parent.getOrientation().getPositionVec().y+mesh.getOffset().getPositionVec().y;
-        double posZ = parent.getOrientation().getPositionVec().z+mesh.getOffset().getPositionVec().z;
-        double rotX = parent.getOrientation().getRotationVec().x+mesh.getOffset().getRotationVec().x;
-        double rotY = parent.getOrientation().getRotationVec().y+mesh.getOffset().getRotationVec().y;
-        double rotZ = parent.getOrientation().getRotationVec().z+mesh.getOffset().getRotationVec().z;
-        double scaleX = parent.getOrientation().getScaleVec().x+mesh.getOffset().getScaleVec().x;
-        double scaleY = parent.getOrientation().getScaleVec().y+mesh.getOffset().getScaleVec().y;
-        double scaleZ = parent.getOrientation().getScaleVec().z+mesh.getOffset().getScaleVec().z;
-        
-        /*System.out.println("[GLRenderer]: Rendering Mesh");
-        System.out.println("[GLRenderer]: -> Position: "+posX+" "+posY+" "+posZ);
-        System.out.println("[GLRenderer]: -> Rotation: "+rotX+" "+rotY+" "+rotZ);
-        System.out.println("[GLRenderer]: -> Scale: "+scaleX+" "+scaleY+" "+scaleZ);*/
-        
-        glTranslated(posX, posY, posZ);
-        glRotated(rotX, 1, 0, 0);
-        glRotated(rotY, 0, 1, 0);
-        glRotated(rotZ, 0, 0, 1);
-        glScaled(scaleX, scaleY, scaleZ);
-        
-        if(mesh.getRenderData() == -1){
-            OpenGLRenderData rData = new OpenGLRenderData();
-            rData.setRenderDataCacheID(glCache.lookUpCache(mesh.getSEMeshData()));
-            oglRenderDatas.add(rData);
-            mesh.setRenderData(oglRenderDatas.size()-1);
-        }
-        
-        OpenGLRenderData rData = oglRenderDatas.get(mesh.getRenderData());
-        glUtils.applyMaterial(mesh.getMaterial(), rData);
-        
-        MeshData mData = AssetLibrary.get().getMesh(mesh.getSEMeshData());
-        RenderDataCacheEntry rDataCache = glCache.getCacheEntry(rData.getRenderDataCacheID());
-        switch(mesh.getRenderMode()){
-            case DIRECT :
-                glUtils.drawObject(mData);
-                break;
-            case DISPLAY_LIST :
-                switch(mesh.getDisplayMode()){
-                    case SOLID :
-                        if(rDataCache.displayListID == -1){
-                            glUtils.generateDisplayList(mData, rDataCache);
-                        }
-                        glCallList(rDataCache.displayListID);
-                        break;
-                    case WIRED :
-                        if(rDataCache.displayListIDWired== -1){
-                            glUtils.generateDisplayListWired(mData, rDataCache);
-                        }
-                        glCallList(rDataCache.displayListIDWired);
-                        break;
-                }
-                break;
-            case VBO :
-                switch(mesh.getDisplayMode()){
-                    case SOLID :
-                        if(rDataCache.vboID == -1 || rDataCache.vboSize == -1){
-                            glUtils.generateVBO(mData, rDataCache);
-                        }
-                        glUtils.renderVBO(rDataCache);
-                        break;
-                    case WIRED :
-                        if(rDataCache.vboIDWired == -1 || rDataCache.vboSizeWired == -1){
-                            glUtils.generateVBOWired(mData, rDataCache);
-                        }
-                        glUtils.renderVBOWired(rDataCache);
-                        break;
-                }
-                break;
-        }
-        glDisable(GL_TEXTURE_2D);
-        //glUtils.applyNullifyMaterial();
-    }
     
-    private void renderLight(LightSource light, int num){
-        int lighNum = GL_LIGHT0+num;
-        if(lighNum > GL_LIGHT7 || lighNum < GL_LIGHT0){
-            SELogger.get().dispatchMsg("GLRenderer", SELogger.SELogType.WARNING, new String[]{"Lightnuber dose not exist!"}, false);
-        }
-        
-        glEnable(lighNum);
-        float position[] = new float[4];
-        position[0] = (float) light.getOrientation().getPosition()[0];
-        position[1] = (float) light.getOrientation().getPosition()[1];
-        position[2] = (float) light.getOrientation().getPosition()[2];
-        position[3] = 1;
-        
-        glLightfv(lighNum, GL_POSITION, position);
-        glLightfv(lighNum, GL_DIFFUSE, light.getColor(LightSource.DIFFUSE));
-        glLightfv(lighNum, GL_AMBIENT, light.getColor(LightSource.AMBIENT));
-        glLightfv(lighNum, GL_SPECULAR, light.getColor(LightSource.SPECULAR));
-        switch(light.getLightType()){
-            case POINT :
-                break;
-            case SPOT :
-                break;
-            case SUN :
-                glLightf(lighNum, GL_CONSTANT_ATTENUATION, 1);
-                break;
-            case VOLUME :
-                break;
-        }
-    }
+    
+    
     
     private final void pollInputs(){
         for(int i = 32; i < keyTimes.length; i++){ //32 because of invalid keys < 32
