@@ -256,6 +256,7 @@ public class GLUtils {
 
             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, diffuse);
             glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
+            glMaterialf(GL_FRONT, GL_SHININESS, mat.getShininess());
         }
         applyTextures(mat, rData);
     }

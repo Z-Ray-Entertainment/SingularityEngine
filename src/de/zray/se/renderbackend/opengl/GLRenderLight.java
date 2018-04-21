@@ -9,7 +9,6 @@ import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
 import de.zray.se.world.World;
 import static org.lwjgl.opengl.GL11.GL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
 import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
 import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
 import static org.lwjgl.opengl.GL11.GL_LIGHT0;
@@ -30,7 +29,6 @@ public class GLRenderLight {
     public void renderLightSources(World world){
         if(world.getAllLights() != null || !world.getAllLights().isEmpty()){
             glEnable(GL_LIGHTING);
-            glEnable(GL_COLOR_MATERIAL);
             for(int i = 0; i < 8; i++){
                 renderLight(world.getAllLights().get(i), i);
             }

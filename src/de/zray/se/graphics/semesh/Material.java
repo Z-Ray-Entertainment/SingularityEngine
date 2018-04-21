@@ -16,9 +16,9 @@ public class Material {
     
     private String texture, specMap, bumpMap, displaceMap, parallaxMap;
     private float specFac = 0, bumpFac = 0, displaceFac = 0, parallaxFac = 0, emission = 0, reflection = 0, transparency = 0f,
-            maxReflectionDistance = 0;
-    private Color3f diffuseColor = new Color3f(1, 1, 1),
-            specularColor = new Color3f(0, 0, 0), reflectionColor = new Color3f(1, 1, 1);
+            maxReflectionDistance = 0, shininess = 50;
+    private Color3f diffuseColor = new Color3f(0.5f, 0.5f, 0.5f),
+            specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
     private boolean cullBackFaces = false, shadeless = false;
     private ReflectionMode refMode = ReflectionMode.NO_BLEND;
     
@@ -216,5 +216,13 @@ public class Material {
     
     public String getParallaxMap(){
         return parallaxMap;
+    }
+    
+    public void setShininess(float shininess){
+        this.shininess = shininess;
+    }
+    
+    public float getShininess(){
+        return shininess;
     }
 }
