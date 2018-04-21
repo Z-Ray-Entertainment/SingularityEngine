@@ -9,6 +9,7 @@ import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
 import de.zray.se.world.World;
 import static org.lwjgl.opengl.GL11.GL_AMBIENT;
+import static org.lwjgl.opengl.GL11.GL_COLOR_MATERIAL;
 import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
 import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
 import static org.lwjgl.opengl.GL11.GL_LIGHT0;
@@ -29,7 +30,7 @@ public class GLRenderLight {
     public void renderLightSources(World world){
         if(world.getAllLights() != null || !world.getAllLights().isEmpty()){
             glEnable(GL_LIGHTING);
-            //glEnable(GL_COLOR_MATERIAL);
+            glEnable(GL_COLOR_MATERIAL);
             for(int i = 0; i < 8; i++){
                 renderLight(world.getAllLights().get(i), i);
             }
@@ -40,29 +41,37 @@ public class GLRenderLight {
     }
     
     private void renderLight(LightSource light, int num){
-        int lighNum = GL_LIGHT0+num;
-        if(lighNum > GL_LIGHT7 || lighNum < GL_LIGHT0){
+        int lightNum = GL_LIGHT0+num;
+        if(lightNum > GL_LIGHT7 || lightNum < GL_LIGHT0){
             SELogger.get().dispatchMsg("GLRenderer", SELogger.SELogType.WARNING, new String[]{"Lightnuber dose not exist!"}, false);
         }
         
-        glEnable(lighNum);
+        glEnable(lightNum);
         float position[] = new float[4];
         position[0] = (float) light.getOrientation().getPosition()[0];
         position[1] = (float) light.getOrientation().getPosition()[1];
         position[2] = (float) light.getOrientation().getPosition()[2];
         position[3] = 1;
         
-        glLightfv(lighNum, GL_POSITION, position);
-        glLightfv(lighNum, GL_DIFFUSE, light.getColor(LightSource.DIFFUSE));
-        glLightfv(lighNum, GL_AMBIENT, light.getColor(LightSource.AMBIENT));
-        glLightfv(lighNum, GL_SPECULAR, light.getColor(LightSource.SPECULAR));
+        glLightfv(lightNum, GL_POSITION, position);
+        applyLightColors(light, lightNum);
+        
+    }
+    
+    private void applyLightColors(LightSource light, int lightNum){
+        glLightfv(lightNum, GL_DIFFUSE, light.getColor(LightSource.DIFFUSE));
+        glLightfv(lightNum, GL_AMBIENT, light.getColor(LightSource.AMBIENT));
+        glLightfv(lightNum, GL_SPECULAR, light.getColor(LightSource.SPECULAR));
+    }
+    
+    private void applyFallof(LightSource light, int lightNum){
         switch(light.getLightType()){
             case POINT :
                 break;
             case SPOT :
                 break;
             case SUN :
-                glLightf(lighNum, GL_CONSTANT_ATTENUATION, 1);
+                glLightf(lightNum, GL_CONSTANT_ATTENUATION, 1);
                 break;
             case VOLUME :
                 break;
