@@ -113,6 +113,25 @@ public class IcoSphere implements SEMeshProvider{
         return new Normal(n.x, n.y, n.z);
     }
     
+    private Normal smoothNormals(Normal[] normals){
+        int amount = normals.length;
+        float smoothX = 0, smoothY = 0, smoothZ = 0;
+        for(Normal n : normals){
+            smoothX += n.nX;
+            smoothY += n.nY;
+            smoothZ += n.nZ;
+        }
+        
+        smoothX /= amount;
+        smoothY /= amount;
+        smoothZ /= amount;
+        
+        Vector3f smoothNormal = new Vector3f(smoothX, smoothY, smoothZ);
+        smoothNormal.normalize();
+        
+        return new Normal(smoothNormal.x, smoothNormal.y, smoothNormal.z);
+    }
+    
     private MeshData iterate(MeshData mesh){
         List<Vertex> v = new ArrayList<>();
         List<Face> f = new ArrayList<>();
@@ -144,10 +163,10 @@ public class IcoSphere implements SEMeshProvider{
             n.add(calcNormal(mesh.getVertecies().get(tmp.v2)));
             n.add(calcNormal(mesh.getVertecies().get(tmp.v3)));
             n.add(calcNormal(a));
-            n.add(calcNormal(a));
-            n.add(calcNormal(a));
+            n.add(calcNormal(b));
+            n.add(calcNormal(c));
 
-            f.add(new Face(iv1, ia, ic, 0, 0, 0, iv1, ia, ib));
+            f.add(new Face(iv1, ia, ic, 0, 0, 0, iv1, ia, ic));
             f.add(new Face(iv2, ib, ia, 0, 0, 0, iv2, ib, ia));
             f.add(new Face(iv3, ic, ib, 0, 0, 0, iv3, ic, ib));
             f.add(new Face(ia, ib, ic, 0, 0, 0, ia, ib, ic));
