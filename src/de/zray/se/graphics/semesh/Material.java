@@ -19,7 +19,7 @@ public class Material {
             maxReflectionDistance = 0, shininess = 50;
     private Color3f diffuseColor = new Color3f(0.5f, 0.5f, 0.5f),
             specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
-    private boolean cullBackFaces = false, shadeless = false;
+    private boolean cullBackFaces = false, shadeless = false, smooth = true;
     private ReflectionMode refMode = ReflectionMode.NO_BLEND;
     
     public Material(){}
@@ -224,5 +224,13 @@ public class Material {
     
     public float getShininess(){
         return shininess;
+    }
+    
+    public void setSmooth(boolean b){
+            this.smooth = b;
+    }
+    
+    public boolean isSmooth(){
+        return smooth;
     }
 }
