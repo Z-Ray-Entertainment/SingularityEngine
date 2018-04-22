@@ -8,17 +8,19 @@ package de.zray.se.renderbackend.opengl;
 import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
 import de.zray.se.world.World;
+import org.lwjgl.opengl.GL11;
 import static org.lwjgl.opengl.GL11.GL_AMBIENT;
-import static org.lwjgl.opengl.GL11.GL_CONSTANT_ATTENUATION;
 import static org.lwjgl.opengl.GL11.GL_DIFFUSE;
 import static org.lwjgl.opengl.GL11.GL_LIGHT0;
 import static org.lwjgl.opengl.GL11.GL_LIGHT7;
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_LIGHT_MODEL_LOCAL_VIEWER;
+import static org.lwjgl.opengl.GL11.GL_NORMALIZE;
 import static org.lwjgl.opengl.GL11.GL_POSITION;
 import static org.lwjgl.opengl.GL11.GL_SPECULAR;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glLightf;
 import static org.lwjgl.opengl.GL11.glLightfv;
 
 /**
@@ -29,6 +31,8 @@ public class GLRenderLight {
     public void renderLightSources(World world){
         if(world.getAllLights() != null || !world.getAllLights().isEmpty()){
             glEnable(GL_LIGHTING);
+            glEnable(GL_NORMALIZE);
+            GL11.glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
             for(int i = 0; i < 8; i++){
                 renderLight(world.getAllLights().get(i), i);
             }
@@ -62,16 +66,14 @@ public class GLRenderLight {
         glLightfv(lightNum, GL_SPECULAR, light.getColor(LightSource.SPECULAR));
     }
     
-    private void applyFallof(LightSource light, int lightNum){
+    private void applyLightType(LightSource light, int lightNum){
         switch(light.getLightType()){
             case POINT :
+            case VOLUME :
                 break;
             case SPOT :
                 break;
             case SUN :
-                glLightf(lightNum, GL_CONSTANT_ATTENUATION, 1);
-                break;
-            case VOLUME :
                 break;
         }
     }

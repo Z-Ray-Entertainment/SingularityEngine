@@ -246,6 +246,12 @@ public class GLUtils {
             glColor4f(mat.getDiffiseColor().x, mat.getDiffiseColor().y, mat.getDiffiseColor().z, mat.getTransparency());
         }
         else{
+            if(mat.isSmooth()){
+                glShadeModel(GL_SMOOTH);
+            } else {
+                glShadeModel(GL_FLAT);
+            }
+            
             glEnable(GL_LIGHTING);
             if(mat.getTransparency() > 0){
                 glEnable(GL_BLEND);
