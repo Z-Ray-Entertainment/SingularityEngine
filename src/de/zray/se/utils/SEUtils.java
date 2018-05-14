@@ -8,6 +8,7 @@ package de.zray.se.utils;
 import java.util.Random;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector2f;
+import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 /**
@@ -64,5 +65,38 @@ public class SEUtils {
             return 0;
         }
         return (new Random().nextInt(end)+start)%end;
+    }
+
+    /**
+     * Source: https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
+     * @param p
+     * @return 
+     */
+    public SphericalCoordiante sphercialCooridantes(Vector3f p){
+        return new SphericalCoordiante(p);
+    }
+    
+    /**
+     * Source: https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
+     * @param p
+     * @return 
+     */
+    public SphericalCoordiante sphercialCooridantes(Vector3d p){
+        return new SphericalCoordiante(p);
+    }
+    
+    /**
+     * Source: https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
+     * @param radius
+     * @param polar
+     * @param azimuthal
+     * @return 
+     */
+    public static Vector3f sphercialCooridantes(float radius, float polar, float azimuthal){
+        Vector3f coords = new Vector3f();
+        coords.x = radius * (float) Math.sin(polar) * (float) Math.cos(azimuthal);
+        coords.y = radius * (float) Math.sin(polar) * (float) Math.sin(azimuthal);
+        coords.z = radius * (float) Math.cos(polar);        
+        return coords;
     }
 }
