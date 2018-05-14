@@ -19,7 +19,7 @@ public class Material {
             maxReflectionDistance = 0, shininess = 50;
     private Color3f diffuseColor = new Color3f(0.5f, 0.5f, 0.5f),
             specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
-    private boolean cullBackFaces = false, shadeless = false, smooth = true;
+    private boolean cullBackFaces = false, shadeless = false, smooth = true, testGen = false;
     private ReflectionMode refMode = ReflectionMode.NO_BLEND;
     
     public Material(){}
@@ -232,5 +232,13 @@ public class Material {
     
     public boolean isSmooth(){
         return smooth;
+    }
+    
+    public void setTestGen(boolean b){
+        this.testGen = b;
+    }
+    
+    public boolean isTestGen(){
+        return testGen;
     }
 }

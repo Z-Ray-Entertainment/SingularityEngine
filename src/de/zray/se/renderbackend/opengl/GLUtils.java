@@ -237,6 +237,15 @@ public class GLUtils {
         else {
             glDisable(GL_CULL_FACE);
         }
+        if(mat.isTestGen()){
+            glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+            glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
+            glEnable(GL_TEXTURE_GEN_Q);
+            glEnable(GL_TEXTURE_GEN_R);
+        } else {
+            glDisable(GL_TEXTURE_GEN_Q);
+            glDisable(GL_TEXTURE_GEN_R);
+        }
         if(mat.isShadeless()){
             glDisable(GL_LIGHTING);
             if(mat.getTransparency() > 0){
