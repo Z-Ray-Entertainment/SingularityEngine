@@ -9,8 +9,6 @@ import de.zray.se.storages.AssetLibrary;
 import de.zray.se.utils.SEUtils;
 import de.zray.se.world.Actor;
 import de.zray.se.world.Entity;
-import javax.vecmath.Tuple2f;
-import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
