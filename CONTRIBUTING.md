@@ -8,6 +8,8 @@ This branch is always the lates stable release (in case of the current progress
 of develompent alpha release).
 This branch is always functional and tested.
 Only administrators are allowed do merge other branches into the master.
+The master branch is onyl updated if a milestone was successfully compleated and
+testet in the other branches.
 
 ### Stage ###
 The stage is a pre release branch whitch intends to be the final testing branch
@@ -57,3 +59,16 @@ You're not allowed to assign an issue to you or anyone else except if you are an
 administrator or workgroup leader.
 After you finished an issue successfully you can request an merge into the test 
 branch.
+
+# Milestones #
+Milestones are ment to be a collection of issues which belonging to one final
+targed.
+For example: Milestone "Implementation of Awesome Render API"
+And an issues which belonging to this API such as rendering lights, textures,
+geometry eg.
+You can find an example in the "Legacy GL Renderbackend" milestone.
+
+Every time a milestone is compleded and testet in the other branches the master
+branch is updated.
+The pre release is the stage which is updated if the test branch is working and
+testet. The stage is updated even if a milestone is not completed.
