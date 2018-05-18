@@ -1,7 +1,6 @@
 # How to contribute #
 
-As you may have seen there are 4 brnaches available.
-By contributing to apply to the following terms of development.
+In order to contribute you have to read, follow and apply to the following term:
 
 ## The Branches ##
 ### Master ###
