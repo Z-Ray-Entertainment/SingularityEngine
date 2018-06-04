@@ -52,8 +52,7 @@ If you create a new issue please follow these steps:
   * Give a short but coherent title
   * A brief descritption of what your issue is about.
   * Add addinional Labels such as "New Feature", "Bug", "Task" or "Optimization"
-
-if any of those belong to your issue.
+    if any of those belong to your issue.
 
 Afterwards a member of the head dev team will revisit your issue may ask further
 questions and approve or refuse the issue.
