@@ -46,11 +46,11 @@ project administrators (VOrtex Acherontic and Kentravyon).
 You are always allowed to submit an issue.
 
 If you create a new issue please follow these steps:
-1) Make your issue "Confidential"
-2) Lable your issue as "TBD"
-3) Give a short but coherent title
-4) A brief descritption of what your issue is about.
-5) Add addinional Labels such as "New Feature", "Bug", "Task" or "Optimization"
+  1) Make your issue "Confidential"
+  2) Lable your issue as "TBD"
+  3) Give a short but coherent title
+  4) A brief descritption of what your issue is about.
+  5) Add addinional Labels such as "New Feature", "Bug", "Task" or "Optimization"
 if any of those belong to your issue.
 
 Afterwards a member of the head dev team will revisit your issue may ask further
