@@ -43,20 +43,26 @@ project administrators (VOrtex Acherontic and Kentravyon).
 # Issues #
 
 ## Submitting issues ##
-If you find a bug, have ideas for additional features or aware of an optimization
-you allways allowed to submit an isse.
-Make sure your issue is labled correctly as "Bug", "New Feature" or "Optimization".
-Please do not set any weights or milestones belonging to yur issue.
-Each issue will first be revisited by an administrator and labled as "Approved"
-and mybe directly assinged to someone.
-Also your issue will be assigned to an milestone if ther is one or any need to 
-do so.
+You are always allowed to submit an issue.
+
+If you create a new issue please follow these steps:
+1) Make your issue "Confidential"
+2) Lable your issue as "TBD"
+3) Give a short but coherent title
+4) A brief descritption of what your issue is about.
+5) Add addinional Labels such as "New Feature", "Bug", "Task" or "Optimization"
+if any of those belong to your issue.
+
+Afterwards a member of the head dev team will revisit your issue may ask further
+questions and approve or refuse the issue.
+If an issue is approved it is in the queue for further adminsitration such as
+Assigning the issue, make it unconfidential or added some lables.
 
 ## Worikng on issues ##
-You are only allowed t owork on an issue which is assigned to you and labled as 
+You are only allowed to work on an issue which is assigned to you and labled as 
 "Approved".
-You're not allowed to assign an issue to you or anyone else except if you are an 
-administrator or workgroup leader.
+You're not allowed to assign an issue to you or anyone else except if you are a 
+meber of the head dev team (HDT).
 After you finished an issue successfully you can request an merge into the test 
 branch.
 
