@@ -42,9 +42,6 @@ public abstract class Entity{
             if(parent != null){
                 parent.setRefreshNeeded(b);
             }
-            if(bBox != null){
-                bBox.reCalc();
-            }
         }
     }
     
