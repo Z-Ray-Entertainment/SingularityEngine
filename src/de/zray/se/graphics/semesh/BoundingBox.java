@@ -38,44 +38,100 @@ public class BoundingBox{
             int mDataID =  parentActor.getRootMesh().getSEMeshData();
             MeshData mData = AssetLibrary.get().getMesh(mDataID);
             if(mData.getVertecies().size() > 0){
-                Vertex vX0Y0Z0 = mData.getVertecies().get(0);
-                Vertex vX1Y0Z0 = mData.getVertecies().get(0);
-
-                Vertex vX0Y1Z0 = mData.getVertecies().get(0);
-                Vertex vX1Y1Z0 = mData.getVertecies().get(0);
-
-                Vertex vX0Y0Z1 = mData.getVertecies().get(0);
-                Vertex vX1Y0Z1 = mData.getVertecies().get(0);
-
-                Vertex vX0Y1Z1 = mData.getVertecies().get(0);
-                Vertex vX1Y1Z1 = mData.getVertecies().get(0);
                 for(Vertex v : mData.getVertecies()){
-                    if(v.vX < vX0Y0Z0.vX && v.vY < vX0Y0Z0.vY  && v.vZ < vX0Y0Z0.vZ){
-                        vX0Y0Z0 = v;
-                    } else if(v.vX > vX1Y0Z0.vX && v.vY < vX1Y0Z0.vY  && v.vZ < vX1Y0Z0.vZ){
-                        vX1Y0Z0 = v;
-                    } else if(v.vX < vX0Y1Z0.vX && v.vY > vX0Y1Z0.vY  && v.vZ < vX0Y1Z0.vZ){
-                        vX0Y1Z0 = v;
-                    } else if(v.vX > vX1Y1Z0.vX && v.vY > vX1Y1Z0.vY  && v.vZ < vX1Y1Z0.vZ){
-                        vX1Y1Z0 = v;
-                    } else if(v.vX < vX0Y0Z1.vX && v.vY < vX0Y0Z1.vY  && v.vZ > vX0Y0Z1.vZ){
-                        vX0Y0Z1 = v;
-                    } else if(v.vX > vX1Y0Z1.vX && v.vY < vX1Y0Z1.vY  && v.vZ > vX1Y0Z1.vZ){
-                        vX1Y0Z1 = v;
-                    } else if(v.vX < vX0Y1Z1.vX && v.vY > vX0Y1Z1.vY  && v.vZ > vX0Y1Z1.vZ){
-                        vX0Y1Z1 = v;
-                    } else if(v.vX > vX1Y1Z1.vX && v.vY > vX1Y1Z1.vY  && v.vZ > vX1Y1Z1.vZ){
-                        vX1Y1Z1 = v;
+                    for(int i = 0; i < 8; i++){
+                        switch(i){
+                            case BOTTOM_BACK_LEFT :
+                                if(v.vX < vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY < vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ < vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                            case BOTTOM_BACK_RIGHT :
+                                if(v.vX > vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY < vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ < vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                            case BOTTOM_FRONT_LEFT :
+                                if(v.vX < vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY > vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ < vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                            case BOTTOM_FRONT_RIGHT :
+                                if(v.vX > vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY > vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ < vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                            case TOP_BACK_LEFT :
+                                if(v.vX < vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY < vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ > vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                            case TOP_BACK_RIGHT :
+                                if(v.vX > vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY < vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ > vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                            case TOP_FRONT_LEFT :
+                                if(v.vX < vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY > vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ > vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                            case TOP_FRONT_RIGHT :
+                                if(v.vX > vertecies[i].vX){
+                                    vertecies[i].vX = v.vX;
+                                }
+                                if(v.vY > vertecies[i].vY){
+                                    vertecies[i].vY = v.vY;
+                                }
+                                if(v.vZ > vertecies[i].vZ){
+                                    vertecies[i].vZ = v.vZ;
+                                }
+                                break;
+                        }
                     }
                 }
-                vertecies[0] = vX0Y0Z0;
-                vertecies[1] = vX1Y0Z0;
-                vertecies[2] = vX0Y1Z0;
-                vertecies[3] = vX1Y1Z0;
-                vertecies[4] = vX0Y0Z1;
-                vertecies[5] = vX1Y0Z1;
-                vertecies[6] = vX0Y1Z1;
-                vertecies[7] = vX1Y1Z1;
             }
             
         }
