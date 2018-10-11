@@ -5,12 +5,11 @@
  */
 package de.zray.se.renderbackend.opengl;
 
+import de.zray.se.renderbackend.opengl.debug.GLDebugRenderer;
 import de.zray.se.MainThread;
-import de.zray.se.world.Actor;
 import de.zray.se.world.World;
 import de.zray.se.Settings;
 import de.zray.se.graphics.Camera;
-import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.logger.SELogger;
 import de.zray.se.renderbackend.RenderBackend;
@@ -18,7 +17,6 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
-import java.util.List;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
