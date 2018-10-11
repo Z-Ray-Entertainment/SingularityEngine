@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.zray.se.renderbackend.opengl;
+package de.zray.se.renderbackend.opengl.debug;
 
 import de.zray.se.Settings;
 import static org.lwjgl.opengl.GL11.GL_COMPILE;
