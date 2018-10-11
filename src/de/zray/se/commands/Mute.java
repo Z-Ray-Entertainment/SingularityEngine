@@ -5,8 +5,9 @@
  */
 package de.zray.se.commands;
 
-import de.zray.coretex.AbstractCommand;
-import de.zray.coretex.Parameter;
+import de.zray.coretex.command.AbstractCommand;
+import de.zray.coretex.command.CommandDefinition;
+import de.zray.coretex.command.Parameter;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
 public class Mute extends AbstractCommand{
 
     public Mute() {
-        super("togglemute", null);
+        super(new CommandDefinition("togglemute", "Mutes and unmutes all sounds"){});
     }
 
     @Override
