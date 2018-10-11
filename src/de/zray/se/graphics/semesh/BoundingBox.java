@@ -6,135 +6,49 @@
 package de.zray.se.graphics.semesh;
 
 import de.zray.se.storages.AssetLibrary;
+import de.zray.se.utils.constrains.Link;
+import de.zray.se.utils.constrains.Reference;
 import de.zray.se.world.Actor;
 import de.zray.se.world.Entity;
+import java.util.ArrayList;
+import java.util.List;
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 
 /**
  *
  * @author Vortex Acherontic
  */
-public class BoundingBox{
+public class BoundingBox implements Link{
     public static final int BOTTOM_BACK_LEFT = 0, BOTTOM_BACK_RIGHT = 1,
             BOTTOM_FRONT_RIGHT = 2, BOTTOM_FRONT_LEFT = 3, TOP_BACK_LEFT = 4,
             TOP_BACK_RIGHT = 5, TOP_FRONT_RIGHT = 6, TOP_FRONT_LEFT = 7;
     float radius = 0;
     
     Orientation ori;
-    Vertex vertecies[] = new Vertex[8];
+    Vector3d vertecies[] = new Vector3d[8];
     
     
     public BoundingBox(Entity parent){
+        this.ori = parent.getOrientation();
+        this.ori.addLink(this);
         calculateBoundingBox(parent);
     }
     
     private void calculateBoundingBox(Entity parent){
-        this.ori = parent.getOrientation();
         if(parent instanceof Actor){
             for(int i = 0; i < 8; i++){
-                vertecies[i] = new Vertex(0, 0, 0);
+                vertecies[i] = new Vector3d(0, 0, 0);
             }
             Actor parentActor = (Actor) parent;
             int mDataID =  parentActor.getRootMesh().getSEMeshData();
             MeshData mData = AssetLibrary.get().getMesh(mDataID);
             if(mData.getVertecies().size() > 0){
-                for(Vertex v : mData.getVertecies()){
-                    for(int i = 0; i < 8; i++){
-                        switch(i){
-                            case BOTTOM_BACK_LEFT :
-                                if(v.vX < vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY < vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ < vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                            case BOTTOM_BACK_RIGHT :
-                                if(v.vX > vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY < vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ < vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                            case BOTTOM_FRONT_LEFT :
-                                if(v.vX < vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY > vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ < vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                            case BOTTOM_FRONT_RIGHT :
-                                if(v.vX > vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY > vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ < vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                            case TOP_BACK_LEFT :
-                                if(v.vX < vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY < vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ > vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                            case TOP_BACK_RIGHT :
-                                if(v.vX > vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY < vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ > vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                            case TOP_FRONT_LEFT :
-                                if(v.vX < vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY > vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ > vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                            case TOP_FRONT_RIGHT :
-                                if(v.vX > vertecies[i].vX){
-                                    vertecies[i].vX = v.vX;
-                                }
-                                if(v.vY > vertecies[i].vY){
-                                    vertecies[i].vY = v.vY;
-                                }
-                                if(v.vZ > vertecies[i].vZ){
-                                    vertecies[i].vZ = v.vZ;
-                                }
-                                break;
-                        }
-                    }
-                }
+                updateShape(mData.getVertecies());
             }
-            
         }
+        applyScales();
     }
     
     public void setOrientation(Orientation ori){
@@ -169,7 +83,151 @@ public class BoundingBox{
     public void reCalc(){
     }
     
-    public Vertex[] getBoundingVertecies(){
+    public Vector3d[] getBoundingVertecies(){
         return vertecies;
+    }
+
+    @Override
+    public void forceRefresh(Reference ref) {
+        
+    }
+    
+    private void applyRotations(){
+        double degX = ori.getRotationVec().x;
+        double degY = ori.getRotationVec().y;
+        double degZ = ori.getRotationVec().z;
+        
+        Matrix3d rotX = new Matrix3d(
+                0, 0, 0,
+                0, Math.cos(degX), Math.asin(degX),
+                0, Math.sin(degX), Math.cos(degX)
+        );
+        Matrix3d rotY = new Matrix3d(
+                Math.cos(degY), 0, Math.sin(degY),
+                0, 0, 0,
+                Math.asin(degY), 0, Math.cos(degY)
+        );
+        Matrix3d rotZ = new Matrix3d(
+                Math.cos(degZ), Math.asin(degZ), 0,
+                Math.sin(degZ), Math.cos(degZ), 0,
+                0, 0, 0
+        );
+        List<Vertex> rotatedVertecies = new ArrayList<>(vertecies.length);
+        for(Vector3d vertex : vertecies){
+            rotX.transform(vertex);
+            rotY.transform(vertex);
+            rotZ.transform(vertex);
+        }
+    }
+    
+    private void applyScales(){
+        double x = ori.getScaleVec().x;
+        double y = ori.getScaleVec().y;
+        double z = ori.getScaleVec().z;
+        Matrix4d scale = new Matrix4d(
+                x, 0, 0, 0,
+                0, y, 0, 0,
+                0, 0, z, 0,
+                0, 0, 0, 0);
+        for(Vector3d v : vertecies){
+            scale.transform(v);
+        }
+    }
+    
+    private void updateShape(List<Vertex> verts){
+        for(Vertex v :verts){
+            for(int i = 0; i < 8; i++){
+                switch(i){
+                    case BOTTOM_BACK_LEFT :
+                        if(v.vX < vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY < vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ < vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                    case BOTTOM_BACK_RIGHT :
+                        if(v.vX > vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY < vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ < vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                    case BOTTOM_FRONT_LEFT :
+                        if(v.vX < vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY > vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ < vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                    case BOTTOM_FRONT_RIGHT :
+                        if(v.vX > vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY > vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ < vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                    case TOP_BACK_LEFT :
+                        if(v.vX < vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY < vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ > vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                    case TOP_BACK_RIGHT :
+                        if(v.vX > vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY < vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ > vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                    case TOP_FRONT_LEFT :
+                        if(v.vX < vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY > vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ > vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                    case TOP_FRONT_RIGHT :
+                        if(v.vX > vertecies[i].x){
+                            vertecies[i].x = v.vX;
+                        }
+                        if(v.vY > vertecies[i].y){
+                            vertecies[i].y = v.vY;
+                        }
+                        if(v.vZ > vertecies[i].z){
+                            vertecies[i].z = v.vZ;
+                        }
+                        break;
+                }
+            }
+        }
     }
 }
