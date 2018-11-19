@@ -32,7 +32,6 @@ public class GLDebugBBox {
 
         glPushMatrix();
             glTranslated(ori.getPosition()[0], ori.getPosition()[1], ori.getPosition()[2]);
-            glScaled(ori.getScale()[0], ori.getScale()[1], ori.getScale()[2]);
             drawBox(bBox);
         glPopMatrix();
     }

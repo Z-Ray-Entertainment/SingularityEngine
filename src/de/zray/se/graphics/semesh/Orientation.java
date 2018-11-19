@@ -107,9 +107,9 @@ public class Orientation implements Reference {
     
     private void callLinks(){
         if(linkedObjetcs != null){
-            for(Link l : linkedObjetcs){
+            linkedObjetcs.forEach((l) -> {
                 l.forceRefresh(this);
-            }
+            });
         }
     }
 }

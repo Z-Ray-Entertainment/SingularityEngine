@@ -13,7 +13,6 @@ import de.zray.se.world.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Matrix3d;
-import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 
 /**
@@ -28,6 +27,7 @@ public class BoundingBox implements Link{
     
     Orientation ori;
     Vector3d vertecies[] = new Vector3d[8];
+    MeshData mData;
     
     
     public BoundingBox(Entity parent){
@@ -43,12 +43,11 @@ public class BoundingBox implements Link{
             }
             Actor parentActor = (Actor) parent;
             int mDataID =  parentActor.getRootMesh().getSEMeshData();
-            MeshData mData = AssetLibrary.get().getMesh(mDataID);
+            mData = AssetLibrary.get().getMesh(mDataID);
             if(mData.getVertecies().size() > 0){
                 updateShape(mData.getVertecies());
             }
         }
-        applyScales();
     }
     
     public void setOrientation(Orientation ori){
@@ -89,46 +88,50 @@ public class BoundingBox implements Link{
 
     @Override
     public void forceRefresh(Reference ref) {
-        
+        applyRotations(mData.getVertecies());
+        applyScales();
     }
     
-    private void applyRotations(){
+    private void applyRotations(List<Vertex> meshVertecies){
         double degX = ori.getRotationVec().x;
-        double degY = ori.getRotationVec().y;
-        double degZ = ori.getRotationVec().z;
+        double degY = ori.getRotationVec().z;
+        double degZ = ori.getRotationVec().y;
         
         Matrix3d rotX = new Matrix3d(
                 0, 0, 0,
-                0, Math.cos(degX), Math.asin(degX),
+                0, Math.cos(degX), -Math.sin(degX),
                 0, Math.sin(degX), Math.cos(degX)
         );
         Matrix3d rotY = new Matrix3d(
                 Math.cos(degY), 0, Math.sin(degY),
                 0, 0, 0,
-                Math.asin(degY), 0, Math.cos(degY)
+                -Math.sin(degY), 0, Math.cos(degY)
         );
         Matrix3d rotZ = new Matrix3d(
-                Math.cos(degZ), Math.asin(degZ), 0,
+                Math.cos(degZ), -Math.sin(degZ), 0,
                 Math.sin(degZ), Math.cos(degZ), 0,
                 0, 0, 0
         );
         List<Vertex> rotatedVertecies = new ArrayList<>(vertecies.length);
-        for(Vector3d vertex : vertecies){
-            rotX.transform(vertex);
-            rotY.transform(vertex);
-            rotZ.transform(vertex);
+        for(Vertex vertex : meshVertecies){
+            Vector3d vecVert = new Vector3d(vertex.vX, vertex.vY, vertex.vZ);
+            rotX.transform(vecVert);
+            rotY.transform(vecVert);
+            rotZ.transform(vecVert);
+            Vertex rotVert = new Vertex((float) vecVert.x, (float)  vecVert.y, (float)  vecVert.z);
+            rotatedVertecies.add(rotVert);
         }
+        updateShape(rotatedVertecies);
     }
     
     private void applyScales(){
         double x = ori.getScaleVec().x;
         double y = ori.getScaleVec().y;
         double z = ori.getScaleVec().z;
-        Matrix4d scale = new Matrix4d(
-                x, 0, 0, 0,
-                0, y, 0, 0,
-                0, 0, z, 0,
-                0, 0, 0, 0);
+        Matrix3d scale = new Matrix3d(
+                x, 0, 0, 
+                0, y, 0, 
+                0, 0, z);
         for(Vector3d v : vertecies){
             scale.transform(v);
         }
