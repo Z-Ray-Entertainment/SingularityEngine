@@ -5,7 +5,9 @@
  */
 package de.zray.se.graphics.semesh;
 
+import com.bulletphysics.linearmath.MatrixUtil;
 import de.zray.se.storages.AssetLibrary;
+import de.zray.se.utils.SEUtils;
 import de.zray.se.utils.constrains.Link;
 import de.zray.se.utils.constrains.Reference;
 import de.zray.se.world.Actor;
@@ -13,6 +15,7 @@ import de.zray.se.world.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Matrix3d;
+import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 
 /**
@@ -79,9 +82,6 @@ public class BoundingBox implements Link{
         return ori;
     }
     
-    public void reCalc(){
-    }
-    
     public Vector3d[] getBoundingVertecies(){
         return vertecies;
     }
@@ -98,26 +98,32 @@ public class BoundingBox implements Link{
         double degZ = ori.getRotationVec().y;
         
         Matrix3d rotX = new Matrix3d(
-                0, 0, 0,
-                0, Math.cos(degX), -Math.sin(degX),
-                0, Math.sin(degX), Math.cos(degX)
+            0, 0, 0,
+            0, Math.cos(degX), -Math.sin(degX),
+            0, Math.sin(degX), Math.cos(degX)
         );
+        rotX.transpose();
+        
         Matrix3d rotY = new Matrix3d(
-                Math.cos(degY), 0, Math.sin(degY),
-                0, 0, 0,
-                -Math.sin(degY), 0, Math.cos(degY)
+            Math.cos(degY), 0, Math.sin(degY),
+            0, 0, 0,
+            -Math.sin(degY), 0, Math.cos(degY)
         );
+        rotY.transpose();
+        
         Matrix3d rotZ = new Matrix3d(
-                Math.cos(degZ), -Math.sin(degZ), 0,
-                Math.sin(degZ), Math.cos(degZ), 0,
-                0, 0, 0
+            Math.cos(degZ), -Math.sin(degZ), 0,
+            Math.sin(degZ), Math.cos(degZ), 0,
+            0, 0, 0
         );
+        rotZ.transpose();
+        
         List<Vertex> rotatedVertecies = new ArrayList<>(vertecies.length);
         for(Vertex vertex : meshVertecies){
             Vector3d vecVert = new Vector3d(vertex.vX, vertex.vY, vertex.vZ);
-            rotX.transform(vecVert);
-            rotY.transform(vecVert);
-            rotZ.transform(vecVert);
+            vecVert = SEUtils.get().matrixMult(rotX, vecVert);
+            vecVert = SEUtils.get().matrixMult(rotY, vecVert);
+            vecVert = SEUtils.get().matrixMult(rotZ, vecVert);
             Vertex rotVert = new Vertex((float) vecVert.x, (float)  vecVert.y, (float)  vecVert.z);
             rotatedVertecies.add(rotVert);
         }
@@ -132,9 +138,12 @@ public class BoundingBox implements Link{
                 x, 0, 0, 
                 0, y, 0, 
                 0, 0, z);
+        
         for(Vector3d v : vertecies){
-            scale.transform(v);
+            v.normalize();
+            v = SEUtils.get().matrixMult(scale, v);
         }
+
     }
     
     private void updateShape(List<Vertex> verts){
