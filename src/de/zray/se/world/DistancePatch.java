@@ -5,7 +5,7 @@
  */
 package de.zray.se.world;
 
-import de.zray.se.Settings;
+import de.zray.se.EngineSettings;
 import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
@@ -177,7 +177,7 @@ public class DistancePatch {
     
     private void calcPosition(double pos[]){
         if(level > -1){
-            int edgeLength = Settings.get().scene.dpSizes[level];
+            int edgeLength = EngineSettings.get().scene.dpSizes[level];
             this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
             this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
             this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
@@ -189,7 +189,7 @@ public class DistancePatch {
     
     public boolean isInside(double x, double y, double z){
         if(level > -1){
-            double edgeLength = Settings.get().scene.dpSizes[level];
+            double edgeLength = EngineSettings.get().scene.dpSizes[level];
         
             if(!isBetween(pos[0], pos[0]+edgeLength/2., x)){
                 if(!isBetween(pos[0]-edgeLength/2., pos[0], x)){
@@ -216,7 +216,7 @@ public class DistancePatch {
     
     private boolean isLowestDistancePatch(){
         if(level > -1){
-            return level == Settings.get().scene.dpSizes.length-1;
+            return level == EngineSettings.get().scene.dpSizes.length-1;
         }
         return false;
     }
@@ -235,7 +235,7 @@ public class DistancePatch {
     }
     
     public int getEdgeLength(){
-        return Settings.get().scene.dpSizes[level];
+        return EngineSettings.get().scene.dpSizes[level];
     }
     
     public int getLevel(){

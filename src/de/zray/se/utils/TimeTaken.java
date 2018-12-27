@@ -7,7 +7,7 @@ package de.zray.se.utils;
 
 /**
  *
- * @author hester
+ * @author vortex
  */
 public final class TimeTaken {
     private long start;
@@ -40,7 +40,7 @@ public final class TimeTaken {
     
     private double timeTaken(){
         double timeTaken = ((double) System.nanoTime()- (double) start);
-        System.out.println("TimeTaken: "+timeTaken/1000000.+"ms");
+        //System.out.println("TimeTaken: "+timeTaken/1000000000.+"s");
         return timeTaken;
     }
 }

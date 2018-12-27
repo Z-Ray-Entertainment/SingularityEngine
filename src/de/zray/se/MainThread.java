@@ -62,7 +62,7 @@ public class MainThread {
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
-                    backend.renderWorld(Settings.get().debug.debugMode);
+                    backend.renderWorld(EngineSettings.get().debug.debugMode);
                     
                 }
                 if(firstCycle){

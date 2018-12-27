@@ -5,7 +5,7 @@
  */
 package de.zray.se.logger;
 
-import de.zray.se.Settings;
+import de.zray.se.EngineSettings;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +43,7 @@ public class SELogger {
     private List<String> logContent = new ArrayList<>();
     
     public SELogger(){
-        logFile = new File(Settings.get().logfile);
+        logFile = new File(EngineSettings.get().logfile);
         loadLogfile();
     }
     
