@@ -47,4 +47,5 @@ public interface RenderBackend {
     public abstract int getHeight();
     public abstract boolean pick(int pointerX, int pointerY);
     public abstract boolean rayPick(Vector3d ray);
+    public abstract boolean featureTest();
 }
