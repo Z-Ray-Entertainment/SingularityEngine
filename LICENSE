@@ -1,0 +1,67 @@
+Z-Ray Entertainment Open Source licence
+Rev.: 1.0
+Last change: December 2018
+
+If this piece of software/work, which is set under the Z-Ray Entertainment Open 
+Source licence, is distributed, copied or in any other way shared with the 
+public,
+this licence document need to be available along side the software/work in an 
+unencrypted txt File and need to be present in the same folder like the piece of
+software/work it applies to.
+Subfolder/Files which should not be affected by this license should be marked at
+the very bottom as exludet Folders/Files with this documents path as relative 
+path.
+
+I) Wordings and acronyms used in this document.
+ I.1) ZRE OS: Z-Ray Entertainment Open Source licence
+ I.2) Money: means in this context any sort of payment, rent, taxes, charge or
+ fees.
+ I.3) Work: The piece of software, artwork, Texture, Audiofile eg. which are
+ protected by this license.
+
+1) You're allowed to:
+ 1.1) Modify this work as long as:
+  1.1.1) All modifications are brefily summerize those modifications.
+  1.1.2) All modifications are distributed under the same licence as described
+  in this document
+  1.1.3) You're not takeing money for any changes/modifications you've done to
+  this software/work
+  1.1.4) You make your modifications publicy accessible if shared with the
+  public, if not used in a personal context.
+ 
+ 1.2) Copy this work as long as:
+  1.2.1)All copies, if shared with the public, are placed under the same licence
+  as in this document described
+
+ 1.3) redistribute this work as long as:
+  1.3.1) You redistribute this work under the same licence as in this document
+  described
+ 
+ 1.4) Use this work in either commercial and non commercial manor as Long as you
+ do not take money for this work in particular. 
+  1.4.1) You're allowed to use this Software to realize any sort of project as
+  long as this Software in particular remains free and open source and is
+  distributed under the Same licence as its original.
+  This Dose not include youre project you've realized with it.
+
+2) You're not allowed to:
+ 2.1) Sell, rent or monteraise this Software nor any modifications you've done
+ to this software in any way
+ 2.2) Do modifications with out makeing them publicy accessible if not used in a
+ personal context.
+
+3) This licence only applies for the particular piece of work which is shared
+under this licence not any other work wich is distributed along side this
+document and the protected software/work.
+ 3.1) This means you can use this work along side any commercial closed source
+ project as long as you do not harm the licence context of the work which is
+ protected by this licence document.
+ 3.2) Even if a piece of software implements or extends any interface or class
+ of the protected software/work but leaves the original untouched dose not apply
+ for the ZRE OS.
+  3.2.1) This means, as long as you leave the original work untouched in your
+  own project ie. use this work as a library you're NOT forced to set your own
+  work under the same licence as in this document describes.
+
+Files/Folder excluded by this license:
+- NONE
