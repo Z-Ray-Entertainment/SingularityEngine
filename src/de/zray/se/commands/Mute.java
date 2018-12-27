@@ -5,9 +5,9 @@
  */
 package de.zray.se.commands;
 
-import de.zray.coretex.command.AbstractCommand;
-import de.zray.coretex.command.CommandDefinition;
-import de.zray.coretex.command.Parameter;
+import de.zray.coretext.command.AbstractCommand;
+import de.zray.coretext.command.CommandDefinition;
+import de.zray.coretext.command.Parameter;
 import java.util.List;
 
 /**
