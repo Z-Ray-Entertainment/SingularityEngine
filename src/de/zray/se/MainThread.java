@@ -51,8 +51,12 @@ public class MainThread {
         return fps;
     }
     
-    public void setRenderBackend(RenderBackend backend){
-        this.backend = backend;
+    public boolean setRenderBackend(RenderBackend backend){
+        if(backend.featureTest()){
+            this.backend = backend;
+            return true;
+        }
+        return false;
     }
     
     public void switchWorld(World world){
