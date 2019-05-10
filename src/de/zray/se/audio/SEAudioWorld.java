@@ -48,7 +48,6 @@ import static org.lwjgl.stb.STBVorbis.stb_vorbis_open_memory;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_stream_length_in_samples;
 import org.lwjgl.stb.STBVorbisInfo;
 import static org.lwjgl.system.MemoryUtil.NULL;
-import sun.nio.ch.IOUtil;
 
 /**
  *
@@ -175,7 +174,7 @@ public class SEAudioWorld extends Module{
             }
         } else {
             try (
-                InputStream source = IOUtil.class.getClassLoader().getResourceAsStream(resource);
+                InputStream source = ClassLoader.getSystemResourceAsStream(resource);
                 ReadableByteChannel rbc = Channels.newChannel(source)
             ) {
                 buffer = createByteBuffer(bufferSize);
