@@ -7,31 +7,43 @@ package de.zray.se.graphics.semesh;
 
 import de.zray.se.world.Entity;
 import javax.vecmath.Vector3d;
+import de.zray.se.utils.constrains.Link;
+import de.zray.se.utils.constrains.Reference;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author vortex
  */
-public class Oriantation {
+public class Orientation implements Reference {
+    private List<Link> linkedObjetcs;
     private Vector3d pos = new Vector3d(0, 0, 0);
     private Vector3d rot = new Vector3d(0, 0, 0);
     private Vector3d scl = new Vector3d(0, 0, 0);
     private Entity parent;
     
-    public Oriantation(Entity parent){
+    public Orientation(Entity parent){
         initOrientation(parent, 0, 0, 0, 0, 0, 0, 1, 1, 1);
     }
     
-    public Oriantation(Entity parent, float posX, float posY, float posZ){
+    public Orientation(Entity parent, float posX, float posY, float posZ){
         initOrientation(parent, posX, posY, posZ, 0, 0, 0, 1, 1, 1);
     }
     
-    public Oriantation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ){
+    public Orientation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ){
         initOrientation(parent, posX, posY, posZ, rotX, rotY, rotZ, 1, 1, 1);
     }
     
-    public Oriantation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
+    public Orientation(Entity parent, float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
         initOrientation(parent, posX, posY, posZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ);
+    }
+    
+    public void addLink(Link linkedObject){
+        if(linkedObjetcs == null){
+            linkedObjetcs = new LinkedList();
+        }
+        linkedObjetcs.add(linkedObject);
     }
     
     public double[] getPosition(){
@@ -44,6 +56,7 @@ public class Oriantation {
     
     public void setPosition(double x, double y, double z){
         pos = new Vector3d(x, y, z);
+        callLinks();
         if(parent != null){
             parent.setRefreshNeeded(true);
         }
@@ -51,6 +64,7 @@ public class Oriantation {
     
     public void setRotation(double x, double y, double z){
         rot = new Vector3d(x, y, z);
+        callLinks();
         if(parent != null){
             parent.setRefreshNeeded(true);
         }
@@ -66,6 +80,7 @@ public class Oriantation {
     
     public void setScale(double x, double y, double z){
         scl = new Vector3d(x, y, z);
+        callLinks();
         if(parent != null){
             parent.setRefreshNeeded(true);
         }
@@ -88,5 +103,13 @@ public class Oriantation {
     
     public void forceNewParent(Entity parent){
         this.parent = parent;
+    }
+    
+    private void callLinks(){
+        if(linkedObjetcs != null){
+            linkedObjetcs.forEach((l) -> {
+                l.forceRefresh(this);
+            });
+        }
     }
 }

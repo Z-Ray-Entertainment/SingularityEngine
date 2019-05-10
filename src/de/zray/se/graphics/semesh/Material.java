@@ -16,10 +16,10 @@ public class Material {
     
     private String texture, specMap, bumpMap, displaceMap, parallaxMap;
     private float specFac = 0, bumpFac = 0, displaceFac = 0, parallaxFac = 0, emission = 0, reflection = 0, transparency = 0f,
-            maxReflectionDistance = 0;
-    private Color3f diffuseColor = new Color3f(1, 1, 1),
+            maxReflectionDistance = 0, shininess = 50;
+    private Color3f diffuseColor = new Color3f(0.5f, 0.5f, 0.5f),
             specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
-    private boolean cullBackFaces = false, shadeless = false;
+    private boolean cullBackFaces = false, shadeless = false, smooth = true, testGen = false;
     private ReflectionMode refMode = ReflectionMode.NO_BLEND;
     
     public Material(){}
@@ -216,5 +216,29 @@ public class Material {
     
     public String getParallaxMap(){
         return parallaxMap;
+    }
+    
+    public void setShininess(float shininess){
+        this.shininess = shininess;
+    }
+    
+    public float getShininess(){
+        return shininess;
+    }
+    
+    public void setSmooth(boolean b){
+            this.smooth = b;
+    }
+    
+    public boolean isSmooth(){
+        return smooth;
+    }
+    
+    public void setTestGen(boolean b){
+        this.testGen = b;
+    }
+    
+    public boolean isTestGen(){
+        return testGen;
     }
 }

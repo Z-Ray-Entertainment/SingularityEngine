@@ -20,7 +20,6 @@ public class MeshData {
     private List<Face> faces = new LinkedList<>();
     private Amature amature = new Amature();
     private boolean cleared = false;
-    private BoundingBox bb;
     
     public MeshData(List<Vertex> vertexList, List<UV> uvs, List<Normal> normals, List<Face> faceList, Amature amature){
         this.amature = amature;
@@ -29,7 +28,6 @@ public class MeshData {
         this.vertecies = vertexList;
         this.uvs = uvs;
         this.normals = normals;
-        this.bb = new BoundingBox(vertecies);
     }
     
     public void printMeshData(){

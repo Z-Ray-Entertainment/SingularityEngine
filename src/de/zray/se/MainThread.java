@@ -7,6 +7,7 @@ package de.zray.se;
 
 import de.zray.se.world.World;
 import de.zray.se.renderbackend.RenderBackend;
+import de.zray.se.utils.TimeTaken;
 import java.io.IOException;
 
 /**
@@ -15,44 +16,31 @@ import java.io.IOException;
  */
 public class MainThread {
     private static double fpsUpdate = 0;
-    private static long delta = 0, timeBeforeAct = System.nanoTime();
+    private static double delta = 0;//, timeBeforeAct = System.nanoTime();
     private static int fps = 0, countedFrames;
     private boolean firstCycle = true;
     
     private RenderBackend backend;
     private World currentWorld;
     
-    private static void updateDelta(){
-        delta =  System.nanoTime() - timeBeforeAct;
-        timeBeforeAct = System.nanoTime();
-        calcFPS(getDeltaInSec());
-    }
-    
-    private static void calcFPS(double delta){
-        fpsUpdate += delta;
-        countedFrames++;
-        if(fpsUpdate >= 1){
-            fps = countedFrames;
-            countedFrames = 0;
-            fpsUpdate = 0;
-            //System.out.println("FPS: "+fps);
-        }
-    }
-    
     public static final double getDeltaInSec(){
-        return delta / 1000000000.0;
+        return delta/1000000000.;
     }
     
     public static final double getDeltaInMs(){
-        return delta;
+        return delta/1000000.;
     }
     
     public static final int getFPS(){
         return fps;
     }
     
-    public void setRenderBackend(RenderBackend backend){
-        this.backend = backend;
+    public boolean setRenderBackend(RenderBackend backend){
+        if(backend.featureTest()){
+            this.backend = backend;
+            return true;
+        }
+        return false;
     }
     
     public void switchWorld(World world){
@@ -62,7 +50,9 @@ public class MainThread {
     
     public void loop() throws IOException{
         Thread loop = new Thread(() -> {
+            TimeTaken timeTaken;
             while(!backend.closeRequested()){
+                timeTaken = new TimeTaken(true);
                 if(!backend.isInited()){
                     backend.init();
                 }
@@ -72,14 +62,14 @@ public class MainThread {
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
-                    backend.renderWorld(Settings.get().debug.debugMode);
+                    backend.renderWorld(EngineSettings.get().debug.debugMode);
                     
                 }
                 if(firstCycle){
-                    timeBeforeAct = System.nanoTime();
+                    timeTaken = new TimeTaken(true);
                     firstCycle = false;
                 }
-                updateDelta();
+                delta = timeTaken.endInNano();
             }
             shutdown();
         });

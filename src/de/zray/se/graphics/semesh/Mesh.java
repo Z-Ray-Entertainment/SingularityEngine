@@ -21,7 +21,7 @@ public class Mesh{
     private int renderData = -1;
     private RenderMode renderMode = RenderMode.DIRECT;
     private DisplayMode displayMode = DisplayMode.SOLID;
-    private Oriantation offset = new Oriantation(null);
+    private Orientation offset = new Orientation(null);
     private Material material = new Material();
     private boolean isAnimated = false;
     private Mesh lod;
@@ -33,7 +33,7 @@ public class Mesh{
     
     public Mesh(Material material, int seMeshData){
         this.material = material;
-        offset = new Oriantation(null);
+        offset = new Orientation(null);
         meshData = seMeshData;
         this.direction = new Vector3f(0, 0, -1);
     }
@@ -95,11 +95,11 @@ public class Mesh{
         freeLOD = mesh;
     }
     
-    public void setOrientation(Oriantation offset){
+    public void setOrientation(Orientation offset){
         this.offset = offset;
     }
     
-    public Oriantation getOffset(){
+    public Orientation getOffset(){
         return offset;
     }
     

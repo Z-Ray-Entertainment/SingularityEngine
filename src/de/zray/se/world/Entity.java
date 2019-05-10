@@ -5,32 +5,33 @@
  */
 package de.zray.se.world;
 
-import de.zray.se.graphics.semesh.Oriantation;
-import de.zray.se.logger.SELogger;
+import de.zray.se.graphics.semesh.BoundingBox;
+import de.zray.se.graphics.semesh.Orientation;
 
 /**
  *
  * @author vortex
  */
 public abstract class Entity{
-    private Oriantation orientation;
+    private Orientation orientation;
     private WorldID id;
     private boolean refreshNeeded = false;
     private DistancePatch parent;
+    BoundingBox bBox;
     
     public Entity(){
-        orientation = new Oriantation(this);
+        orientation = new Orientation(this);
     }
     
     public void setParent(DistancePatch parent){
         this.parent = parent;
     }
     
-    public Oriantation getOrientation(){
+    public Orientation getOrientation(){
         return orientation;
     }
     
-    public void setOrientation(Oriantation oriantation){
+    public void setOrientation(Orientation oriantation){
         this.orientation = oriantation;
         this.orientation.forceNewParent(this);
     }
@@ -55,5 +56,9 @@ public abstract class Entity{
     
     public boolean isRefreshNedded(){
         return refreshNeeded;
+    }
+    
+    public BoundingBox getBoundingBox(){
+        return bBox;
     }
 }
