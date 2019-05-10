@@ -6,7 +6,7 @@
 package de.zray.se.graphics.semesh;
 
 import de.zray.se.logger.SELogger;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,10 +14,10 @@ import java.util.List;
  * @author vortex
  */
 public class MeshData {
-    private List<Vertex> vertecies = new LinkedList<>();
-    private List<UV> uvs = new LinkedList<>();
-    private List<Normal> normals = new LinkedList<>();
-    private List<Face> faces = new LinkedList<>();
+    private List<Vertex> vertecies = new ArrayList<>();
+    private List<UV> uvs = new ArrayList<>();
+    private List<Normal> normals = new ArrayList<>();
+    private List<Face> faces = new ArrayList<>();
     private Amature amature = new Amature();
     private boolean cleared = false;
     
