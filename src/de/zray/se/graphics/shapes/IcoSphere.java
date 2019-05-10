@@ -56,39 +56,38 @@ public class IcoSphere implements SEMeshProvider{
         vertex.add(setOnUnitSphere(new Vertex(-tau, 0, -1)));
         vertex.add(setOnUnitSphere(new Vertex(-tau, 0, 1)));
         
-        //DO TO
-        for(Vertex tmp : vertex){
+        vertex.forEach((tmp) -> {
+            Normal norm = calcNormal(tmp);
+            uvs.add(calcUV(norm));
             normals.add(calcNormal(tmp));
-        }
+        });
         
-        uvs.add(new UV(0, 0));
+        faces.add(new Face(0, 11, 5, 0, 11, 5, 0, 11, 5));
+        faces.add(new Face(0, 5, 1, 0, 5, 1, 0, 5, 1));
+        faces.add(new Face(0, 1, 7, 0, 1, 7, 0, 1, 7));
+        faces.add(new Face(0, 7, 10, 0, 7, 10, 0, 7, 10));
+        faces.add(new Face(0, 10, 11, 0, 10, 11, 0, 10, 11));
         
-        faces.add(new Face(0, 11, 5, 0, 0, 0, 0, 11, 5));
-        faces.add(new Face(0, 5, 1, 0, 0, 0, 0, 5, 1));
-        faces.add(new Face(0, 1, 7, 0, 0, 0, 0, 1, 7));
-        faces.add(new Face(0, 7, 10, 0, 0, 0, 0, 7, 10));
-        faces.add(new Face(0, 10, 11, 0, 0, 0, 0, 10, 11));
+        faces.add(new Face(1, 5, 9, 1, 5, 9, 1, 5, 9));
+        faces.add(new Face(5, 11, 4, 5, 11, 4, 5, 11, 4));
+        faces.add(new Face(11, 10, 2, 11, 10, 2, 11, 10, 2));
+        faces.add(new Face(10, 7, 6, 10, 7, 6, 10, 7, 6));
+        faces.add(new Face(7, 1, 8, 7, 1, 8, 7, 1, 8));
         
-        faces.add(new Face(1, 5, 9, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(5, 11, 4, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(11, 10, 2, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(10, 7, 6, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(7, 1, 8, 0, 0, 0, 0, 0, 0));
+        faces.add(new Face(3, 9, 4, 3, 9, 4, 3, 9, 4));
+        faces.add(new Face(3, 4, 2, 3, 4, 2, 3, 4, 2));
+        faces.add(new Face(3, 2, 6, 3, 2, 6, 3, 2, 6));
+        faces.add(new Face(3, 6, 8, 3, 6, 8, 3, 6, 8));
+        faces.add(new Face(3, 8, 9, 3, 8, 9, 3, 8, 9));
         
-        faces.add(new Face(3, 9, 4, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(3, 4, 2, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(3, 2, 6, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(3, 6, 8, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(3, 8, 9, 0, 0, 0, 0, 0, 0));
-        
-        faces.add(new Face(4, 9, 5, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(2, 4, 11, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(6, 2, 10, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(8, 6, 7, 0, 0, 0, 0, 0, 0));
-        faces.add(new Face(9, 8, 1, 0, 0, 0, 0, 0, 0));
+        faces.add(new Face(4, 9, 5, 4, 9, 5, 4, 9, 5));
+        faces.add(new Face(2, 4, 11, 2, 4, 11, 2, 4, 11));
+        faces.add(new Face(6, 2, 10, 6, 2, 10, 6, 2, 10));
+        faces.add(new Face(8, 6, 7, 8, 6, 7, 8, 6, 7));
+        faces.add(new Face(9, 8, 1, 9, 8, 1, 9, 8, 1));
         
         MeshData mData = new MeshData(vertex, uvs, normals, faces, null);
-        icoSphere = subdevide(subDiv, mData);
+        icoSphere = subdivide(subDiv, mData);
         
         if(deform){
             for(int i = 0; i < mData.getVertecies().size(); i++){
@@ -97,7 +96,7 @@ public class IcoSphere implements SEMeshProvider{
         }
     }
     
-    private MeshData subdevide(int iterations, MeshData mesh){
+    private MeshData subdivide(int iterations, MeshData mesh){
         MeshData tmpMeshData = mesh;
         
         for(int i = 0; i < iterations; i++){
@@ -138,7 +137,7 @@ public class IcoSphere implements SEMeshProvider{
         List<UV> uv = new ArrayList<>();
         List<Normal> n = new ArrayList<>();
         
-        for(Face tmp : mesh.getFaces()){
+        mesh.getFaces().forEach((tmp) -> {
             Vertex a = getMiddle(mesh.getVertecies().get(tmp.v1), mesh.getVertecies().get(tmp.v2));
             Vertex b = getMiddle(mesh.getVertecies().get(tmp.v2), mesh.getVertecies().get(tmp.v3));
             Vertex c = getMiddle(mesh.getVertecies().get(tmp.v3), mesh.getVertecies().get(tmp.v1));
@@ -156,21 +155,37 @@ public class IcoSphere implements SEMeshProvider{
             int ib = v.size()-1;
             v.add(c);
             int ic = v.size()-1;
+            
+            //DO To
+            Normal n1 = calcNormal(mesh.getVertecies().get(tmp.v1));
+            uv.add(calcUV(n1));
+            n.add(n1);
+            
+            Normal n2 = calcNormal(mesh.getVertecies().get(tmp.v2));
+            uv.add(calcUV(n2));
+            n.add(n2);
+            
+            Normal n3 = calcNormal(mesh.getVertecies().get(tmp.v3));
+            uv.add(calcUV(n3));
+            n.add(n3);
+            
+            Normal na = calcNormal(a);
+            uv.add(calcUV(na));
+            n.add(na);
+            
+            Normal nb = calcNormal(b);
+            uv.add(calcUV(nb));
+            n.add(nb);
+            
+            Normal nc = calcNormal(c);
+            uv.add(calcUV(nc));
+            n.add(nc);
 
-             //DO To
-            uv.add(new UV(0, 0));
-            n.add(calcNormal(mesh.getVertecies().get(tmp.v1)));
-            n.add(calcNormal(mesh.getVertecies().get(tmp.v2)));
-            n.add(calcNormal(mesh.getVertecies().get(tmp.v3)));
-            n.add(calcNormal(a));
-            n.add(calcNormal(b));
-            n.add(calcNormal(c));
-
-            f.add(new Face(iv1, ia, ic, 0, 0, 0, iv1, ia, ic));
-            f.add(new Face(iv2, ib, ia, 0, 0, 0, iv2, ib, ia));
-            f.add(new Face(iv3, ic, ib, 0, 0, 0, iv3, ic, ib));
-            f.add(new Face(ia, ib, ic, 0, 0, 0, ia, ib, ic));
-        }
+            f.add(new Face(iv1, ia, ic, iv1, ia, ic, iv1, ia, ic));
+            f.add(new Face(iv2, ib, ia, iv2, ib, ia, iv2, ib, ia));
+            f.add(new Face(iv3, ic, ib, iv3, ic, ib, iv3, ic, ib));
+            f.add(new Face(ia, ib, ic, ia, ib, ic, ia, ib, ic));
+        });
         return new MeshData(v, uv, n, f, null);
     }
     
@@ -187,6 +202,12 @@ public class IcoSphere implements SEMeshProvider{
         VoronoiCracle cracle = new VoronoiCracle(seed, (short) 1);
         lengthScale = (float) cracle.noise(v.vX, v.vY, v.vZ, frequenzy)*scale;
         return setOnUnitSphere(v);
+    }
+    
+    private UV calcUV(Normal n){
+        double u = Math.asin(n.nX)/Math.PI + 0.5;
+        double v = Math.asin(n.nY)/Math.PI + 0.5;
+        return new UV(u, v);
     }
     
     @Override
