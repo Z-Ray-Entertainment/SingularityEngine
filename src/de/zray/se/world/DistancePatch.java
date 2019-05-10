@@ -21,9 +21,10 @@ public class DistancePatch {
     private World parentWorld;
     private int level;
     private List<DistancePatch> subPatches = new LinkedList<>();
+    private List<DistancePatch> subPatchesToBeAdded = new LinkedList<>();
     private double pos[] = new double[3];
     private List<Entity> ents = new LinkedList<>();
-    private List<Integer> freeEnts = new LinkedList<>();
+    private List<Integer> freeEnts = new LinkedList<>(), distancePatchesToBeDeleted = new LinkedList<>();
     private boolean refreshNeeded = false;
     
     public DistancePatch(World parent, int level, double pos[]){
@@ -37,56 +38,65 @@ public class DistancePatch {
     }
     
     private void initDistancePatch(int level, double pos[]){
-        calcPosition(pos);
         this.level = level;
-        System.out.println("[DP "+level+"]: New DP at: "+pos[0]+" "+pos[1]+" "+pos[2]);
+        calcPosition(pos);
     }
     
     public void setRefreshNeeded(boolean b) {
         if(b){
             refreshNeeded = true;
-            if(parentDP != null){
-                parentDP.setRefreshNeeded(b);
+            if(parent != null){
+                parent.setRefreshNeeded(b);
             }
         }
     }
     
     public boolean addEntity(Entity ent){
-        System.out.println("[DP "+level+"]: Adding new entity");
-        if(isLowestDistancePatch()){
-            System.out.println("[DP "+level+"]: I'm the lowest DP");
-            double pos[] = ent.getOrientation().getPosition();
-            if(isInside(pos[0], pos[1], pos[2])){
-                System.out.println("[DP "+level+"]: Entity It's inside me");
+        double pos[] = ent.getOrientation().getPosition();
+        if(isInside(pos[0], pos[1], pos[2])){
+            //System.out.println("[DP "+level+"]: Entity is inside");
+            if(isLowestDistancePatch()){
+                //System.out.println("[DP "+level+"]: Lowest DP");
                 if(!addEntityToFreeSlot(ent)){
-                    System.out.println("[DP "+level+"]: Adding entity to new slot");
-                    ent.setWorldID(new WorldID(uuid, ents.size()-1));
                     ents.add(ent);
+                    ent.setWorldID(new WorldID(uuid, ents.size()-1));
+                    ent.setParent(this);
                     return true;
                 }
-                return true;
+            } else {
+                if(subPatches.isEmpty()){
+                    //System.out.println("[DP "+level+"]: No sub patches, creating new");
+                    createAndAddtoNewSubPatch(ent);
+                    subPatches.addAll(subPatchesToBeAdded);
+                    return true;
+                } 
+                else {
+                    for(DistancePatch sub : subPatches){
+                        if(sub.isInside(pos[0], pos[1], pos[2])){
+                            //System.out.println("[DP "+level+"]: Found matching sub patch, adding Entity");
+                            sub.addEntity(ent);
+                            return true;
+                        }
+                    }
+                    return createAndAddtoNewSubPatch(ent);
+                }
             }
+        } else if(parent != null){
+            //System.out.println("[DP "+level+"]: Entity is not inside, sending to parent DP");
+            return parent.addEntity(ent);
+        } else if(parentWorld != null){
+            parentWorld.addEntity(ent);
+            return true;
         } else {
-            if(subPatches.isEmpty()){
-                System.out.println("[DP "+level+"]: Creating new SubDP");
-                DistancePatch sub = new DistancePatch(this, level+1, ent.getOrientation().getPosition());
-                sub.addEntity(ent);
-                subPatches.add(sub);
-                return true;
-            } 
-            if (subPatches.stream().anyMatch((sub) -> (sub.addEntity(ent)))) {
-                System.out.println("[DP "+level+"]: Adding entity to SubDP");
-                return true;
-            }
-            
+            SELogger.get().dispatchMsg("DistancePatch", SELogger.SELogType.ERROR, new String[]{"Distancepatch without parent"}, true);
         }
         return false;
     }
     
     private boolean addEntityToFreeSlot(Entity ent){
         if(freeEnts.size() > 0){
-            System.out.println("[DP "+level+"]: Adding entity to free slot");
             ent.setWorldID(new WorldID(uuid, freeEnts.get(0)));
+            ent.setParent(this);
             ents.set(freeEnts.get(0), ent);
             freeEnts.remove(0);
             return true;
@@ -107,15 +117,23 @@ public class DistancePatch {
     }
     
     public boolean removeEntity(WorldID id){
-        if(id.getUUID().compareTo(uuid) == 0){
-            int index = id.getIndex();
-            if(index == ents.size()-1){
-                ents.remove(index);
-                return true;
-            } else {
-                freeEnts.add(index);
-                ents.set(index, null);
-                return true;
+        if(isLowestDistancePatch()){
+            if(id.getUUID().compareTo(uuid) == 0){
+                int index = id.getIndex();
+                if(index == ents.size()-1){
+                    ents.remove(index);
+                    return true;
+                } else {
+                    freeEnts.add(index);
+                    ents.set(index, null);
+                    return true;
+                }
+            }
+        } else {
+            for(DistancePatch sub : subPatches){
+                if(sub.removeEntity(id)){
+                    return true;
+                }
             }
         }
         return false;
@@ -123,24 +141,45 @@ public class DistancePatch {
     
     public void refresh(){
         if(refreshNeeded){
-            for(DistancePatch dp : subPatches){
-                dp.refresh();
-            }
             if(isLowestDistancePatch()){
                 for(int i = 0; i < ents.size(); i++){
                     if(ents.get(i) != null && ents.get(i).isRefreshNedded()){
                         double pos[] = ents.get(i).getOrientation().getPosition();
                         if(!isInside(pos[0], pos[1], pos[2])){
-                            System.out.println("Actor left DP!");
+                            //System.out.println("[DP "+level+"]: Entity left dp");
                             Entity tmp = ents.get(i);
-                            parent.addEntity(tmp);
                             removeEntity(tmp.getWorldID());
+                            parent.addEntity(tmp);
                         }
                     }
                 }
             }
+            for(int i = 0; i < subPatches.size(); i++){
+                DistancePatch dp = subPatches.get(i);
+                dp.refresh();
+                if(dp.isEmpty()){
+                    //System.out.println("[DP "+level+"]: Found empty DP index: "+i);
+                    distancePatchesToBeDeleted.add(i);
+                }
+            }
+            if(subPatchesToBeAdded != null || !subPatchesToBeAdded.isEmpty()){
+                subPatches.addAll(subPatchesToBeAdded);
+                //System.out.println("[DP "+level+"]: Added "+subPatchesToBeAdded.size()+" new sub patches");
+                subPatchesToBeAdded.clear();
+            }
+            for(int i = distancePatchesToBeDeleted.size()-1; i >= 0; i--){
+                subPatches.remove(distancePatchesToBeDeleted.get(i).intValue());
+            }
+            distancePatchesToBeDeleted.clear();
             refreshNeeded = false;
         }
+    }
+    
+    private boolean createAndAddtoNewSubPatch(Entity ent){
+        //System.out.println("[DP "+level+"]: Building new sub patch");
+        DistancePatch sub = new DistancePatch(this, level+1, ent.getOrientation().getPosition());
+        subPatchesToBeAdded.add(sub);
+        return sub.addEntity(ent);
     }
     
     private void calcPosition(double pos[]){
@@ -148,23 +187,26 @@ public class DistancePatch {
         this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
         this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
         this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
+        /*System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
+        System.out.println("=> for pos: "+pos[0]+" "+pos[1]+" "+pos[2]);
+        System.out.println("=> edgeLenght: "+edgeLength);*/
     }
     
     public boolean isInside(double x, double y, double z){
-        int edgeLength = Settings.get().scene.dpSizes[level];
+        double edgeLength = Settings.get().scene.dpSizes[level];
         
-        if(!isBetween(pos[0], pos[0]+edgeLength/2, x)){
-            if(!isBetween(pos[0]-edgeLength/2, pos[0], x)){
+        if(!isBetween(pos[0], pos[0]+edgeLength/2., x)){
+            if(!isBetween(pos[0]-edgeLength/2., pos[0], x)){
                 return false;
             }
         }
-        if(!isBetween(pos[1], pos[1]+edgeLength/2, y)){
-            if(!isBetween(pos[1]-edgeLength/2, pos[1], y)){
+        if(!isBetween(pos[1], pos[1]+edgeLength/2., y)){
+            if(!isBetween(pos[1]-edgeLength/2., pos[1], y)){
                 return false;
             }
         }
-        if(!isBetween(pos[2], pos[2]+edgeLength/2, z)){
-            if(!isBetween(pos[2]-edgeLength/2, pos[2], z)){
+        if(!isBetween(pos[2], pos[2]+edgeLength/2., z)){
+            if(!isBetween(pos[2]-edgeLength/2., pos[2], z)){
                 return false;
             }
         }
@@ -198,5 +240,18 @@ public class DistancePatch {
     
     public int getLevel(){
         return level;
+    }
+    
+    public boolean isEmpty(){
+        if(isLowestDistancePatch()){
+            return ents.isEmpty();
+        } else {
+            for(DistancePatch sub : subPatches){
+                if(!sub.isEmpty()){
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
