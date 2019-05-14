@@ -5,7 +5,6 @@
  */
 package de.zray.se.graphics.semesh;
 
-import com.bulletphysics.linearmath.MatrixUtil;
 import de.zray.se.storages.AssetLibrary;
 import de.zray.se.utils.SEUtils;
 import de.zray.se.utils.constrains.Link;
@@ -15,7 +14,6 @@ import de.zray.se.world.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.vecmath.Matrix3d;
-import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 
 /**
