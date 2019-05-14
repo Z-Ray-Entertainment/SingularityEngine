@@ -37,9 +37,6 @@ public class OBJLoader extends LoaderModule{
             String objFile = loadTextFile(file);
             List<OBJGroup> groups = readGroups(objFile);
             Mesh root = objGroupToSEMesh(groups.get(0));
-            for(int i = 1; i < groups.size(); i++){
-                root.addSubMesh(objGroupToSEMesh(groups.get(i)));
-            }
             return root;
         }
         catch (FileNotFoundException ex){
