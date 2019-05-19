@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import de.zray.se.storages.AssetLibrary;
+import java.io.File;
 
 /**
  *
@@ -32,7 +33,7 @@ public class OBJLoader extends LoaderModule{
     }
     
     @Override
-    public Mesh loadModel(String file) {
+    public Mesh loadModel(File file) {
         try {
             String objFile = loadTextFile(file);
             List<OBJGroup> groups = readGroups(objFile);
@@ -71,7 +72,7 @@ public class OBJLoader extends LoaderModule{
         return new Mesh(new Material(), mDataID);
     }
     
-    private String loadTextFile(String file) throws FileNotFoundException,
+    private String loadTextFile(File file) throws FileNotFoundException,
             IOException{
         BufferedReader reader = new BufferedReader(
                 new InputStreamReader(

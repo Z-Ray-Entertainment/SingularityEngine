@@ -5,6 +5,8 @@
  */
 package de.zray.se.graphics.semesh;
 
+import de.zray.se.storages.AssetLibrary;
+import java.io.File;
 import javax.vecmath.Color3f;
 
 /**
@@ -14,7 +16,7 @@ import javax.vecmath.Color3f;
 public class Material {
     public static enum ReflectionMode {BLEND_INTO_MATERIAL, BLEND_INTO_SKY, NO_BLEND};
     
-    private String texture, specMap, bumpMap, displaceMap, parallaxMap;
+    private File texture, specMap, bumpMap, displaceMap, parallaxMap;
     private float specFac = 0, bumpFac = 0, displaceFac = 0, parallaxFac = 0, emission = 0, reflection = 0, transparency = 0f,
             maxReflectionDistance = 0, shininess = 50;
     private Color3f diffuseColor = new Color3f(0.5f, 0.5f, 0.5f),
@@ -60,11 +62,11 @@ public class Material {
     }
     
     private void setTextures(String diff, String spec, String bump, String disp, String para){
-        this.texture = diff;
-        this.specMap = spec;
-        this.bumpMap = bump;
-        this.parallaxMap = para;
-        this.displaceMap = disp;
+        this.texture = AssetLibrary.get().getAsset(diff);
+        this.specMap = AssetLibrary.get().getAsset(spec);
+        this.bumpMap = AssetLibrary.get().getAsset(bump);
+        this.parallaxMap = AssetLibrary.get().getAsset(disp);
+        this.displaceMap = AssetLibrary.get().getAsset(para);
     }
     
     public void setBackfaceCulling(boolean enabled){
@@ -179,43 +181,43 @@ public class Material {
     }
     
     public void setTexture(String file){
-        texture = file;
+        texture = AssetLibrary.get().getAsset(file);
     }
     
     public String getTexture(){
-        return texture;
+        return texture.getAbsolutePath();
     }
     
     public void setSpecMap(String file){
-        specMap = file;
+        specMap = AssetLibrary.get().getAsset(file);
     }
     
     public String getSpecMap(){
-        return specMap;
+        return specMap.getAbsolutePath();
     }
     
     public void setBumpMap(String file){
-        bumpMap = file;
+        bumpMap = AssetLibrary.get().getAsset(file);
     }
     
     public String getBumpMap(){
-        return bumpMap;
+        return bumpMap.getAbsolutePath();
     }
     
     public void setDisplaceMap(String file){
-        displaceMap = file;
+        displaceMap = AssetLibrary.get().getAsset(file);
     }
     
     public String getDisplaceMap(){
-        return displaceMap;
+        return displaceMap.getAbsolutePath();
     }
     
     public void setParallaxMap(String file){
-        parallaxMap = file;
+        parallaxMap = AssetLibrary.get().getAsset(file);
     }
     
     public String getParallaxMap(){
-        return parallaxMap;
+        return parallaxMap.getAbsolutePath();
     }
     
     public void setShininess(float shininess){

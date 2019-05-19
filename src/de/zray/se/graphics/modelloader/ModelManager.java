@@ -6,6 +6,7 @@
 package de.zray.se.graphics.modelloader;
 
 import de.zray.se.graphics.semesh.Mesh;
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,14 +19,14 @@ public class ModelManager {
     private List<String> fileNames = new LinkedList<>();
     private Modelloader loader = new Modelloader();
     
-    public int loadModel(String file){
+    public int loadModel(File file){
         for(int i = 0; i < models.size(); i++){
             if(fileNames.get(i).equals(file)){
                 return i;
             }
         }
-        fileNames.add(file);
-        models.add(loader.loadModel(file));
+        fileNames.add(file.getAbsolutePath());
+        models.add(loader.loadModel(file.getName()));
         return models.size()-1;
     }
     

@@ -8,6 +8,8 @@ package de.zray.se.audio;
 import de.zray.se.world.Module;
 import de.zray.se.world.World;
 import de.zray.se.logger.SELogger;
+import de.zray.se.storages.AssetLibrary;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -102,14 +104,15 @@ public class SEAudioWorld extends Module{
         return newBuffer;
     }
     
-    public int loadAudioFile(String file){
+    public int loadAudioFile(String fileName){
+        File file = AssetLibrary.get().getAsset(fileName);
         int buffer = alGenBuffers();
         handleALError("alGenBuffers");
         int source = alGenSources();
         handleALError("alGenSource");
         ShortBuffer pcm;
         STBVorbisInfo info = STBVorbisInfo.malloc();
-        pcm = readVorbis(file, 32 * 1024, info);
+        pcm = readVorbis(file.getAbsolutePath(), 32 * 1024, info);
         alBufferData(buffer, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
         handleALError("alBufferData");
         AudioSource audioSource = new AudioSource(buffer, source);

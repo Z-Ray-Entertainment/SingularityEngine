@@ -5,9 +5,12 @@
  */
 package de.zray.se;
 
+import de.zray.se.logger.SELogger;
 import de.zray.se.world.World;
 import de.zray.se.renderbackend.RenderBackend;
+import de.zray.se.storages.DataLibrary;
 import de.zray.se.utils.TimeTaken;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -22,6 +25,17 @@ public class MainThread {
     
     private RenderBackend backend;
     private World currentWorld;
+    
+    public MainThread(){
+        if(EngineSettings.get().assetDirectory == null || EngineSettings.get().assetDirectory.isEmpty()){
+            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.ERROR, new String[]{"No asset directory set!"}, false);
+        } else {
+            File assetDir = new File(EngineSettings.get().assetDirectory);
+            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory:\n"+assetDir.getAbsolutePath()}, false);
+            DataLibrary.get().scanAssetDirectory(assetDir);
+            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{DataLibrary.get().getNumberOfKnownAssets()+" assetes registered"}, false);
+        }
+    }
     
     public static final double getDeltaInSec(){
         return delta/1000000000.;

@@ -6,6 +6,7 @@
 package de.zray.se.storages;
 
 import de.zray.se.graphics.semesh.MeshData;
+import java.io.File;
 
 /**
  *
@@ -35,4 +36,7 @@ public class AssetLibrary {
         return meshLib.getMesh(id);
     }
     
+    public File getAsset(String fileName){
+        return DataLibrary.get().getAsset(fileName);
+    }
 }
