@@ -5,6 +5,7 @@
  */
 package de.zray.se;
 
+import de.zray.se.exceptions.MissingRenderBackendException;
 import de.zray.se.logger.SELogger;
 import de.zray.se.world.World;
 import de.zray.se.renderbackend.RenderBackend;
@@ -12,6 +13,7 @@ import de.zray.se.storages.DataLibrary;
 import de.zray.se.utils.TimeTaken;
 import java.io.File;
 import java.io.IOException;
+import java.util.Stack;
 
 /**
  *
@@ -24,6 +26,7 @@ public class MainThread {
     private boolean firstCycle = true;
     
     private RenderBackend backend;
+    private Stack<RenderBackend> backendStack = new Stack<>();
     private World currentWorld;
     
     public MainThread(){
@@ -49,12 +52,8 @@ public class MainThread {
         return fps;
     }
     
-    public boolean setRenderBackend(RenderBackend backend){
-        if(backend.featureTest()){
-            this.backend = backend;
-            return true;
-        }
-        return false;
+    public void registerRenderBackend(RenderBackend backend){
+        backendStack.push(backend);
     }
     
     public void switchWorld(World world){
@@ -62,7 +61,11 @@ public class MainThread {
         firstCycle = true;
     }
     
-    public void loop() throws IOException{
+    public void loop() throws IOException, MissingRenderBackendException{
+        if(backend == null){
+            chooseRenderBackend();
+        }
+        
         Thread loop = new Thread(() -> {
             TimeTaken timeTaken;
             while(!backend.closeRequested()){
@@ -100,5 +103,22 @@ public class MainThread {
     
     public World getCurrentWorld(){
         return currentWorld;
+    }
+    
+    private void chooseRenderBackend() throws MissingRenderBackendException{
+        RenderBackend test = backendStack.pop();
+        while(test != null){
+            SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Testing renderer: "+test.getClassAsString()}, false);
+            if(test.featureTest()){
+                SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Use renderer: "+test.getClassAsString()}, false);
+                this.backend = test;
+                break;
+            }
+            SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Not supported renderer: "+test.getClassAsString()}, false);
+            test = backendStack.pop();
+        }
+        if(backend == null){
+            throw new MissingRenderBackendException();
+        }
     }
 }

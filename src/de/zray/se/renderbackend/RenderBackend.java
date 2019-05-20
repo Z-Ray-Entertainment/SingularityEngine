@@ -48,4 +48,5 @@ public interface RenderBackend {
     public abstract boolean pick(int pointerX, int pointerY);
     public abstract boolean rayPick(Vector3d ray);
     public abstract boolean featureTest();
+    public abstract String getClassAsString();
 }
