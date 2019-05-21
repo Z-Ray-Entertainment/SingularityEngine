@@ -5,9 +5,11 @@
  */
 package de.zray.se.world;
 
-import de.zray.se.Settings;
+import de.zray.se.EngineSettings;
+import de.zray.se.graphics.Camera;
+import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,19 +20,13 @@ import java.util.UUID;
 public class DistancePatch {
     private UUID uuid = UUID.randomUUID();
     private DistancePatch parent;
-    private World parentWorld;
     private int level;
-    private List<DistancePatch> subPatches = new LinkedList<>();
-    private List<DistancePatch> subPatchesToBeAdded = new LinkedList<>();
+    private List<DistancePatch> subPatches = new ArrayList<>();
+    private List<DistancePatch> subPatchesToBeAdded = new ArrayList<>();
     private double pos[] = new double[3];
-    private List<Entity> ents = new LinkedList<>();
-    private List<Integer> freeEnts = new LinkedList<>(), distancePatchesToBeDeleted = new LinkedList<>();
+    private List<Entity> ents = new ArrayList<>();
+    private List<Integer> freeEnts = new ArrayList<>(), distancePatchesToBeDeleted = new ArrayList<>();
     private boolean refreshNeeded = false;
-    
-    public DistancePatch(World parent, int level, double pos[]){
-        this.parentWorld = parent;
-        initDistancePatch(level, pos);
-    }
     
     public DistancePatch(DistancePatch parent, int level, double pos[]){
         this.parent = parent;
@@ -84,11 +80,8 @@ public class DistancePatch {
         } else if(parent != null){
             //System.out.println("[DP "+level+"]: Entity is not inside, sending to parent DP");
             return parent.addEntity(ent);
-        } else if(parentWorld != null){
-            parentWorld.addEntity(ent);
-            return true;
         } else {
-            SELogger.get().dispatchMsg("DistancePatch", SELogger.SELogType.ERROR, new String[]{"Distancepatch without parent"}, true);
+            SELogger.get().dispatchMsg("DistancePatch", SELogger.SELogType.ERROR, new String[]{"Unable to sort Entiy in DisntacePatch level:"+level}, true);
         }
         return false;
     }
@@ -106,7 +99,7 @@ public class DistancePatch {
     
     public List<Entity> getEntities(){
         if(!isLowestDistancePatch()){
-            List<Entity> allEnts = new LinkedList<>();
+            List<Entity> allEnts = new ArrayList<>();
             subPatches.forEach((sub) -> {
                 allEnts.addAll(sub.getEntities());
             });
@@ -183,31 +176,35 @@ public class DistancePatch {
     }
     
     private void calcPosition(double pos[]){
-        int edgeLength = Settings.get().scene.dpSizes[level];
-        this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
-        this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
-        this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
+        if(level > -1){
+            int edgeLength = EngineSettings.get().scene.dpSizes[level];
+            this.pos[0] = (Math.round((pos[0]/edgeLength))*edgeLength);
+            this.pos[1] = (Math.round((pos[1]/edgeLength))*edgeLength);
+            this.pos[2] = (Math.round((pos[2]/edgeLength))*edgeLength);
+        }
         /*System.out.println("[DP "+level+"]: Pos: "+this.pos[0]+" "+this.pos[1]+" "+this.pos[2]);
         System.out.println("=> for pos: "+pos[0]+" "+pos[1]+" "+pos[2]);
         System.out.println("=> edgeLenght: "+edgeLength);*/
     }
     
     public boolean isInside(double x, double y, double z){
-        double edgeLength = Settings.get().scene.dpSizes[level];
+        if(level > -1){
+            double edgeLength = EngineSettings.get().scene.dpSizes[level];
         
-        if(!isBetween(pos[0], pos[0]+edgeLength/2., x)){
-            if(!isBetween(pos[0]-edgeLength/2., pos[0], x)){
-                return false;
+            if(!isBetween(pos[0], pos[0]+edgeLength/2., x)){
+                if(!isBetween(pos[0]-edgeLength/2., pos[0], x)){
+                    return false;
+                }
             }
-        }
-        if(!isBetween(pos[1], pos[1]+edgeLength/2., y)){
-            if(!isBetween(pos[1]-edgeLength/2., pos[1], y)){
-                return false;
+            if(!isBetween(pos[1], pos[1]+edgeLength/2., y)){
+                if(!isBetween(pos[1]-edgeLength/2., pos[1], y)){
+                    return false;
+                }
             }
-        }
-        if(!isBetween(pos[2], pos[2]+edgeLength/2., z)){
-            if(!isBetween(pos[2]-edgeLength/2., pos[2], z)){
-                return false;
+            if(!isBetween(pos[2], pos[2]+edgeLength/2., z)){
+                if(!isBetween(pos[2]-edgeLength/2., pos[2], z)){
+                    return false;
+                }
             }
         }
         return true;
@@ -218,11 +215,14 @@ public class DistancePatch {
     }
     
     private boolean isLowestDistancePatch(){
-        return level == Settings.get().scene.dpSizes.length-1;
+        if(level > -1){
+            return level == EngineSettings.get().scene.dpSizes.length-1;
+        }
+        return false;
     }
     
     public List<DistancePatch> getSubPatches(){
-        List<DistancePatch> subs = new LinkedList<>();
+        List<DistancePatch> subs = new ArrayList<>();
         subs.addAll(subPatches);
         for(DistancePatch subsub : subPatches){
             subs.addAll(subsub.getSubPatches());
@@ -235,7 +235,7 @@ public class DistancePatch {
     }
     
     public int getEdgeLength(){
-        return Settings.get().scene.dpSizes[level];
+        return EngineSettings.get().scene.dpSizes[level];
     }
     
     public int getLevel(){
@@ -253,5 +253,31 @@ public class DistancePatch {
             }
             return true;
         }
+    }
+    
+    public List<Actor> getVisibleActors(Camera curCam){
+        List<Entity> visibleEnts = getVisibleEntities(curCam);
+        List<Actor> visibleActors = new ArrayList<>();
+        for(Entity ent : visibleEnts){
+            if(ent instanceof Actor){
+                visibleActors.add((Actor) ent);
+            }
+        }
+        return visibleActors;
+    }
+    
+    public List<LightSource> getVisibleLights(Camera curCam){
+        List<Entity> visibleEnts = getVisibleEntities(curCam);
+        List<LightSource> visibleLights = new ArrayList<>();
+        for(Entity ent : visibleEnts){
+            if(ent instanceof LightSource){
+                visibleLights.add((LightSource) ent);
+            }
+        }
+        return visibleLights;
+    }
+    
+    public List<Entity> getVisibleEntities(Camera curCam){
+        return getEntities();
     }
 }

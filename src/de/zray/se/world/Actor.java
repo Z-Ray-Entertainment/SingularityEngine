@@ -6,9 +6,11 @@
 package de.zray.se.world;
 
 import de.zray.se.ai.SEAI;
+import de.zray.se.graphics.Camera;
+import de.zray.se.graphics.semesh.BoundingBox;
 import de.zray.se.graphics.semesh.Mesh;
-import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.physics.SEBulletObject;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,7 +19,7 @@ import java.util.List;
  */
 public class Actor extends Entity {
 
-    private Mesh mesh;
+    private List<Mesh> mesh = new LinkedList<Mesh>();
     private SEAI ai;
     private SEBulletObject bullet;
     private World parrentWorld;
@@ -26,12 +28,20 @@ public class Actor extends Entity {
     public Actor(Mesh mesh, SEAI ai, SEBulletObject bulletObj, World parrentWorld) {
         this.ai = ai;
         this.bullet = bulletObj;
-        this.mesh = mesh;
+        this.mesh.add(mesh);
         this.parrentWorld = parrentWorld;
+        bBox = new BoundingBox(this);
     }
 
-    public List<Mesh> getRendableSEMeshes() {
-        return mesh.getRendableMeshes(parrentWorld.getCurrentCamera());
+    public List<Mesh> getRendableMeshes() {
+        List rMeshes = new LinkedList();
+        for(Mesh m : mesh){
+            Mesh tmp = m.getMeshOrLOD(parrentWorld.getCurrentCamera());
+            if(tmp != null){
+                rMeshes.add(tmp);
+            }
+        }
+        return rMeshes;
     }
 
     public SEAI getSEAI() {
@@ -46,15 +56,19 @@ public class Actor extends Entity {
         return bullet;
     }
 
-    public Mesh getRootMesh() {
-        return mesh;
-    }
-
     public void setSEWorldID(WorldID id) {
         this.seWorldID = id;
     }
 
     public WorldID getSEWorldID() {
         return seWorldID;
+    }
+
+    /**
+     * Returns the first Mesh in it's mesh List
+     * @return 
+     */
+    public Mesh getRootMesh() {
+        return mesh.get(0);
     }
 }

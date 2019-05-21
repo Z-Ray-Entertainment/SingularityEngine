@@ -12,7 +12,7 @@ import de.zray.se.world.World;
  * @author vortex
  */
 public abstract class InputManager {
-    public static final KeyMap KEY_MAP = new KeyMap(KeyMap.KeyBoardLayout.ENGLSIH);
+    public static final KeyMap KEY_MAP = new KeyMap(KeyMap.KeyBoardLayout.ENGLISH);
     private World parrent;
     
     public InputManager(World world){

@@ -5,9 +5,9 @@
  */
 package de.zray.se.renderbackend;
 
-import de.zray.se.Settings;
+import de.zray.se.EngineSettings;
 import de.zray.se.world.World;
-import javax.vecmath.Vector3d;
+import org.joml.Vector3d;
 
 /**
  *
@@ -35,7 +35,7 @@ public interface RenderBackend {
      * @return true if backend is initialized
      */
     public abstract boolean isInited();
-    public abstract void renderWorld(Settings.DebugMode dMode);
+    public abstract void renderWorld(EngineSettings.DebugMode dMode);
     public abstract void renderDebug();
     public abstract void setCurrentWorld(World world);
     public abstract void shutdown();
@@ -47,4 +47,6 @@ public interface RenderBackend {
     public abstract int getHeight();
     public abstract boolean pick(int pointerX, int pointerY);
     public abstract boolean rayPick(Vector3d ray);
+    public abstract boolean featureTest();
+    public abstract String getClassAsString();
 }

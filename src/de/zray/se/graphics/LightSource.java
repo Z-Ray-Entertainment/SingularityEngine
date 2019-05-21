@@ -5,7 +5,6 @@
  */
 package de.zray.se.graphics;
 
-import de.zray.se.graphics.semesh.Oriantation;
 import de.zray.se.world.Entity;
 
 /**
@@ -16,17 +15,18 @@ public class LightSource extends Entity {
     public static enum Type{SPOT, POINT, SUN, VOLUME};
     public static enum FallOf{LINEAR, CUBIC, INVERSE_CUBIC, INFINITY}
     public static final int DIFFUSE = 0, SPECULAR = 1, AMBIENT = 2;
-    public static final int RED = 0, GREEN = 1, BLUE = 2;
+    public static final int RED = 0, GREEN = 1, BLUE = 2, ALPHA = 3;
     
     private Type lightType = Type.SUN;
     private boolean castShadows = false;
-    private float[][] colors = new float[3][3];
+    private float[][] colors = new float[3][4];
     private FallOf fallOf = FallOf.CUBIC;
     
-    public void setColor(int type, float red, float green, float blue) throws ArrayIndexOutOfBoundsException{
+    public void setColor(int type, float red, float green, float blue, float alpha) throws ArrayIndexOutOfBoundsException{
         colors[type][RED] = red;
         colors[type][GREEN] = green;
         colors[type][BLUE] = blue;
+        colors[type][ALPHA] = alpha;
     }
     
     public float[] getColor(int type) throws ArrayIndexOutOfBoundsException{
