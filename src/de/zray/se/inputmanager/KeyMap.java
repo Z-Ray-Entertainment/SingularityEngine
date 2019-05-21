@@ -10,7 +10,7 @@ package de.zray.se.inputmanager;
  * @author vortex
  */
 public class KeyMap {
-    public static enum KeyBoardLayout {GERMAN, ENGLSIH};
+    public static enum KeyBoardLayout {GERMAN, ENGLISH};
     public static enum MODE {RELEASED, PRESSED, TIPED};
     public static final int KEY_A = 65, KEY_B = 66, KEY_C = 67, KEY_D = 68,
             KEY_E = 69, KEY_F = 70, KEY_G = 71, KEY_H = 72, KEY_I = 73,

@@ -13,7 +13,6 @@ import de.zray.se.graphics.semesh.Normal;
 import de.zray.se.graphics.semesh.UV;
 import de.zray.se.graphics.semesh.Vertex;
 import java.util.ArrayList;
-import java.util.List;
 import de.zray.se.storages.AssetLibrary;
 
 
@@ -25,10 +24,10 @@ public class Plane implements SEMeshProvider{
     private Mesh plane;
     
     public Plane(float width, float height, boolean backfaceculling){
-        List<Vertex> vertecies = new ArrayList();
-        List<UV> uvs = new ArrayList<>();
-        List<Normal> normals = new ArrayList<>();
-        List<Face> faces = new ArrayList();
+        ArrayList<Vertex> vertecies = new ArrayList();
+        ArrayList<UV> uvs = new ArrayList<>();
+        ArrayList<Normal> normals = new ArrayList<>();
+        ArrayList<Face> faces = new ArrayList();
         
         vertecies.add(new Vertex(-width, 0, height));
         vertecies.add(new Vertex(width, 0, height));

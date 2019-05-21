@@ -5,9 +5,9 @@
  */
 package de.zray.se.graphics;
 
-import de.zray.se.Settings;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import de.zray.se.EngineSettings;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 /**
  *
@@ -24,8 +24,8 @@ public class Camera {
     };
 
     private CameraMode camMode = CameraMode.PERSPECTIVE;
-    private Vector3f pos = new Vector3f(0, 1, 0), rot = new Vector3f(90, 0, 0);
-    private float near = Settings.get().view.nearClip, far = Settings.get().view.farClip, ratio = 1, fov = 50;
+    private Vector3f pos = new Vector3f(0, 1, 0), rot = new Vector3f(0, 0, 0);
+    private float near = EngineSettings.get().view.nearClip, far = EngineSettings.get().view.farClip, ratio = 1, fov = 50;
     private String camName = "Camera";
     private ViewMode viewMode = ViewMode.THIRDPERSON;
     private boolean rotLocks[] = {false, false, false}, posLocks[] = {false, false, false};
@@ -111,5 +111,29 @@ public class Camera {
     
     public boolean[] getRotationLocks(){
         return rotLocks;
+    }
+    
+    public double getDistance(Vector3d point){
+        Vector3d distVec = new Vector3d(pos.x - point.x, pos.y - point.y, pos.z - point.z);
+        return distVec.length();
+    }
+    
+    /**
+     * Determines if a point is in the cameras view range
+     * TODO: Determine if the point is in the cameras frustum
+     * @param point
+     * @return 
+     */
+    public boolean isVisable(Vector3d point){
+        double distance = getDistance(point);
+        
+        if(distance < far || distance > near){
+            return inFrusutm(point);
+        }       
+        return false;
+    }
+    
+    private boolean inFrusutm(Vector3d point){
+        return true;
     }
 }

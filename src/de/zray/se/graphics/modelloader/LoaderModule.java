@@ -6,6 +6,7 @@
 package de.zray.se.graphics.modelloader;
 
 import de.zray.se.graphics.semesh.Mesh;
+import java.io.File;
 
 /**
  *
@@ -18,13 +19,14 @@ public abstract class LoaderModule {
         this.ext = supportedExt;
     }
     
-    public boolean meshSupported(String file){
+    public boolean meshSupported(File file){
         String meshExt = "";
+        String fileName = file.getName();
         int ctc = 0;
-        while(!file.substring(file.length()-(ctc+1), file.length()-(ctc)).equals(".")){
+        while(!fileName.substring(fileName.length()-(ctc+1), fileName.length()-(ctc)).equals(".")){
             ctc++;
         }
-        meshExt = file.substring(file.length()-ctc);
+        meshExt = fileName.substring(fileName.length()-ctc);
         for(int i = 0; i < ext.length; i++){
             if(ext[i].toLowerCase().equals(meshExt.toLowerCase())){
                 return true;
@@ -33,5 +35,5 @@ public abstract class LoaderModule {
         return false;
     }
     
-    public abstract Mesh loadModel(String file);
+    public abstract Mesh loadModel(File file);
 }

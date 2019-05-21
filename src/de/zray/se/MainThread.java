@@ -5,9 +5,15 @@
  */
 package de.zray.se;
 
+import de.zray.se.exceptions.MissingRenderBackendException;
+import de.zray.se.logger.SELogger;
 import de.zray.se.world.World;
 import de.zray.se.renderbackend.RenderBackend;
+import de.zray.se.storages.DataLibrary;
+import de.zray.se.utils.TimeTaken;
+import java.io.File;
 import java.io.IOException;
+import java.util.Stack;
 
 /**
  *
@@ -15,44 +21,39 @@ import java.io.IOException;
  */
 public class MainThread {
     private static double fpsUpdate = 0;
-    private static long delta = 0, timeBeforeAct = System.nanoTime();
+    private static double delta = 0;//, timeBeforeAct = System.nanoTime();
     private static int fps = 0, countedFrames;
     private boolean firstCycle = true;
     
     private RenderBackend backend;
+    private Stack<RenderBackend> backendStack = new Stack<>();
     private World currentWorld;
     
-    private static void updateDelta(){
-        delta =  System.nanoTime() - timeBeforeAct;
-        timeBeforeAct = System.nanoTime();
-        calcFPS(getDeltaInSec());
-    }
-    
-    private static void calcFPS(double delta){
-        fpsUpdate += delta;
-        countedFrames++;
-        if(fpsUpdate >= 1){
-            fps = countedFrames;
-            countedFrames = 0;
-            fpsUpdate = 0;
-            //System.out.println("FPS: "+fps);
+    public MainThread(){
+        if(EngineSettings.get().assetDirectory == null || EngineSettings.get().assetDirectory.isEmpty()){
+            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.ERROR, new String[]{"No asset directory set!"}, false);
+        } else {
+            File assetDir = new File(EngineSettings.get().assetDirectory);
+            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory:\n"+assetDir.getAbsolutePath()}, false);
+            DataLibrary.get().scanAssetDirectory(assetDir);
+            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{DataLibrary.get().getNumberOfKnownAssets()+" assetes registered"}, false);
         }
     }
     
     public static final double getDeltaInSec(){
-        return delta / 1000000000.0;
+        return delta/1000000000.;
     }
     
     public static final double getDeltaInMs(){
-        return delta;
+        return delta/1000000.;
     }
     
     public static final int getFPS(){
         return fps;
     }
     
-    public void setRenderBackend(RenderBackend backend){
-        this.backend = backend;
+    public void registerRenderBackend(RenderBackend backend){
+        backendStack.push(backend);
     }
     
     public void switchWorld(World world){
@@ -60,9 +61,15 @@ public class MainThread {
         firstCycle = true;
     }
     
-    public void loop() throws IOException{
+    public void loop() throws IOException, MissingRenderBackendException{
+        if(backend == null){
+            chooseRenderBackend();
+        }
+        
         Thread loop = new Thread(() -> {
+            TimeTaken timeTaken;
             while(!backend.closeRequested()){
+                timeTaken = new TimeTaken(true);
                 if(!backend.isInited()){
                     backend.init();
                 }
@@ -72,14 +79,14 @@ public class MainThread {
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
-                    backend.renderWorld(Settings.get().debug.debugMode);
+                    backend.renderWorld(EngineSettings.get().debug.debugMode);
                     
                 }
                 if(firstCycle){
-                    timeBeforeAct = System.nanoTime();
+                    timeTaken = new TimeTaken(true);
                     firstCycle = false;
                 }
-                updateDelta();
+                delta = timeTaken.endInNano();
             }
             shutdown();
         });
@@ -96,5 +103,22 @@ public class MainThread {
     
     public World getCurrentWorld(){
         return currentWorld;
+    }
+    
+    private void chooseRenderBackend() throws MissingRenderBackendException{
+        RenderBackend test = backendStack.pop();
+        while(test != null){
+            SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Testing renderer: "+test.getClassAsString()}, false);
+            if(test.featureTest()){
+                SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Use renderer: "+test.getClassAsString()}, false);
+                this.backend = test;
+                break;
+            }
+            SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Not supported renderer: "+test.getClassAsString()}, false);
+            test = backendStack.pop();
+        }
+        if(backend == null){
+            throw new MissingRenderBackendException();
+        }
     }
 }

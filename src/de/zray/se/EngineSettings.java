@@ -11,20 +11,21 @@ import java.util.Date;
  *
  * @author vortex
  */
-public class Settings {
-    private static Settings SETTINGS = new Settings();
+public class EngineSettings {
+    private static EngineSettings SETTINGS = new EngineSettings();
     public static enum DebugMode{DEBUG_ON, DEBUG_AND_OBJECTS, DEBUG_OFF};
         
-    public static Settings get(){
+    public static EngineSettings get(){
         return SETTINGS;
     }
     
-    public static void set(Settings set){
+    public static void set(EngineSettings set){
         SETTINGS = set;
     }
     
     public String title = "SingularityEngine", version = "0.0.8 Currendum";
     public String logfile = System.getProperty("user.home")+"/.se/loggs/SE-Log"+new Date().toString()+".log";
+    public String assetDirectory;
     public DebugSettings debug = new DebugSettings();
     public SoundSettings sound = new SoundSettings();
     public ViewSettings view = new ViewSettings();
