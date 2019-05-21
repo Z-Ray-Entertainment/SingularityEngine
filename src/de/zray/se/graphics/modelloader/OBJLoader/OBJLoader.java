@@ -19,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import de.zray.se.storages.AssetLibrary;
 import java.io.File;
 
@@ -36,7 +35,7 @@ public class OBJLoader extends LoaderModule{
     public Mesh loadModel(File file) {
         try {
             String objFile = loadTextFile(file);
-            List<OBJGroup> groups = readGroups(objFile);
+            ArrayList<OBJGroup> groups = readGroups(objFile);
             Mesh root = objGroupToSEMesh(groups.get(0));
             return root;
         }
@@ -50,10 +49,10 @@ public class OBJLoader extends LoaderModule{
     }
     
     private Mesh objGroupToSEMesh(OBJGroup group){
-        List<Vertex> seVerts = new ArrayList<>();
-        List<UV> seUVs = new ArrayList<>();
-        List<Normal> seNormals = new ArrayList<>();
-        List<Face> faces = new ArrayList<>();
+        ArrayList<Vertex> seVerts = new ArrayList<>();
+        ArrayList<UV> seUVs = new ArrayList<>();
+        ArrayList<Normal> seNormals = new ArrayList<>();
+        ArrayList<Face> faces = new ArrayList<>();
         
         for(int i = 0; i < group.verts.size(); i++){
             seVerts.add(new Vertex(group.verts.get(i).x, group.verts.get(i).y, group.verts.get(i).z));
@@ -94,8 +93,8 @@ public class OBJLoader extends LoaderModule{
         return null;
     }
     
-    private List<OBJGroup> readGroups(String objFile){
-        List<OBJGroup> objGroups = new ArrayList<>();
+    private ArrayList<OBJGroup> readGroups(String objFile){
+        ArrayList<OBJGroup> objGroups = new ArrayList<>();
         OBJGroup currentGroup = null;
         String lines[] = objFile.split("\n");
         for(String tmp : lines){
