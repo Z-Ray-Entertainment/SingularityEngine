@@ -13,7 +13,6 @@ import de.zray.se.graphics.semesh.Normal;
 import de.zray.se.graphics.semesh.UV;
 import de.zray.se.graphics.semesh.Vertex;
 import java.util.ArrayList;
-import java.util.List;
 import de.zray.se.storages.AssetLibrary;
 
 /**
@@ -24,10 +23,10 @@ public class Cube implements SEMeshProvider{
     private Mesh cube;
     
     public Cube(float w, float h, float d, Material material){
-        List<Vertex> v = new ArrayList<>();
-        List<UV> uvs = new ArrayList<>();
-        List<Normal> normlas = new ArrayList<>();
-        List<Face> f = new ArrayList<>();
+        ArrayList<Vertex> v = new ArrayList<>();
+        ArrayList<UV> uvs = new ArrayList<>();
+        ArrayList<Normal> normlas = new ArrayList<>();
+        ArrayList<Face> f = new ArrayList<>();
 
         v.add(new Vertex(w, -h, -d));
         v.add(new Vertex(w, -h, d));

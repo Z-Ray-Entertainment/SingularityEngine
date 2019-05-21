@@ -9,6 +9,8 @@ import de.zray.se.graphics.modelloader.OBJLoader.OBJLoader;
 import de.zray.se.graphics.semesh.Material;
 import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.logger.SELogger;
+import de.zray.se.storages.AssetLibrary;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,8 +24,9 @@ public class Modelloader {
     private List<ModelCacheEntry> modelCache = new LinkedList<>();
     private static Modelloader mLoader;
     
-    public Mesh loadModel(String file){
-        Mesh tmp = checkForExisitingModels(file);
+    public Mesh loadModel(String fileName){
+        File file = AssetLibrary.get().getAsset(fileName);
+        Mesh tmp = checkForExisitingModels(file.getAbsolutePath());
         if(tmp == null){
             for(LoaderModule module : loaderModules){
                 if(module.meshSupported(file)){

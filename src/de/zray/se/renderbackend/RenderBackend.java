@@ -7,7 +7,7 @@ package de.zray.se.renderbackend;
 
 import de.zray.se.EngineSettings;
 import de.zray.se.world.World;
-import javax.vecmath.Vector3d;
+import org.joml.Vector3d;
 
 /**
  *
@@ -48,4 +48,5 @@ public interface RenderBackend {
     public abstract boolean pick(int pointerX, int pointerY);
     public abstract boolean rayPick(Vector3d ray);
     public abstract boolean featureTest();
+    public abstract String getClassAsString();
 }

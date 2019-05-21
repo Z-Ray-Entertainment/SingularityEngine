@@ -6,8 +6,8 @@
 package de.zray.se.graphics;
 
 import de.zray.se.EngineSettings;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 /**
  *
@@ -111,5 +111,29 @@ public class Camera {
     
     public boolean[] getRotationLocks(){
         return rotLocks;
+    }
+    
+    public double getDistance(Vector3d point){
+        Vector3d distVec = new Vector3d(pos.x - point.x, pos.y - point.y, pos.z - point.z);
+        return distVec.length();
+    }
+    
+    /**
+     * Determines if a point is in the cameras view range
+     * TODO: Determine if the point is in the cameras frustum
+     * @param point
+     * @return 
+     */
+    public boolean isVisable(Vector3d point){
+        double distance = getDistance(point);
+        
+        if(distance < far || distance > near){
+            return inFrusutm(point);
+        }       
+        return false;
+    }
+    
+    private boolean inFrusutm(Vector3d point){
+        return true;
     }
 }

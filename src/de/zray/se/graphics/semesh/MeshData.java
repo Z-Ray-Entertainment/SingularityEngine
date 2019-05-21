@@ -6,22 +6,21 @@
 package de.zray.se.graphics.semesh;
 
 import de.zray.se.logger.SELogger;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
  * @author vortex
  */
 public class MeshData {
-    private List<Vertex> vertecies = new LinkedList<>();
-    private List<UV> uvs = new LinkedList<>();
-    private List<Normal> normals = new LinkedList<>();
-    private List<Face> faces = new LinkedList<>();
+    private ArrayList<Vertex> vertecies = new ArrayList<>();
+    private ArrayList<UV> uvs = new ArrayList<>();
+    private ArrayList<Normal> normals = new ArrayList<>();
+    private ArrayList<Face> faces = new ArrayList<>();
     private Amature amature = new Amature();
     private boolean cleared = false;
     
-    public MeshData(List<Vertex> vertexList, List<UV> uvs, List<Normal> normals, List<Face> faceList, Amature amature){
+    public MeshData(ArrayList<Vertex> vertexList, ArrayList<UV> uvs, ArrayList<Normal> normals, ArrayList<Face> faceList, Amature amature){
         this.amature = amature;
         this.faces = faceList;
         
@@ -49,19 +48,23 @@ public class MeshData {
         return cleared;
     }
     
-     public List<Face> getFaces(){
+     public ArrayList<Face> getFaces(){
         return faces;
     }
     
-    public List<Vertex> getVertecies(){
+    public ArrayList<Vertex> getVertecies(){
         return vertecies;
     }
     
-    public List<UV> getUVs(){
+    public ArrayList<UV> getUVs(){
         return uvs;
     }
     
-    public List<Normal> getNormals(){
+    public ArrayList<Normal> getNormals(){
         return normals;
+    }
+    
+    public Amature getAmature(){
+        return amature;
     }
 }

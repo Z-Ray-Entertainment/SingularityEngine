@@ -16,4 +16,9 @@ public class UV {
         this.u = u;
         this.v = v;
     }
+    
+    public UV(double u, double v){
+        this.u = (float) u;
+        this.v = (float) v;
+    }
 }
