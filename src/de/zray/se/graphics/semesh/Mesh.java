@@ -6,9 +6,7 @@
 package de.zray.se.graphics.semesh;
 
 import de.zray.se.graphics.Camera;
-import java.util.LinkedList;
-import java.util.List;
-import javax.vecmath.Vector3f;
+import org.joml.Vector3f;
 
 /**
  *

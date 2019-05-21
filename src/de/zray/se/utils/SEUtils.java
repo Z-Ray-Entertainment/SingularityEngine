@@ -6,11 +6,12 @@
 package de.zray.se.utils;
 
 import java.util.Random;
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Vector2d;
-import javax.vecmath.Vector2f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.joml.Matrix3d;
+import org.joml.Vector2d;
+import org.joml.Vector2f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
+
 
 /**
  *
@@ -74,24 +75,6 @@ public class SEUtils {
         return (new Random().nextInt(end)+start)%end;
     }
 
-    /**
-     * Source: https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
-     * @param p
-     * @return 
-     */
-    public SphericalCoordiante sphercialCooridantes(Vector3f p){
-        return new SphericalCoordiante(p);
-    }
-    
-    /**
-     * Source: https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
-     * @param p
-     * @return 
-     */
-    public SphericalCoordiante sphercialCooridantes(Vector3d p){
-        return new SphericalCoordiante(p);
-    }
-    
     /**
      * Source: https://vvvv.org/blog/polar-spherical-and-geographic-coordinates
      * @param radius

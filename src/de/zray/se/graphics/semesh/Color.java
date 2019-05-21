@@ -17,10 +17,10 @@ public class Color {
     
     public Color(){
         colorData = BufferUtils.createFloatBuffer(4);
-        colorData.put(255);
-        colorData.put(255);
-        colorData.put(255);
-        colorData.put(255);
+        colorData.put(255); //r
+        colorData.put(255); //g
+        colorData.put(255); //b
+        colorData.put(255); //a
         colorData.flip();
     }
     
@@ -35,5 +35,21 @@ public class Color {
     
     public FloatBuffer getColorData(){
         return colorData;
+    }
+    
+    public float red(){
+        return colorData.get(0);
+    }
+    
+    public float green(){
+        return colorData.get(1);
+    }
+    
+    public float blue(){
+        return colorData.get(2);
+    }
+    
+    public float alpha(){
+        return colorData.get(3);
     }
 }

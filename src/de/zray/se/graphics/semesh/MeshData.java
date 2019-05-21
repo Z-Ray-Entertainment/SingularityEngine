@@ -63,4 +63,8 @@ public class MeshData {
     public ArrayList<Normal> getNormals(){
         return normals;
     }
+    
+    public Amature getAmature(){
+        return amature;
+    }
 }

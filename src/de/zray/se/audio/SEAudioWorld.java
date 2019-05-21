@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import javax.vecmath.Vector3f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.BufferUtils.createByteBuffer;
 import org.lwjgl.openal.AL;

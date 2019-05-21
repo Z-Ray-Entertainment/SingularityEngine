@@ -6,8 +6,8 @@
 package de.zray.se.graphics;
 
 import de.zray.se.EngineSettings;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 /**
  *

@@ -14,32 +14,31 @@ import de.zray.se.graphics.semesh.Normal;
 import de.zray.se.graphics.semesh.UV;
 import de.zray.se.graphics.semesh.Vertex;
 import java.util.ArrayList;
-import javax.vecmath.Vector3f;
 import de.zray.se.storages.AssetLibrary;
-import javax.vecmath.Vector3d;
+import de.zray.se.utils.UVGenerator;
+import org.joml.Vector3f;
 
 /**
  *
  * @author Vortex Acherontic
  */
 public class IcoSphere implements SEMeshProvider{
-    public static enum UVMode{BY_NORMAL, BY_VERTEX, CYLINDRIC}
-    
     private MeshData icoSphere;
     private float lengthScale = 1;
-    private UVMode uvMode = UVMode.BY_NORMAL;
     
-    public IcoSphere(int subDiv, UVMode uvMode){
-        this.uvMode = uvMode;
+    public IcoSphere(int subDiv, UVGenerator.Mapping mapping){
         generate(subDiv, false, 0, 0, 0);
+        if(mapping != null){
+            UVGenerator uvGen = new UVGenerator();
+            icoSphere = uvGen.generateUVs(icoSphere, mapping);
+        }
     }
     
     public IcoSphere(int subDiv){
         generate(subDiv, false, 0, 0, 0);
     }
     
-    public IcoSphere(int subDiv, boolean deform, long seed, float scale, float freq, UVMode uvMode){
-        this.uvMode = uvMode;
+    public IcoSphere(int subDiv, boolean deform, long seed, float scale, float freq){
         generate(subDiv, deform, seed, scale, freq);
     }
     
@@ -95,7 +94,6 @@ public class IcoSphere implements SEMeshProvider{
         
         MeshData mData = new MeshData(vertex, new ArrayList<UV>(), normals, faces, null);
         icoSphere = subdivide(subDiv, mData);
-        icoSphere = generateUVs(icoSphere);
         
         if(deform){
             for(int i = 0; i < mData.getVertecies().size(); i++){
@@ -189,33 +187,6 @@ public class IcoSphere implements SEMeshProvider{
         return new MeshData(v, new ArrayList<UV>(), n, f, null);
     }
     
-    private MeshData generateUVs(MeshData mData){
-        ArrayList<Vertex> verts = mData.getVertecies();
-        ArrayList<Normal> normals = mData.getNormals();
-        ArrayList<Face> faces = mData.getFaces();
-        ArrayList<UV> uvs = new ArrayList<>();
-        switch(uvMode){
-            case BY_NORMAL :
-                for(Normal n : mData.getNormals()){
-                    uvs.add(calcUVByNormal(n));
-                }
-                break;
-            case BY_VERTEX :
-                for(Vertex v : mData.getVertecies()){
-                    uvs.add(calcUVByVertex(v));
-                }
-                break;
-            case CYLINDRIC :
-                for(Vertex v : mData.getVertecies()){
-                    uvs.add(calcUVCylindric(v));
-                }
-                break;
-            default:
-                break;
-        }
-        return new MeshData(verts, uvs, normals, faces, null);
-    }
-    
     private Vertex getMiddle(Vertex v1, Vertex v2){
         return setOnUnitSphere(new Vertex((v1.vX+v2.vX)/2f, (v1.vY+v2.vY)/2f, (v1.vZ+v2.vZ)/2f));
     }
@@ -229,29 +200,6 @@ public class IcoSphere implements SEMeshProvider{
         VoronoiCracle cracle = new VoronoiCracle(seed, (short) 1);
         lengthScale = (float) cracle.noise(v.vX, v.vY, v.vZ, frequenzy)*scale;
         return setOnUnitSphere(v);
-    }
-    
-    private UV calcUVByVertex(Vertex vert){
-        Vector3f n = new Vector3f(vert.vX, vert.vY, vert.vZ);
-        n.normalize();
-        double u = Math.asin(n.x)/Math.PI + 0.5;
-        double v = Math.asin(n.y)/Math.PI + 0.5;
-        
-        return new UV(v, u);
-    }
-    
-    private UV calcUVByNormal(Normal n){
-        double u = Math.asin(n.nX)/Math.PI + 0.5;
-        double v = Math.asin(n.nY)/Math.PI + 0.5;
-        return new UV(v, u);
-    }
-    
-    private UV calcUVCylindric(Vertex vert){
-        Vector3d n = new Vector3d(vert.vX, vert.vY, vert.vZ);
-        n.normalize();
-        double u = Math.atan2(n.x, n.z) / 2*Math.PI + .5;
-        double v = n.y * .5 +.5;
-        return new UV(v, u);
     }
     
     @Override

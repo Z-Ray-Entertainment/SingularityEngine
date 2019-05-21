@@ -7,7 +7,7 @@ package de.zray.se.renderbackend;
 
 import de.zray.se.EngineSettings;
 import de.zray.se.world.World;
-import javax.vecmath.Vector3d;
+import org.joml.Vector3d;
 
 /**
  *

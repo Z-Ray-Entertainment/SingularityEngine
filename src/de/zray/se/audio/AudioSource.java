@@ -5,7 +5,7 @@
  */
 package de.zray.se.audio;
 
-import javax.vecmath.Vector3f;
+import org.joml.Vector3f;
 import static org.lwjgl.openal.AL10.AL_PLAYING;
 import static org.lwjgl.openal.AL10.AL_POSITION;
 import static org.lwjgl.openal.AL10.AL_SOURCE_STATE;

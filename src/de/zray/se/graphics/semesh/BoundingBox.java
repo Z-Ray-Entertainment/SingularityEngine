@@ -13,8 +13,8 @@ import de.zray.se.world.Actor;
 import de.zray.se.world.Entity;
 import java.util.ArrayList;
 import java.util.List;
-import javax.vecmath.Matrix3d;
-import javax.vecmath.Vector3d;
+import org.joml.Matrix3d;
+import org.joml.Vector3d;
 
 /**
  *

@@ -7,7 +7,6 @@ package de.zray.se.graphics.semesh;
 
 import de.zray.se.storages.AssetLibrary;
 import java.io.File;
-import javax.vecmath.Color3f;
 
 /**
  *
@@ -17,25 +16,24 @@ public class Material {
     public static enum ReflectionMode {BLEND_INTO_MATERIAL, BLEND_INTO_SKY, NO_BLEND};
     
     private File texture, specMap, bumpMap, displaceMap, parallaxMap;
-    private float specFac = 0, bumpFac = 0, displaceFac = 0, parallaxFac = 0, emission = 0, reflection = 0, transparency = 0f,
-            maxReflectionDistance = 0, shininess = 50;
-    private Color3f diffuseColor = new Color3f(0.5f, 0.5f, 0.5f),
-            specularColor = new Color3f(1, 1, 1), reflectionColor = new Color3f(1, 1, 1);
+    private float specFac = 0, bumpFac = 0, displaceFac = 0, parallaxFac = 0, emission = 0, reflection = 0, maxReflectionDistance = 0, shininess = 50;
+    private Color diffuseColor = new  Color(.5f, .5f, .5f, 0),
+            specularColor = new Color(1, 1, 1, 0), reflectionColor = new Color(1, 1, 1, 0);
     private boolean cullBackFaces = false, shadeless = false, smooth = true, testGen = false;
     private ReflectionMode refMode = ReflectionMode.NO_BLEND;
     
     public Material(){}
     
-    public Material(Color3f diffuseColor){
+    public Material(Color diffuseColor){
         this.diffuseColor = diffuseColor;
     }
     
-    public Material(Color3f diffuseColor, Color3f specColor){
+    public Material(Color diffuseColor, Color specColor){
         this.diffuseColor = diffuseColor;
         this.specularColor = specColor;
     }
     
-    public Material(Color3f diffuseColor, Color3f specColor, Color3f reflectionColor){
+    public Material(Color diffuseColor, Color specColor, Color reflectionColor){
         this.diffuseColor = diffuseColor;
         this.specularColor = specColor;
         this.reflectionColor = reflectionColor;
@@ -78,33 +76,26 @@ public class Material {
     }
     
     public void setReflectionColor(float red, float green, float blue, float alpha){
-        reflectionColor.x = red;
-        reflectionColor.y = green;
-        reflectionColor.z = blue;
+        reflectionColor = new Color(red, green, blue, alpha);
     }
     
-    public Color3f getReflectionColor(){
+    public Color getReflectionColor(){
         return reflectionColor;
     }
     
     public void setSpecularColor(float red, float green, float blue, float alpha){
-        specularColor.x = red;
-        specularColor.y = green;
-        specularColor.z = blue;
+        specularColor = new Color(red, green, blue, alpha);
     }
     
-    public Color3f getSpecularColor(){
+    public Color getSpecularColor(){
         return specularColor;
     }
     
     public void setDiffuseColor(float red, float green, float blue, float alpha){
-        diffuseColor.x = red;
-        diffuseColor.y = green;
-        diffuseColor.z = blue;
-        transparency = alpha;
+        diffuseColor = new Color(red, green, blue, alpha);
     }
       
-    public Color3f getDiffiseColor(){
+    public Color getDiffiseColor(){
         return diffuseColor;
     }
     
@@ -122,14 +113,6 @@ public class Material {
     
     public boolean isShadeless(){
         return shadeless;
-    }
-    
-    public void setTransparency(float fac){
-        this.transparency = fac%1;
-    }
-    
-    public float getTransparency(){
-        return transparency;
     }
     
     public void setReflectivity(float fac){

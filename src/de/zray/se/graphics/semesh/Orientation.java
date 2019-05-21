@@ -6,11 +6,11 @@
 package de.zray.se.graphics.semesh;
 
 import de.zray.se.world.Entity;
-import javax.vecmath.Vector3d;
 import de.zray.se.utils.constrains.Link;
 import de.zray.se.utils.constrains.Reference;
 import java.util.LinkedList;
 import java.util.List;
+import org.joml.Vector3d;
 
 /**
  *
