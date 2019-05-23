@@ -6,3 +6,4 @@ dist/
 nbdist/
 private/
 test/
+nbproject/project.properties
