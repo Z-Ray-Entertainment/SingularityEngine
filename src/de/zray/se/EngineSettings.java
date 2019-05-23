@@ -23,9 +23,10 @@ public class EngineSettings {
         SETTINGS = set;
     }
     
-    public String title = "SingularityEngine", version = "0.0.8 Currendum";
+    public final String title = "SingularityEngine", version = "0.0.8 Currendum";
     public String logfile = System.getProperty("user.home")+"/.se/loggs/SE-Log"+new Date().toString()+".log";
     public String assetDirectory;
+    public String windowTitle = title+" "+version;
     public DebugSettings debug = new DebugSettings();
     public SoundSettings sound = new SoundSettings();
     public ViewSettings view = new ViewSettings();

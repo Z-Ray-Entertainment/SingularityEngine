@@ -11,8 +11,6 @@ import de.zray.se.audio.SEAudioWorld;
 import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.LightSource;
 import de.zray.se.graphics.semesh.Mesh;
-import de.zray.se.inputmanager.InputManager;
-import de.zray.se.inputmanager.KeyMap;
 import de.zray.se.physics.SEBulletWorld;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,33 +24,12 @@ public abstract class World {
     private SEBulletWorld bulletWorld;
     private SEAudioWorld audioWorld;
     private List<Camera> views = new ArrayList<>();
-    private List<InputManager> inputManages = new ArrayList<>();
     private int currentCamera = -1;
     private List<Mesh> rendableMeshes = new ArrayList<>();
     private DistancePatch master;
     
     public World(){
         master = new DistancePatch(null, -1, new double[]{0,0,0});
-    }
-    
-    public final void addInputManager(InputManager manager){
-        inputManages.add(manager);
-    }
-    
-    public final void hanldeKeyInputs(int key, KeyMap.MODE mode){
-        for(InputManager man : inputManages){
-            switch(mode){
-                case PRESSED :
-                    man.keyPressed(key);
-                    break;
-                case RELEASED :
-                    man.keyReleased(key);
-                    break;
-                case TIPED :
-                    man.keyTiped(key);
-                    break;
-            }
-        }
     }
     
     public final void addEntity(Entity ent){

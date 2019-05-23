@@ -88,7 +88,7 @@ public class SELogger {
     
     public void dispatchMsg(String dispatcher, SELogType logType, String lines[], boolean saveToFile){
         for(String tmp : lines){
-            String output = new Date().toString()+" : "+dispatcher+" : "+logType.designator+" : "+tmp;
+            String output = new Date().toString()+" : "+logType.designator+" : "+dispatcher+" : "+tmp;
             for(SEDispatcherHook hook : dispatcherHooks){
                 hook.dispatchMessage(output);
             }

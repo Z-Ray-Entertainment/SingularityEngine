@@ -6,6 +6,7 @@
 package de.zray.se;
 
 import de.zray.se.exceptions.MissingRenderBackendException;
+import de.zray.se.inputmanager.InputManager;
 import de.zray.se.logger.SELogger;
 import de.zray.se.world.World;
 import de.zray.se.renderbackend.RenderBackend;
@@ -13,23 +14,30 @@ import de.zray.se.storages.DataLibrary;
 import de.zray.se.utils.TimeTaken;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Stack;
+import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.glfw.GLFWKeyCallback;
 
 /**
  *
  * @author vortex
  */
-public class MainThread {
-    private static double fpsUpdate = 0;
-    private static double delta = 0;//, timeBeforeAct = System.nanoTime();
-    private static int fps = 0, countedFrames;
+public class Engine {
+    private static Engine engine;
+    
+    private double fpsUpdate = 0;
+    private double delta = 0;//, timeBeforeAct = System.nanoTime();
+    private int fps = 0, countedFrames;
     private boolean firstCycle = true;
     
     private RenderBackend backend;
-    private Stack<RenderBackend> backendStack = new Stack<>();
+    private final Stack<RenderBackend> backendStack;
     private World currentWorld;
+    private final ArrayList<InputManager> inputs = new ArrayList<>();
     
-    public MainThread(){
+    public Engine(){
+        this.backendStack = new Stack<>();
         if(EngineSettings.get().assetDirectory == null || EngineSettings.get().assetDirectory.isEmpty()){
             SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.ERROR, new String[]{"No asset directory set!"}, false);
         } else {
@@ -40,16 +48,28 @@ public class MainThread {
         }
     }
     
-    public static final double getDeltaInSec(){
+    public static final Engine get(){
+        if(engine == null){
+            engine = new Engine();
+        }
+        return engine;
+    }
+    
+    public final double getDeltaInSec(){
         return delta/1000000000.;
     }
     
-    public static final double getDeltaInMs(){
+    public final double getDeltaInMs(){
         return delta/1000000.;
     }
     
-    public static final int getFPS(){
+    public final int getFPS(){
         return fps;
+    }
+    
+    public void addInputManager(InputManager manager){
+        SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Added Manager"}, false);
+        inputs.add(manager);
     }
     
     public void registerRenderBackend(RenderBackend backend){
@@ -72,6 +92,7 @@ public class MainThread {
                 timeTaken = new TimeTaken(true);
                 if(!backend.isInited()){
                     backend.init();
+                    setGLFWInputCallbacks(backend.getWindow());
                 }
                 if(currentWorld != null){
                     currentWorld.act(getDeltaInSec());
@@ -79,8 +100,8 @@ public class MainThread {
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
+                    glfwPollEvents();
                     backend.renderWorld(EngineSettings.get().debug.debugMode);
-                    
                 }
                 if(firstCycle){
                     timeTaken = new TimeTaken(true);
@@ -108,17 +129,44 @@ public class MainThread {
     private void chooseRenderBackend() throws MissingRenderBackendException{
         RenderBackend test = backendStack.pop();
         while(test != null){
-            SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Testing renderer: "+test.getClassAsString()}, false);
+            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Testing renderer: "+test.getClassAsString()}, false);
             if(test.featureTest()){
-                SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Use renderer: "+test.getClassAsString()}, false);
+                SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Use renderer: "+test.getClassAsString()}, false);
                 this.backend = test;
                 break;
             }
-            SELogger.get().dispatchMsg(MainThread.class, SELogger.SELogType.INFO, new String[]{"Not supported renderer: "+test.getClassAsString()}, false);
+            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Not supported renderer: "+test.getClassAsString()}, false);
             test = backendStack.pop();
         }
         if(backend == null){
             throw new MissingRenderBackendException();
-        }
+        } 
+    }
+    
+    private void setGLFWInputCallbacks(long window){
+        glfwSetKeyCallback(window, new GLFWKeyCallback() {
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                int a = action;
+                SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Input!", "Key: "+key, "Action: "+action}, false);
+                SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Managers to serve: "+inputs.size()}, false);
+                for(InputManager i : inputs){
+                    switch(a){
+                        case GLFW_PRESS :
+                            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"GLFW_PRESS"}, false);
+                            i.keyTiped(key);
+                            break;
+                        case GLFW_RELEASE :
+                            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"GLFW_RELEASE"}, false);
+                            i.keyReleased(key);
+                            break;
+                        case GLFW_REPEAT:
+                            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"GLFW_REPEAT"}, false);
+                            i.keyPressed(key);
+                            break;
+                    }
+                }
+            }
+        });
     }
 }
