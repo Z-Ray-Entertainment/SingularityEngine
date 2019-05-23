@@ -8,6 +8,8 @@ package de.zray.se.storages;
 import de.zray.se.logger.SELogger;
 import java.io.File;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -15,7 +17,7 @@ import java.util.HashMap;
  */
 public class DataLibrary {
     private static DataLibrary dataLib;
-    
+        
     public static DataLibrary get(){
         if(dataLib == null){
             dataLib = new DataLibrary();
@@ -24,14 +26,15 @@ public class DataLibrary {
     }
     
     private HashMap<String, String> assets;
-    private boolean preventLog = false;
+    private boolean preventLog = false, scanned = false;
 
     
     public DataLibrary(){
         assets = new HashMap<>();
     }
     
-    public void scanAssetDirectory(File path){
+    public List<String> scanAssetDirectory(File path){
+        List<String> dublicates = new LinkedList<>();
         if(path.isDirectory()){
             for(File f : path.listFiles()){
                 if(f.isDirectory()){
@@ -41,12 +44,13 @@ public class DataLibrary {
                     if(getAsset(f.getName()) == null){
                         assets.put(f.getName(), f.getAbsolutePath());
                     } else {
-                        SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.WARNING, new String[]{"File already exists: "+f.getName()+" (Skipping)"}, false);
+                        dublicates.add(f.getName());
                     }
                     preventLog = false;
                 }
             }
         }
+        return dublicates;
     }
     
     public File getAsset(String fileName){
