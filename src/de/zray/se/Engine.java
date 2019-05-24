@@ -49,7 +49,7 @@ public class Engine {
           SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory: "+assetDir.getAbsolutePath()}, false);
           LinkedList<String> dublicates = DataLibrary.get().scanAssetDirectory(assetDir);
           dublicates.forEach((s) -> {
-            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.WARNING, new String[]{s}, true);
+            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.WARNING, new String[]{"Dublicate file: "+s}, true);
         });
           SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{DataLibrary.get().getNumberOfKnownAssets()+" assetes registered"}, false);
       }

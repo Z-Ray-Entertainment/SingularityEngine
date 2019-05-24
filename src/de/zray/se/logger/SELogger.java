@@ -99,7 +99,7 @@ public class SELogger {
             }
             System.out.println(output);
             if(saveToFile){
-              logContent.add(tmp+"\n");
+              logContent.add(output+"\n");
             }
         }
         if(saveToFile){
