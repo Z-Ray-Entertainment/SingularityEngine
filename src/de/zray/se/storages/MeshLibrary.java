@@ -10,7 +10,6 @@ import de.zray.se.graphics.semesh.MeshData;
 import de.zray.se.graphics.semesh.Normal;
 import de.zray.se.graphics.semesh.UV;
 import de.zray.se.graphics.semesh.Vertex;
-import de.zray.se.logger.SELogger;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,7 +65,7 @@ public class MeshLibrary {
                 return i;
             }
         }
-        SELogger.get().dispatchMsg("MeshLibrary", SELogger.SELogType.INFO, new String[]{"Registering new mesh data"}, false);
+        //SELogger.get().dispatchMsg("MeshLibrary", SELogger.SELogType.INFO, new String[]{"Registering new mesh data"}, false);
         return -1;
     }
     
