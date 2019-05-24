@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,7 +44,7 @@ public class SELogger {
     private List<String> logContent = new ArrayList<>();
     
     public SELogger(){
-        logFile = new File(EngineSettings.get().logfile);
+        logFile = new File(EngineSettings.get().logPath+"/"+EngineSettings.get().logFile);
         loadLogfile();
     }
     
@@ -61,9 +62,9 @@ public class SELogger {
             }
         }
         catch(FileNotFoundException e){
-            File path = new File(logFile.getPath());
+            File path = new File(EngineSettings.get().logPath);
             if(!path.mkdirs()){
-                dispatchMsg("SELogger", SELogType.FATAL_ERROR, new String[]{"Could not create directory "+logFile.toString()}, true);
+                dispatchMsg("SELogger", SELogType.FATAL_ERROR, new String[]{"Could not create directory "+logFile.toString()}, false);
             }
             else{
                 loadLogfile();
@@ -76,6 +77,10 @@ public class SELogger {
     
     public void dispatchMsg(Object dispatcher, Exception e){
         dispatchMsg(dispatcher, SELogType.ERROR, new String[]{e.getMessage()}, true);
+    }
+    
+    public void dispatchMsg(Object dispatcher, Exception e, boolean toFile){
+        dispatchMsg(dispatcher, SELogType.ERROR, new String[]{e.getMessage()}, toFile);
     }
     
     public void dispatchMsg(String dispatcher, Exception e){
@@ -93,22 +98,24 @@ public class SELogger {
                 hook.dispatchMessage(output);
             }
             System.out.println(output);
-        }
-        
-        if(false){
-            try {
-            
-            
-                BufferedReader reader = new BufferedReader(new FileReader(logFile));
-            }
-            catch(FileNotFoundException e){
-                String tmp[] = new String[lines.length+1];
-                for(int i = 0; i < lines.length; i++){
-                    tmp[i] = lines[i];
-                }
-                tmp[lines.length] = e.getMessage();
-                dispatchMsg("SELogger", logType, tmp , false);
+            if(saveToFile){
+              logContent.add(tmp+"\n");
             }
         }
+        if(saveToFile){
+          try {
+            flushLogToDisk();
+          } catch (IOException ex) {
+            dispatchMsg(SELogger.class, ex, false);
+          }
+        }
+    }
+    
+    private void flushLogToDisk() throws IOException{
+      FileWriter writer = new FileWriter(logFile);
+      for(String s : logContent){
+        writer.write(s);
+      }
+      writer.close();
     }
 }
