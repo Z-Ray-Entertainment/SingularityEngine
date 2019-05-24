@@ -15,6 +15,8 @@ import de.zray.se.utils.TimeTaken;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -45,7 +47,10 @@ public class Engine {
       } else {
           File assetDir = new File(EngineSettings.get().assetDirectory);
           SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory: "+assetDir.getAbsolutePath()}, false);
-          DataLibrary.get().scanAssetDirectory(assetDir);
+          LinkedList<String> dublicates = DataLibrary.get().scanAssetDirectory(assetDir);
+          dublicates.forEach((s) -> {
+            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.WARNING, new String[]{s}, true);
+        });
           SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{DataLibrary.get().getNumberOfKnownAssets()+" assetes registered"}, false);
       }
     }

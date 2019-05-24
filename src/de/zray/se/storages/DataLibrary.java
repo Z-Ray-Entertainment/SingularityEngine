@@ -33,18 +33,18 @@ public class DataLibrary {
         assets = new HashMap<>();
     }
     
-    public List<String> scanAssetDirectory(File path){
-        List<String> dublicates = new LinkedList<>();
+    public LinkedList<String> scanAssetDirectory(File path){
+        LinkedList<String> dublicates = new LinkedList<>();
         if(path.isDirectory()){
             for(File f : path.listFiles()){
                 if(f.isDirectory()){
-                    scanAssetDirectory(f);
+                    dublicates.addAll(scanAssetDirectory(f));
                 } else if(f.isFile()){
                     preventLog = true;
                     if(getAsset(f.getName()) == null){
                         assets.put(f.getName(), f.getAbsolutePath());
                     } else {
-                        dublicates.add(f.getName());
+                        dublicates.add(f.getAbsolutePath());
                     }
                     preventLog = false;
                 }
