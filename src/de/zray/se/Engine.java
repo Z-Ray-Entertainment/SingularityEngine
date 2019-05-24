@@ -34,18 +34,20 @@ public class Engine {
     private RenderBackend backend;
     private final Stack<RenderBackend> backendStack;
     private World currentWorld;
-    private final ArrayList<InputManager> inputs = new ArrayList<>();
+    private ArrayList<InputManager> inputs;
     
     public Engine(){
-        this.backendStack = new Stack<>();
-        if(EngineSettings.get().assetDirectory == null || EngineSettings.get().assetDirectory.isEmpty()){
-            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.ERROR, new String[]{"No asset directory set!"}, false);
-        } else {
-            File assetDir = new File(EngineSettings.get().assetDirectory);
-            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory:\n"+assetDir.getAbsolutePath()}, false);
-            DataLibrary.get().scanAssetDirectory(assetDir);
-            SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{DataLibrary.get().getNumberOfKnownAssets()+" assetes registered"}, false);
-        }
+      SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"New Engine"}, false);
+      this.backendStack = new Stack<>();
+      this.inputs = new ArrayList<>();
+      if(EngineSettings.get().assetDirectory == null || EngineSettings.get().assetDirectory.isEmpty()){
+          SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.ERROR, new String[]{"No asset directory set!"}, false);
+      } else {
+          File assetDir = new File(EngineSettings.get().assetDirectory);
+          SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory: "+assetDir.getAbsolutePath()}, false);
+          DataLibrary.get().scanAssetDirectory(assetDir);
+          SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{DataLibrary.get().getNumberOfKnownAssets()+" assetes registered"}, false);
+      }
     }
     
     public static final Engine get(){
@@ -148,8 +150,8 @@ public class Engine {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 int a = action;
-                SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Input!", "Key: "+key, "Action: "+action}, false);
-                SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Managers to serve: "+inputs.size()}, false);
+                //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Input!", "Key: "+key, "Action: "+action}, false);
+                //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Managers to serve: "+inputs.size()}, false);
                 for(InputManager i : inputs){
                     switch(a){
                         case GLFW_PRESS :
