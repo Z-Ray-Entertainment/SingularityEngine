@@ -17,8 +17,6 @@ import static org.lwjgl.glfw.GLFW.*;
 public abstract class InputManager {
     private World parrent;
     private HashMap<Integer, Boolean> pressedKeys = new HashMap<>();
-    private HashMap<Integer, Boolean> pressedModifiers = new HashMap<>();
-    
     
     public InputManager(World world){
         this.parrent = world;
@@ -58,6 +56,5 @@ public abstract class InputManager {
     public abstract void mouseClicked(int key, int posX, int posY);
     public abstract void mouseMoved(int posX, int posY);
     public abstract void keyPressed(int key);
-    //public abstract void keyTiped(int key);
     public abstract void keyReleased(int i);
 }
