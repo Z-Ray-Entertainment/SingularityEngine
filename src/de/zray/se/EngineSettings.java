@@ -5,8 +5,6 @@
  */
 package de.zray.se;
 
-import java.util.Date;
-
 /**
  *
  * @author vortex
@@ -14,19 +12,16 @@ import java.util.Date;
 public class EngineSettings {
     private static EngineSettings SETTINGS = new EngineSettings();
     public static enum DebugMode{DEBUG_ON, DEBUG_AND_OBJECTS, DEBUG_OFF};
-        
+    
     public static EngineSettings get(){
         return SETTINGS;
     }
     
-    public static void set(EngineSettings set){
-        SETTINGS = set;
-    }
-    
-    public final String title = "SingularityEngine", version = "0.0.8 Currendum";
+    public final String engineName = "SingularityEngine", engineVersion = "0.0.8", engineSuffix = "Currendum";
+    public final String defaultEngineTitle = engineName+" "+engineVersion+" "+engineSuffix;
     public String logPath = System.getProperty("user.home")+"/.se/logs/", logFile = "se.log";
     public String assetDirectory;
-    public String windowTitle = title+" "+version;
+    public String windowTitle = defaultEngineTitle;
     public DebugSettings debug = new DebugSettings();
     public SoundSettings sound = new SoundSettings();
     public ViewSettings view = new ViewSettings();
@@ -40,9 +35,6 @@ public class EngineSettings {
      * @return 
      */
     public boolean checkVersion(String extVersion){
-        String sepWordsExternel[] = extVersion.split(" ");
-        String sepWordsInternal[] = version.split(" ");
-        
         return true;
     }
     
