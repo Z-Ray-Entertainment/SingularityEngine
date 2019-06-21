@@ -8,8 +8,7 @@ package de.zray.se.graphics.semesh;
 import de.zray.se.world.Entity;
 import de.zray.se.utils.constrains.Link;
 import de.zray.se.utils.constrains.Reference;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 import org.joml.Vector3d;
 
 /**
@@ -17,7 +16,7 @@ import org.joml.Vector3d;
  * @author vortex
  */
 public class Orientation implements Reference {
-    private List<Link> linkedObjetcs;
+    private ArrayList<Link> linkedObjetcs;
     private Vector3d pos = new Vector3d(0, 0, 0);
     private Vector3d rot = new Vector3d(0, 0, 0);
     private Vector3d scl = new Vector3d(0, 0, 0);
@@ -41,7 +40,7 @@ public class Orientation implements Reference {
     
     public void addLink(Link linkedObject){
         if(linkedObjetcs == null){
-            linkedObjetcs = new LinkedList();
+            linkedObjetcs = new ArrayList();
         }
         linkedObjetcs.add(linkedObject);
     }
