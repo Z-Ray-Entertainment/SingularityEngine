@@ -68,12 +68,12 @@ public abstract class World {
             }
         });
 
-        if(audioWorld != null){
+        /*if(audioWorld != null){
             audioWorld.setALListener(getCurrentCamera().getPosition());
             audioWorld.update(delta);
         }
         
-        optimizeScene();
+        optimizeScene();*/
     }
     
     public void optimizeScene(){
