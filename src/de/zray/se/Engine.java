@@ -110,6 +110,9 @@ public class Engine {
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
                     glfwPollEvents();
+                    for(InputManager i : inputs){
+                        i.invoke();
+                    }
                     backend.renderWorld(EngineSettings.get().debug.debugMode);
                 }
                 if(firstCycle){
@@ -168,22 +171,9 @@ public class Engine {
                 int a = action;
                 //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Input!", "Key: "+key, "Action: "+action}, false);
                 //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Managers to serve: "+inputs.size()}, false);
-                for(InputManager i : inputs){
-                    switch(a){
-                        case GLFW_PRESS :
-                            i.keyTiped(key);
-                            break;
-                        case GLFW_RELEASE :
-                            i.keyReleased(key);
-                            break;
-                        case GLFW_REPEAT:
-                            i.keyPressed(key);
-                            break;
-                        default:
-                          SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"DEFAULT: "+a}, false);
-                          break;
-                    }
-                }
+                inputs.forEach((i) -> {
+                    i.callBack(action, key, mods);
+                });
             }
         });
     }
