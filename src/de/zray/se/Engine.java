@@ -30,7 +30,7 @@ public class Engine {
     
     private double fpsUpdate = 0;
     private double delta = 0;//, timeBeforeAct = System.nanoTime();
-    private int fps = 0, countedFrames;
+    private long fps = 0;
     private boolean firstCycle = true;
     
     private RenderBackend backend;
@@ -38,18 +38,18 @@ public class Engine {
     private World currentWorld;
     private ArrayList<InputManager> inputs;
     
-    public Engine(){
-      SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"New Engine"}, false);
+    private Engine(){
+      SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"New Engine"}, false);
       this.backendStack = new Stack<>();
       this.inputs = new ArrayList<>();
       if(EngineSettings.get().assetDirectory == null || EngineSettings.get().assetDirectory.isEmpty()){
-          SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.ERROR, new String[]{"No asset directory set!"}, false);
+          SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.ERROR, new String[]{"No asset directory set!"}, false);
       } else {
           File assetDir = new File(EngineSettings.get().assetDirectory);
-          SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory: "+assetDir.getAbsolutePath()}, false);
+          SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory: "+assetDir.getAbsolutePath()}, false);
           LinkedList<String> dublicates = DataLibrary.get().scanAssetDirectory(assetDir);
           dublicates.forEach((s) -> {
-            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.WARNING, new String[]{"Dublicate file: "+s}, true);
+            //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.WARNING, new String[]{"Dublicate file: "+s}, true);
         });
           SELogger.get().dispatchMsg(DataLibrary.class, SELogger.SELogType.INFO, new String[]{DataLibrary.get().getNumberOfKnownAssets()+" assetes registered"}, false);
       }
@@ -66,11 +66,11 @@ public class Engine {
         return delta/1000000000.;
     }
     
-    public final double getDeltaInMs(){
+    /*public final double getDeltaInMs(){
         return delta/1000000.;
-    }
+    }*/
     
-    public final int getFPS(){
+    public final long getFPS(){
         return fps;
     }
     
@@ -95,6 +95,8 @@ public class Engine {
         
         Thread loop = new Thread(() -> {
             TimeTaken timeTaken;
+            long ctcFPS = 0;
+            double ctc = 0;
             while(!backend.closeRequested()){
                 timeTaken = new TimeTaken(true);
                 if(!backend.isInited()){
@@ -115,6 +117,14 @@ public class Engine {
                     firstCycle = false;
                 }
                 delta = timeTaken.endInNano();
+                ctcFPS++;
+                ctc += getDeltaInSec();
+                if(ctc > 1){
+                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"FPS: "+fps}, firstCycle);
+                  fps = ctcFPS;
+                  ctc = 0;
+                  ctcFPS = 0;
+                }
             }
             shutdown();
         });
@@ -154,23 +164,24 @@ public class Engine {
         glfwSetKeyCallback(window, new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
+                //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"INVOKE"}, false);
                 int a = action;
                 //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Input!", "Key: "+key, "Action: "+action}, false);
                 //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Managers to serve: "+inputs.size()}, false);
                 for(InputManager i : inputs){
                     switch(a){
                         case GLFW_PRESS :
-                            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"GLFW_PRESS"}, false);
                             i.keyTiped(key);
                             break;
                         case GLFW_RELEASE :
-                            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"GLFW_RELEASE"}, false);
                             i.keyReleased(key);
                             break;
                         case GLFW_REPEAT:
-                            SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"GLFW_REPEAT"}, false);
                             i.keyPressed(key);
                             break;
+                        default:
+                          SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"DEFAULT: "+a}, false);
+                          break;
                     }
                 }
             }

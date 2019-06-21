@@ -5,6 +5,8 @@
  */
 package de.zray.se.utils;
 
+import de.zray.se.logger.SELogger;
+
 /**
  *
  * @author vortex
@@ -26,6 +28,7 @@ public final class TimeTaken {
     
     public double endInSec(){
         double timeTaken = timeTaken()/1000000000.;
+        //SELogger.get().dispatchMsg(TimeTaken.class, SELogger.SELogType.INFO, new String[]{"Time in Sec: "+timeTaken}, false);
         return timeTaken;
     }
     
