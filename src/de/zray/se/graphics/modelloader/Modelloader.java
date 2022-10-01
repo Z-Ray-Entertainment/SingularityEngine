@@ -12,7 +12,6 @@ import de.zray.se.logger.SELogger;
 import de.zray.se.storages.AssetLibrary;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,7 +20,7 @@ import java.util.List;
  */
 public class Modelloader {
     public List<LoaderModule> loaderModules = new ArrayList<>();
-    private List<ModelCacheEntry> modelCache = new LinkedList<>();
+    private List<ModelCacheEntry> modelCache = new ArrayList<>();
     private static Modelloader mLoader;
     
     public Mesh loadModel(String fileName){

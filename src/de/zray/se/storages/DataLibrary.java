@@ -7,9 +7,8 @@ package de.zray.se.storages;
 
 import de.zray.se.logger.SELogger;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *
@@ -33,8 +32,8 @@ public class DataLibrary {
         assets = new HashMap<>();
     }
     
-    public LinkedList<String> scanAssetDirectory(File path){
-        LinkedList<String> dublicates = new LinkedList<>();
+    public ArrayList<String> scanAssetDirectory(File path){
+        ArrayList<String> dublicates = new ArrayList<>();
         if(path.isDirectory()){
             for(File f : path.listFiles()){
                 if(f.isDirectory()){

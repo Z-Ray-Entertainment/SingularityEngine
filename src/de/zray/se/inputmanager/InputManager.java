@@ -6,6 +6,7 @@
 package de.zray.se.inputmanager;
 
 import de.zray.se.world.World;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import static org.lwjgl.glfw.GLFW.*;
@@ -42,14 +43,19 @@ public abstract class InputManager {
     
     public void invoke(){
         Set<Integer> keys = pressedKeys.keySet();
+        ArrayList<Integer> remove = new ArrayList<>();
+        
         for(Integer i : keys){
             if(pressedKeys.get(i)){
                 keyPressed(i);
             } else {
                 keyReleased(i);
+                remove.add(i);
             }
         }
-        
+        for(Integer i : remove){
+            pressedKeys.remove(i);
+        }
     }
     
     public abstract void mousePressed(int key, int posX, int posY);

@@ -14,7 +14,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ import java.util.List;
  */
 public class SELogger {
     private static SELogger logger;
-    private List<SEDispatcherHook> dispatcherHooks = new LinkedList<>();
+    private ArrayList<SEDispatcherHook> dispatcherHooks = new ArrayList<>();
     
     public static SELogger get(){
         if(logger == null){
