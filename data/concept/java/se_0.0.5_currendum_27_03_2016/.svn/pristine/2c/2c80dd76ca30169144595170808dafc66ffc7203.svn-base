@@ -1,0 +1,49 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se;
+
+import java.io.IOException;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.opengl.ContextAttribs;
+import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.DisplayMode;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import org.lwjgl.opengl.PixelFormat;
+
+/**
+ *
+ * @author vortex
+ */
+public class MainThread {
+    private static boolean closeRequested = false;
+    private static Settings settings = new Settings();
+    
+    public static void loop(SEWorld world) throws IOException{
+        if(!Display.isCreated()){
+            createDisplay();
+        }
+        
+        while(!closeRequested){
+            world.act();
+            Display.update();
+        }
+    }
+    
+    private static void createDisplay(){
+        PixelFormat pixelFormat = new PixelFormat();
+        ContextAttribs contextAtrributes = new ContextAttribs(3, 0);
+        
+        try {
+                Display.setDisplayMode(new DisplayMode(settings.resX, settings.resY));
+                Display.setTitle(settings.title+" "+settings.version);
+                Display.create(pixelFormat, contextAtrributes);
+        } catch (LWJGLException e) {
+                e.printStackTrace();
+                System.exit(-1);
+        }
+        glClearColor(0.1f, 0.1f, 0.1f, 0f);
+    }
+}

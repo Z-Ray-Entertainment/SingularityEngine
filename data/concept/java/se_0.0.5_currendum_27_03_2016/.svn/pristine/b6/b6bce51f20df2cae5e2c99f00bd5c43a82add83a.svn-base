@@ -1,0 +1,24 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.semesh;
+
+/**
+ *
+ * @author vortex
+ */
+public class SEVertex {
+    public float vX, vY, vZ, u, v;
+    public SENormal normal;
+    
+    public SEVertex(float vX, float vY, float vz, SENormal normal, float u, float v){
+        this.normal = normal;
+        this.u = u;
+        this.v = v;
+        this.vX = vX;
+        this.vY = vY;
+        this.vZ = vz;
+    }
+}

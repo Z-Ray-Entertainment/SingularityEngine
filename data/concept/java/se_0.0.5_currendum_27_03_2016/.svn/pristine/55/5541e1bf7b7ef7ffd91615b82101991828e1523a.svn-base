@@ -1,0 +1,42 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se;
+
+import java.util.Date;
+
+/**
+ *
+ * @author vortex
+ */
+public class Settings {
+    private static Settings SETTINGS = new Settings();
+    
+    public static Settings getSettings(){
+        return SETTINGS;
+    }
+    
+    public static void setSettings(Settings set){
+        SETTINGS = set;
+    }
+    
+    public String title = "SingularityEngine", version = "0.0.5 Currendum";
+    public String logfile = System.getProperty("user.home")+"/.se/loggs/SE-Log"+new Date().toString()+".log";
+    public int resX = 800, resY = 600;
+    public boolean fullscreen = false;
+    
+    /**
+     * Takes a version string and compares it with the interlnal version String (TODO)
+     * @param extVersion
+     * Returns true if the interla version ist higher than the extrenal
+     * @return 
+     */
+    public boolean checkVersion(String extVersion){
+        String sepWordsExternel[] = extVersion.split(" ");
+        String sepWordsInternal[] = version.split(" ");
+        
+        return true;
+    }
+}

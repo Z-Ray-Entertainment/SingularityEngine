@@ -1,0 +1,80 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.material;
+
+import de.zray.se.grapics.texturemanager.TextureManager;
+import java.io.IOException;
+import static org.lwjgl.opengl.GL11.*;
+
+/**
+ *
+ * @author vortex
+ */
+public class SEMaterial {
+    private String id;
+    SEColor diffuse, specular, ambient;
+    private int textureID;
+    private boolean lighted = false, blending = false;
+    private TextureManager textureManager;
+
+    public SEMaterial() {
+        init("sem", -1, new SEColor(), new SEColor(), new SEColor(), null, true);
+    }
+    
+    public SEMaterial(String id, int textureID, TextureManager tManager){
+        init(id, textureID, new SEColor(), new SEColor(), new SEColor(), tManager, true);
+    }
+
+    public SEMaterial(SEColor diffuse, SEColor specular, SEColor ambient){
+        init("sem", -1, diffuse, specular, ambient, null, false);
+    }
+    
+    public void setLighted(boolean enabled){
+        this.lighted = enabled;
+    }
+    
+    private void init(String id, int texture, SEColor diffuse, SEColor specular, SEColor ambient, TextureManager manager, boolean lighted){
+        this.id = id;
+        this.textureID = texture;
+        this.textureManager = manager;
+        this.lighted = lighted;
+        this.diffuse = diffuse;
+        this.specular = specular;
+        this.ambient = ambient;
+    }
+    
+    public void apply() throws IOException{
+        if(diffuse.colorData.get(3) > 0 && blending){
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+        if(lighted){
+            glEnable(GL_LIGHTING);
+        }
+        else{
+            glDisable(GL_LIGHTING);
+        }
+        if(lighted){
+            glMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse.colorData);
+            glMaterial(GL_FRONT_AND_BACK, GL_SPECULAR, specular.colorData);
+            glMaterial(GL_FRONT_AND_BACK, GL_AMBIENT, ambient.colorData);
+        }
+        else{
+            diffuse.getColorData().rewind();
+            glColor4f(diffuse.colorData.get(0), diffuse.colorData.get(1), diffuse.colorData.get(2), diffuse.colorData.get(3));
+        }
+        
+        if(textureManager != null && textureID != -1){
+            glEnable(GL_TEXTURE);
+            glEnable(GL_TEXTURE_2D);
+            textureManager.bindTexture(textureID);
+        }
+        else if(textureID == -1){
+            glDisable(GL_TEXTURE);
+            glDisable(GL_TEXTURE_2D);
+        }
+    }
+}
