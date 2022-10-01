@@ -1,0 +1,77 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics;
+
+import de.zray.se.SEModule;
+import de.zray.se.grapics.semesh.SEMesh;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import static org.lwjgl.opengl.GL11.*;
+
+/**
+ *
+ * @author vortex
+ */
+public abstract class SEGLModule extends SEModule{
+    private List<Camera> cams = new ArrayList<>();
+    private List<SEMesh> meshes = new ArrayList<>();
+    private List<Integer> freeSlots = new ArrayList<>();
+    private int cam = 0;
+    
+    public SEGLModule(){
+        cams.add(new Camera());
+    }
+    
+    public int addSEMesh(SEMesh mesh){
+        if(freeSlots.size() > 1){
+            int slot = freeSlots.get(0);
+            freeSlots.remove(0);
+            meshes.set(slot, mesh);
+            return slot;
+        }
+        else{
+            meshes.add(mesh);
+            return meshes.size()-1;
+        }
+    }
+    
+    public void removeSEMesh(int id){
+        if(id == meshes.size()-1){
+            meshes.remove(id);
+        }
+        else{
+            meshes.set(id, null);
+            freeSlots.add(id);
+        }
+    }
+    
+    public SEMesh getSEMesh(int id){
+        return meshes.get(id);
+    }
+    
+    public Camera getCurrentCamera(){
+        return cams.get(cam);
+    }
+    
+    public int addCamera(Camera cam){
+        this.cams.add(cam);
+        return cams.size()-1;
+    }
+    
+    public void render() throws IOException{
+        glClearColor(0f, 0f, 0f, 0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glLoadIdentity();
+        cams.get(cam).applyCamera();
+        for(SEMesh tmp : meshes){
+            if(tmp != null){
+                tmp.render();
+            }
+        }
+        
+    }
+}

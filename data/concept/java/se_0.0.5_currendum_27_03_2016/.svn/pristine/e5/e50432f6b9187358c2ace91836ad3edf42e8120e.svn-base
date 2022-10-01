@@ -1,0 +1,35 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.audio;
+
+import org.newdawn.slick.openal.SoundStore;
+
+/**
+ *
+ * @author Vortex Acherontic
+ */
+public abstract class SEAudioModule {
+    private Playlist playlist;
+    
+    public SEAudioModule(){}
+    
+    public  SEAudioModule(Playlist playlist){
+        this.playlist = playlist;
+    }
+    
+    public void setPlaylist(Playlist playlist){
+        this.playlist = playlist;
+    }
+    
+    public void poll(){
+        if(playlist != null){
+            if(!playlist.isPlaying()){
+                playlist.nextTrack();
+            }
+            SoundStore.get().poll(0);
+        }
+    }
+}

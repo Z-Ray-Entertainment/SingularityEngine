@@ -1,0 +1,228 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.semesh;
+
+import de.zray.se.Settings;
+import de.zray.se.grapics.material.SEColor;
+import de.zray.se.grapics.material.SEMaterial;
+import java.io.IOException;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import static org.lwjgl.opengl.GL11.*;
+
+/**
+ *
+ * @author vortex
+ */
+public class SEMesh{
+    public static enum RenderMode{DIRECT, DISPLAY_LIST, VBO}
+    public static enum DisplayMode{SOLID, WIRED, DOTS};
+    
+    private RenderMode renderMode = RenderMode.DIRECT;
+    private DisplayMode displayMode = DisplayMode.SOLID;
+    private List<SEVertex> vertecies = new ArrayList<>();
+    private List<SEUV> uvs = new ArrayList<>();
+    private List<SENormal> normals = new ArrayList<>();
+    private List<SEFace> faces = new ArrayList<>();
+    private SEAmature amature = new SEAmature();
+    private SEOriantation orientation = new SEOriantation();
+    private SEVBO vbo = null;
+    private SEMaterial material = new SEMaterial(), debugMat;
+    private int displayList;
+    private boolean backfaceCulling = false, vboRendered = false;
+    private HashMap<Float, SEMesh> lods = new HashMap<>();
+    private List<SEMesh> subMeshes = new ArrayList<>();
+    
+    public SEMesh(List<SEVertex> vertexList, List<SEUV> uvs, List<SENormal> normals, List<SEFace> faceList, SEAmature amature, SEMaterial material){
+        this.amature = amature;
+        this.faces = faceList;
+        this.material = material;
+        this.vertecies = vertexList;
+        this.uvs = uvs;
+        this.normals = normals;
+        
+        orientation = new SEOriantation();
+    }
+    
+    public void printMeshData(){
+        System.out.println("SEMESH:");
+        System.out.println("Vertex: "+vertecies.size());
+        System.out.println("UVs: "+uvs.size());
+        System.out.println("Normals: "+normals.size());
+        System.out.println("Faces: "+faces.size());
+    }
+    
+    public List<SEFace> getFaces(){
+        return faces;
+    }
+    
+    public List<SEVertex> getVertecies(){
+        return vertecies;
+    }
+    
+    public List<SEUV> getUVs(){
+        return uvs;
+    }
+    
+    public List<SENormal> getNormals(){
+        return normals;
+    }
+    
+    public void addSubMesh(SEMesh subMesh){
+        subMeshes.add(subMesh);
+    }
+    
+    public void setMaterial(SEMaterial mat){
+        this.material = mat;
+    }
+    
+    public void setRenderMode(RenderMode rMode){
+        this.renderMode = rMode;
+        if(renderMode == RenderMode.VBO){
+            vbo = new SEVBO(this.vertecies, this.normals, this.uvs, this.faces, SEVBO.VBOMode.STATIC);
+        }
+    }
+    
+    public void addLOD(SEMesh mesh, float distance){
+        lods.put(distance, mesh);
+    }
+    
+    public void setBackfaceCulling(boolean enabled){
+        backfaceCulling = enabled;
+    }
+    
+    public void setOrientation(SEOriantation orientation){
+        this.orientation = orientation;
+    }
+    
+    public SEOriantation getOrientation(){
+        return orientation;
+    }
+    
+    public void setDisplayMpode(DisplayMode displayMode){
+        this.displayMode = displayMode;
+    }
+    
+    private void call(){
+        switch(displayMode){
+            case SOLID:
+                glBegin(GL_TRIANGLES);
+                for(SEFace face : faces){
+                    glNormal3f(normals.get(face.n1).nX, normals.get(face.n1).nY, normals.get(face.n1).nZ);
+                    glTexCoord2f(uvs.get(face.uv1).u, uvs.get(face.uv1).v);
+                    glVertex3f(vertecies.get(face.v1).vX, vertecies.get(face.v1).vY, vertecies.get(face.v1).vZ);
+                    
+                    glNormal3f(normals.get(face.n2).nX, normals.get(face.n2).nY, normals.get(face.n2).nZ);
+                    glTexCoord2f(uvs.get(face.uv2).u, uvs.get(face.uv2).v);
+                    glVertex3f(vertecies.get(face.v2).vX, vertecies.get(face.v2).vY, vertecies.get(face.v2).vZ);
+                    
+                    glNormal3f(normals.get(face.n3).nX, normals.get(face.n3).nY, normals.get(face.n3).nZ);
+                    glTexCoord2f(uvs.get(face.uv3).u, uvs.get(face.uv3).v);
+                    glVertex3f(vertecies.get(face.v3).vX, vertecies.get(face.v3).vY, vertecies.get(face.v3).vZ);
+                }
+                glEnd();
+                break;
+            case WIRED :
+                glBegin(GL_LINES);
+                for(SEFace face : faces){
+                    glTexCoord2f(uvs.get(face.uv1).u, uvs.get(face.uv1).v);
+                    glVertex3f(vertecies.get(face.v1).vX, vertecies.get(face.v1).vY, vertecies.get(face.v1).vZ);
+                    glTexCoord2f(uvs.get(face.uv2).u, uvs.get(face.uv2).v);
+                    glVertex3f(vertecies.get(face.v2).vX, vertecies.get(face.v2).vY, vertecies.get(face.v2).vZ);
+                    glTexCoord2f(uvs.get(face.uv1).u, uvs.get(face.uv1).v);
+                    glVertex3f(vertecies.get(face.v1).vX, vertecies.get(face.v1).vY, vertecies.get(face.v1).vZ);
+                    glTexCoord2f(uvs.get(face.uv3).u, uvs.get(face.uv3).v);
+                    glVertex3f(vertecies.get(face.v3).vX, vertecies.get(face.v3).vY, vertecies.get(face.v3).vZ);
+                    glTexCoord2f(uvs.get(face.uv2).u, uvs.get(face.uv2).v);
+                    glVertex3f(vertecies.get(face.v2).vX, vertecies.get(face.v2).vY, vertecies.get(face.v2).vZ);
+                    glTexCoord2f(uvs.get(face.uv3).u, uvs.get(face.uv3).v);
+                    glVertex3f(vertecies.get(face.v3).vX, vertecies.get(face.v3).vY, vertecies.get(face.v3).vZ);
+                }
+                glEnd();
+                break;
+            case DOTS :
+                break;
+        }
+        
+    }
+    
+    private void createList(){
+        displayList = glGenLists(1);
+        glNewList(displayList, GL_COMPILE);
+        call();
+        glEndList();
+    }
+    
+    private void renderDebug(){
+        glDisable(GL_LIGHTING);
+        glLineWidth(1);
+        glBegin(GL_LINES);
+            glColor4f(0, 1, 0, 1);
+            glVertex3f(0, -.5f, 0);
+            glVertex3f(0, .5f, 0);
+            glColor4f(1, 0, 0, 1);
+            glVertex3f(-.5f, 0, 0);
+            glVertex3f(.5f, 0, 0);
+            glColor4f(0, 0, 1, 1);
+            glVertex3f(0, 0, -.5f);
+            glVertex3f(0, 0, .5f);
+        glEnd();
+        glColor4f(1, 1, 1, 1);
+    }
+    
+    private void renderSEMesh() throws IOException{
+        material.apply();
+        if(backfaceCulling && !glIsEnabled(GL_CULL_FACE)){
+            glEnable(GL_CULL_FACE);
+        }
+        else if(glIsEnabled(GL_CULL_FACE)){
+            glDisable(GL_CULL_FACE);
+        }
+
+        switch(renderMode){
+            case DIRECT :
+                call();
+                break;
+            case DISPLAY_LIST :
+                if(displayList == -1){
+                    createList();
+                }
+                glCallList(displayList);
+                break;
+            case VBO :
+                vbo.render();
+                if(faces != null && vertecies != null){
+                    vertecies.clear();
+                    vertecies = null;
+                    faces.clear();
+                    faces = null;
+                }
+                break;
+        }
+        if(subMeshes != null && !subMeshes.isEmpty()){
+            for(SEMesh sub : subMeshes){
+                sub.render();
+            }
+        }
+    }
+    
+    public void render() throws IOException{
+        glPushMatrix();
+        orientation.apply();
+        switch(Settings.get().debugMode){
+            case DEBUG_AND_OBJECTS:
+                renderDebug();
+                renderSEMesh();
+                break;
+            case DEBUG_ON :
+                renderDebug();
+                break;
+        }
+        glPopMatrix();
+    }
+}

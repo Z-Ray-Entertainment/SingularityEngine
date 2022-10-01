@@ -1,0 +1,30 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.ai;
+
+import de.zray.se.SEModule;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ *
+ * @author vortex
+ */
+public abstract class SEAIModule extends SEModule{
+    private List<SEAI> ais = new LinkedList<>();
+
+    @Override
+    public boolean update(float delta){
+        for(SEAI tmp : ais){
+            tmp.act();
+        }
+        return true;
+    } 
+   
+    public void addAI(SEAI ai){
+        this.ais.add(ai);
+    }
+}

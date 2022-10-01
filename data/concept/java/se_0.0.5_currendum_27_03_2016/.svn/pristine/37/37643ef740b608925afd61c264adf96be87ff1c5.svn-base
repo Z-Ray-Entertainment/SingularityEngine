@@ -1,0 +1,77 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.audio;
+
+import de.zray.se.Settings;
+import java.util.ArrayList;
+import java.util.List;
+import org.newdawn.slick.openal.Audio;
+
+/**
+ *
+ * @author Vortex Acherontic
+ */
+public class Playlist {
+    public enum PlayMode{LOOP_ONE, LOOP_ALL, PLAY_LIST};
+    
+    private boolean inUse = false;
+    private List<Audio> clips = new ArrayList<>();
+    private int currentClip = -1;
+    private PlayMode playMode = PlayMode.LOOP_ALL;
+    
+    public int addTrack(Audio track){
+        for(int i = 0; i < clips.size(); i++){
+            if(clips.get(i) == null){
+                clips.set(i, track);
+                return i;
+            }
+        }
+        clips.add(track);
+        return clips.size()-1;
+    }
+    
+    public boolean isInUse(){
+        return inUse;
+    }
+    
+    public void stop(){
+        inUse = false;
+    }
+    
+    public void nextTrack(){
+        if(currentClip + 1 >= clips.size()){
+            currentClip = 0;
+            play();
+        }
+        else{
+            currentClip++;
+        }
+    }
+    
+    public void previousTrack(){
+        if(currentClip - 1 < 0){
+            currentClip = clips.size()-1;
+            play();
+        }
+        else{
+            currentClip--;
+        }
+    }
+    
+    public Audio getCurrentClip(){
+        return clips.get(currentClip);
+    }
+    
+    private void play(){
+        inUse = true;
+        if(playMode == PlayMode.LOOP_ONE){
+            clips.get(currentClip).playAsMusic(Settings.getSettings().volume, Settings.getSettings().pitch, true);
+        }
+        else{
+            clips.get(currentClip).playAsMusic(Settings.getSettings().volume, Settings.getSettings().pitch, false);
+        }
+    }
+}

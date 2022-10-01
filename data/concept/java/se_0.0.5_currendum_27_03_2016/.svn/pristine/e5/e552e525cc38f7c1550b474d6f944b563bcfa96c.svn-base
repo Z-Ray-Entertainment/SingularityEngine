@@ -1,0 +1,57 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.shapes;
+
+import de.zray.se.grapics.material.SEMaterial;
+import de.zray.se.grapics.semesh.SEFace;
+import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SENormal;
+import de.zray.se.grapics.semesh.SEVertex;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author vortex
+ */
+public class Cube implements SEMeshProvider{
+    private SEMesh cube;
+    
+    public Cube(float w, float h, float d, SEMaterial material){
+        List<SEVertex> v = new ArrayList<>();
+        List<SEFace> f = new ArrayList<>();
+
+        v.add(new SEVertex(w, -h, -d, new SENormal(0, -1, 0), .25f, 0f));
+        v.add(new SEVertex(w, -h, d, new SENormal(0, -1, 0), .25f, .3333f));
+        v.add(new SEVertex(-w, -h, d, new SENormal(0, -1, 0), .5f, .3333f));
+        v.add(new SEVertex(-w, -h, -d, new SENormal(0, -1, 0), .5f, 0f));
+        v.add(new SEVertex(w, h, -d, new SENormal(0, -1, 0), 1f, .6667f));
+        v.add(new SEVertex(w, h, d, new SENormal(0, -1, 0), .25f, .6667f));
+        v.add(new SEVertex(-w, h, d, new SENormal(0, -1, 0), .5f, .6667f));
+        v.add(new SEVertex(-w, h, -d, new SENormal(0, -1, 0), .75f, .6667f));
+        
+        f.add(new SEFace(1, 3, 0));
+        f.add(new SEFace(7, 5, 4));
+        f.add(new SEFace(4, 1, 0));
+        f.add(new SEFace(5, 2, 1));
+        f.add(new SEFace(2, 7, 3));
+        f.add(new SEFace(0, 7, 4));
+        f.add(new SEFace(1, 2, 3));
+        f.add(new SEFace(7, 6, 7));
+        f.add(new SEFace(4, 5, 1));
+        f.add(new SEFace(5, 6, 2));
+        f.add(new SEFace(2, 6, 7));
+        f.add(new SEFace(0, 3, 7));
+        
+        cube = new SEMesh(v, f, null, material);
+    }
+    
+    @Override
+    public SEMesh getSEMesh() {
+        return cube;
+    }
+    
+}

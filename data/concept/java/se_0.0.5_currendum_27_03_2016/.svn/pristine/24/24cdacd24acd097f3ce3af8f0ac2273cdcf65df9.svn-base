@@ -1,0 +1,112 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics;
+
+import de.zray.se.SEModule;
+import de.zray.se.Settings;
+import de.zray.se.env.SkyDome;
+import de.zray.se.grapics.semesh.SEMesh;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import static org.lwjgl.opengl.GL11.*;
+
+/**
+ *
+ * @author vortex
+ */
+public abstract class SEGLModule extends SEModule{
+    private List<Camera> cams = new ArrayList<>();
+    private List<SEMesh> meshes = new ArrayList<>();
+    private List<Integer> freeSlots = new ArrayList<>();
+    private List<SkyDome> skyDomes = new ArrayList<>();
+    private int cam = 0, skyDome = 0;
+    
+    public SEGLModule(){
+        cams.add(new Camera());
+    }
+    
+    public int addSkyDome(SkyDome dome){
+        skyDomes.add(dome);
+        return skyDomes.size()-1;
+    }
+    
+    public void setSkyDome(int id){
+        skyDome = id;
+    }
+    
+    public int addSEMesh(SEMesh mesh){
+        if(freeSlots.size() > 1){
+            int slot = freeSlots.get(0);
+            freeSlots.remove(0);
+            meshes.set(slot, mesh);
+            return slot;
+        }
+        else{
+            meshes.add(mesh);
+            return meshes.size()-1;
+        }
+    }
+    
+    public void removeSEMesh(int id){
+        if(id == meshes.size()-1){
+            meshes.remove(id);
+        }
+        else{
+            meshes.set(id, null);
+            freeSlots.add(id);
+        }
+    }
+    
+    public SEMesh getSEMesh(int id){
+        return meshes.get(id);
+    }
+    
+    public Camera getCurrentCamera(){
+        return cams.get(cam);
+    }
+    
+    public int addCamera(Camera cam){
+        this.cams.add(cam);
+        return cams.size()-1;
+    }
+    
+    public void render() throws IOException{
+        if(!skyDomes.isEmpty()){
+            skyDomes.get(skyDome).render();
+        }
+        cams.get(cam).applyCamera();
+        if(Settings.get().debugRender){
+            glDisable(GL_LIGHTING);
+            glColor4f(1, 1, 1, 1);
+            int linesX = 10, linesY = 10;
+            glPushMatrix();
+            glTranslatef(0, 0, (float)-linesX/2f);
+            glBegin(GL_LINES);
+            for(int i = 0; i < linesX+1; i++){
+                glVertex3f(-linesX/2, 0, i);
+                glVertex3f(linesX/2, 0, i);
+                glTranslatef(0, 0, 1);
+            }
+            glEnd();
+            glPopMatrix();
+            glPushMatrix();
+            glTranslatef((float)-linesY/2f, 0, 0);
+            glBegin(GL_LINES);
+            for(int i = 0; i < linesY+1; i++){
+                glVertex3f(i, 0, -linesY/2);
+                glVertex3f(i, 0, linesY/2);
+                glTranslatef(1, 0, 0);
+            }
+            glPopMatrix();
+        }
+        for(SEMesh tmp : meshes){
+            if(tmp != null){
+                tmp.render();
+            }
+        }
+    }
+}

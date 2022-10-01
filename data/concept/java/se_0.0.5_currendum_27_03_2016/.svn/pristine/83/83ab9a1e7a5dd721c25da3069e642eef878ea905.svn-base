@@ -1,0 +1,29 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.semesh;
+
+/**
+ * A SEFace alway contians indecies of THREE vertecies with defines its shape.
+ * @author vortex
+ */
+public class SEFace {
+    public int v1, v2, v3;
+    
+    /**
+     * Index of first verstex
+     * @param v1
+     * Index of first verstex
+     * @param v2
+     * Index of first verstex
+     * @param v3
+     * Index of first verstex
+     */
+    public SEFace(int v1, int v2, int v3){
+        this.v1 = v1;
+        this.v2 = v2;
+        this.v3 = v3;
+    }
+}

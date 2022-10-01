@@ -1,0 +1,108 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.semesh;
+
+import de.zray.se.grapics.material.SEMaterial;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import static org.lwjgl.opengl.GL11.*;
+
+/**
+ *
+ * @author vortex
+ */
+public class SEMesh{
+    public static enum RenderMode{DIRECT, DISPLAY_LIST, VBO}
+    
+    private RenderMode renderMode = RenderMode.DIRECT;
+    private List<SEVertex> vertecies = new ArrayList<>();
+    private List<SEFace> faces = new ArrayList<>();
+    private SEAmature amature = new SEAmature();
+    private SEOriantation orientation;
+    private SEVBO vbo;
+    private SEMaterial material;
+    private int displayList;
+    private boolean backfaceCulling = false;
+    
+    private HashMap<Float, SEMesh> lods = new HashMap<>();
+    
+    public SEMesh(List<SEVertex> vertexList, List<SEFace> faceList, SEAmature amature, SEMaterial material){
+        this.amature = amature;
+        this.faces = faceList;
+        this.material = material;
+        this.vertecies = vertexList;
+        vbo = new SEVBO(this.vertecies, this.faces, SEVBO.VBOMode.STATIC);
+        orientation = new SEOriantation();
+    }
+    
+    public void addLOD(SEMesh mesh, float distance){
+        lods.put(distance, mesh);
+    }
+    
+    public void setBackfaceCulling(boolean enabled){
+        backfaceCulling = enabled;
+    }
+    
+    public void setOrientation(SEOriantation orientation){
+        this.orientation = orientation;
+    }
+    
+    public SEOriantation getOrientation(){
+        return orientation;
+    }
+    
+    private void call(){
+        glBegin(GL_TRIANGLES);
+        for(SEFace face : faces){
+            glVertex3f(vertecies.get(face.v1).vX, vertecies.get(face.v1).vY, vertecies.get(face.v1).vZ);
+            glNormal3f(vertecies.get(face.v1).normal.nX, vertecies.get(face.v1).normal.nY, vertecies.get(face.v1).normal.nZ);
+            glTexCoord2f(vertecies.get(face.v1).u, vertecies.get(face.v1).v);
+
+            glVertex3f(vertecies.get(face.v2).vX, vertecies.get(face.v2).vY, vertecies.get(face.v2).vZ);
+            glNormal3f(vertecies.get(face.v2).normal.nX, vertecies.get(face.v2).normal.nY, vertecies.get(face.v2).normal.nZ);
+            glTexCoord2f(vertecies.get(face.v2).u, vertecies.get(face.v2).v);
+
+            glVertex3f(vertecies.get(face.v3).vX, vertecies.get(face.v3).vY, vertecies.get(face.v3).vZ);
+            glNormal3f(vertecies.get(face.v3).normal.nX, vertecies.get(face.v3).normal.nY, vertecies.get(face.v3).normal.nZ);
+            glTexCoord2f(vertecies.get(face.v3).u, vertecies.get(face.v3).v);
+        }
+        glEnd();
+    }
+    
+    private void createList(){
+        displayList = glGenLists(1);
+        glNewList(displayList, GL_COMPILE);
+        call();
+        glEndList();
+    }
+    
+    public void render() throws IOException{
+        material.apply();
+        orientation.apply();
+        if(backfaceCulling && !glIsEnabled(GL_CULL_FACE)){
+            glEnable(GL_CULL_FACE);
+        }
+        else if(glIsEnabled(GL_CULL_FACE)){
+            glDisable(GL_CULL_FACE);
+        }
+
+        switch(renderMode){
+            case DIRECT :
+                call();
+                break;
+            case DISPLAY_LIST :
+                if(displayList == -1){
+                    createList();
+                }
+                glCallList(displayList);
+                break;
+            case VBO :
+                break;
+        }
+    }
+}

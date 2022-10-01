@@ -1,0 +1,76 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.semesh;
+
+import static org.lwjgl.opengl.GL11.*;
+
+/**
+ *
+ * @author vortex
+ */
+public class SEOriantation {
+    private float posX, posY, posZ;
+    private float scaleX, scaleY, scaleZ;
+    private float rotX, rotY, rotZ;
+    
+    public SEOriantation(){
+        initOrientation(0, 0, 0, 0, 0, 0, 1, 1, 1);
+    }
+    
+    public SEOriantation(float posX, float posY, float posZ){
+        initOrientation(posX, posY, posZ, 0, 0, 0, 1, 1, 1);
+    }
+    
+    public SEOriantation(float posX, float posY, float posZ, float rotX, float rotY, float rotZ){
+        initOrientation(posX, posY, posZ, rotX, rotY, rotZ, 1, 1, 1);
+    }
+    
+    public SEOriantation(float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
+        initOrientation(posX, posY, posZ, rotX, rotY, rotZ, scaleX, scaleY, scaleZ);
+    }
+    
+    public void apply(){
+        glTranslatef(posX, posY, posZ);
+        glRotatef(rotX, 1, 0, 0);
+        glRotatef(rotY, 0, 1, 0);
+        glRotatef(rotZ, 0, 0, 1);
+        glScalef(scaleX, scaleY, scaleZ);
+    }
+    
+    public float[] getPosition(){
+        return new float[]{posX, posY, posZ};
+    }
+    
+    public void setPosition(float x, float y, float z){
+        posX = x;
+        posY = y;
+        posZ = z;
+    }
+    
+    public void setRotation(float x, float y, float z){
+        rotX = x;
+        rotY = y;
+        rotZ = z;
+    }
+    
+    public void setScale(float x, float y, float z){
+        scaleX = x;
+        scaleY = y;
+        scaleZ = z;
+    }
+    
+    private void initOrientation(float posX, float posY, float posZ, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ){
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.scaleZ = scaleZ;
+        this.rotX = rotX;
+        this.rotY = rotY;
+        this.rotZ = rotZ;
+    }
+}

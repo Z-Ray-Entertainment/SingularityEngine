@@ -1,0 +1,34 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se.grapics.shapes;
+
+import de.zray.se.grapics.material.SEMaterial;
+import de.zray.se.grapics.semesh.SEFace;
+import de.zray.se.grapics.semesh.SEMesh;
+import de.zray.se.grapics.semesh.SEVertex;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author vortex
+ */
+public class Cube implements SEMeshProvider{
+    private SEMesh cube;
+    
+    public Cube(float width, float height, float depth, SEMaterial material){
+        List<SEVertex> v = new ArrayList<>();
+        List<SEFace> f = new ArrayList<>();
+        
+        cube = new SEMesh(v, f, null, material);
+    }
+    
+    @Override
+    public SEMesh getSEMesh() {
+        return cube;
+    }
+    
+}

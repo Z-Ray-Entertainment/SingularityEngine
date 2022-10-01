@@ -1,0 +1,179 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package de.zray.se;
+
+import de.zray.se.ai.SEAIModule;
+import de.zray.se.audio.SEAudioModule;
+import de.zray.se.grapics.SEGLModule;
+import de.zray.se.physics.SEBulletModule;
+import de.zray.zgui.GUI;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
+
+/**
+ *
+ * @author vortex
+ */
+public class SEWorld {
+    private SEGLModule glModule;
+    private SEAIModule aiModule;
+    private SEBulletModule bullettModule;
+    private SEAudioModule audioModule;
+    private InputManager inputManager;
+    private List<GUI> guis = new ArrayList<>();
+    private List<Integer> pressedKeysLastTime = new ArrayList<>();
+    private List<Integer> pressedKeysThisTime = new ArrayList<>();
+    private long lastTime = (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    private float delta = 0;
+    private int currentGUI = 0;
+    
+    public SEWorld(SEGLModule glModule, SEAIModule aiModule, SEBulletModule bulletModule, SEAudioModule audioModule){
+        this.aiModule = aiModule;
+        this.glModule = glModule;
+        this.bullettModule = bulletModule;
+        this.audioModule = audioModule;
+    }
+    
+    public void act() throws IOException{
+        update();
+        render();
+        pollInputs();
+        pollSounds();
+    }
+    
+    public GUI getCurrentGUI(){
+        return guis.get(currentGUI);
+    }
+    
+    public int addGUI(GUI gui){
+        guis.add(gui);
+        return guis.size()-1;
+    }
+    
+    public void setInputManager(InputManager inputManager){
+        this.inputManager = inputManager;
+    }
+    
+    public SEAudioModule getAudioModule(){
+        return audioModule;
+    }
+    
+    public SEGLModule getGLModule(){
+        return glModule;
+    }
+    
+    public SEAIModule getAIModule(){
+        return aiModule;
+    }
+    
+    public SEBulletModule getBulletModule(){
+        return bullettModule;
+    }
+    
+    private void pollSounds(){
+        if(audioModule != null){
+            audioModule.poll();
+        }
+    }
+    
+    private void pollInputs(){
+        if(inputManager != null){
+            pollKeyboardInput();
+            pollMouseInput();
+        }
+        if(guis.size() > 0 && currentGUI <= guis.size()-1){
+            guis.get(currentGUI).pollInputs();
+        }
+    }
+    
+    private void pollKeyboardInput(){
+        while(Keyboard.next()){
+            if(Keyboard.getEventKeyState()){
+                int key = Keyboard.getEventKey();
+                inputManager.keyTiped(key);
+                guis.get(currentGUI).keyTiped(key);
+            }
+        }
+        
+        for(int i = 0; i < Keyboard.getKeyCount(); i++){
+            if(Keyboard.isKeyDown(i)){
+                pressedKeysThisTime.add(i);
+                inputManager.keyPressed(i);
+                guis.get(currentGUI).keyPressed(i);
+            }
+        }
+        
+        for(int i = 0; i < pressedKeysLastTime.size(); i++){
+            boolean found = false;
+            for(int j = 0; j < pressedKeysThisTime.size(); j++){
+                if(Objects.equals(pressedKeysLastTime.get(i), pressedKeysThisTime.get(j))){
+                    found = true;
+                }
+            }
+            if(!found){
+                inputManager.keyReleased(pressedKeysLastTime.get(i));
+            }
+        }
+        pressedKeysLastTime.clear();
+        pressedKeysLastTime.addAll(pressedKeysThisTime);
+        pressedKeysThisTime.clear();
+    }
+    
+    private void pollMouseInput(){
+        int x = Mouse.getX();
+        int y = Display.getHeight()-Mouse.getY();
+        
+        inputManager.mouseMoved(x, y);
+        
+        while(Mouse.next()){
+            if(Mouse.getEventButtonState()){
+                inputManager.mouseClicked(Mouse.getEventButton(), x, y);
+            }
+        }
+        for(int i = 0; i < Mouse.getButtonCount(); i++){
+            if(Mouse.isButtonDown(i)){
+                inputManager.mousePressed(Mouse.getEventButton(), x, y);
+            }
+        }
+    }
+    
+    private void render() throws IOException{
+        glModule.render();
+        if(guis.size() > 0 && currentGUI <= guis.size()-1){
+            guis.get(currentGUI).render();
+        }
+    }
+    
+    private void update(){
+        glModule.update(delta);
+        aiModule.update(delta);
+        bullettModule.update(delta);
+        if(guis.size() > 0 && currentGUI <= guis.size()-1){
+            guis.get(currentGUI).update(delta);
+        }
+        updateDelta();
+    }
+    
+    public float getDeltaInMS(){
+        return delta;
+    }
+    
+    public float getDeltaInS(){
+        return delta/1000;
+    }
+    
+    private void updateDelta(){
+        long currentTime = (Sys.getTime() * 1000) / Sys.getTimerResolution();
+        delta = currentTime - lastTime; //Delta in Milliseconds
+        lastTime = currentTime;
+    }
+}
