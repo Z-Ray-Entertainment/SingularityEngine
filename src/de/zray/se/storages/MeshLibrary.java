@@ -10,16 +10,15 @@ import de.zray.se.graphics.semesh.MeshData;
 import de.zray.se.graphics.semesh.Normal;
 import de.zray.se.graphics.semesh.UV;
 import de.zray.se.graphics.semesh.Vertex;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
  * @author vortex
  */
 public class MeshLibrary {
-    private List<MeshData> meshLibrary = new LinkedList<>();
-    private List<Integer> freeSlots = new LinkedList<>();
+    private ArrayList<MeshData> meshLibrary = new ArrayList<>();
+    private ArrayList<Integer> freeSlots = new ArrayList<>();
     
     public MeshData getMesh(int id){
         if(id >= meshLibrary.size()){

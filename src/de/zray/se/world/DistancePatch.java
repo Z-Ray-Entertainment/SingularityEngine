@@ -10,7 +10,6 @@ import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.LightSource;
 import de.zray.se.logger.SELogger;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,11 +20,11 @@ public class DistancePatch {
     private UUID uuid = UUID.randomUUID();
     private DistancePatch parent;
     private int level;
-    private List<DistancePatch> subPatches = new ArrayList<>();
-    private List<DistancePatch> subPatchesToBeAdded = new ArrayList<>();
+    private ArrayList<DistancePatch> subPatches = new ArrayList<>();
+    private ArrayList<DistancePatch> subPatchesToBeAdded = new ArrayList<>();
     private double pos[] = new double[3];
-    private List<Entity> ents = new ArrayList<>();
-    private List<Integer> freeEnts = new ArrayList<>(), distancePatchesToBeDeleted = new ArrayList<>();
+    private ArrayList<Entity> ents = new ArrayList<>();
+    private ArrayList<Integer> freeEnts = new ArrayList<>(), distancePatchesToBeDeleted = new ArrayList<>();
     private boolean refreshNeeded = false;
     
     public DistancePatch(DistancePatch parent, int level, double pos[]){
@@ -97,9 +96,9 @@ public class DistancePatch {
         return false;
     }
     
-    public List<Entity> getEntities(){
+    public ArrayList<Entity> getEntities(){
         if(!isLowestDistancePatch()){
-            List<Entity> allEnts = new ArrayList<>();
+            ArrayList<Entity> allEnts = new ArrayList<>();
             subPatches.forEach((sub) -> {
                 allEnts.addAll(sub.getEntities());
             });
@@ -221,8 +220,8 @@ public class DistancePatch {
         return false;
     }
     
-    public List<DistancePatch> getSubPatches(){
-        List<DistancePatch> subs = new ArrayList<>();
+    public ArrayList<DistancePatch> getSubPatches(){
+        ArrayList<DistancePatch> subs = new ArrayList<>();
         subs.addAll(subPatches);
         for(DistancePatch subsub : subPatches){
             subs.addAll(subsub.getSubPatches());
@@ -255,9 +254,9 @@ public class DistancePatch {
         }
     }
     
-    public List<Actor> getVisibleActors(Camera curCam){
-        List<Entity> visibleEnts = getVisibleEntities(curCam);
-        List<Actor> visibleActors = new ArrayList<>();
+    public ArrayList<Actor> getVisibleActors(Camera curCam){
+        ArrayList<Entity> visibleEnts = getVisibleEntities(curCam);
+        ArrayList<Actor> visibleActors = new ArrayList<>();
         for(Entity ent : visibleEnts){
             if(ent instanceof Actor){
                 visibleActors.add((Actor) ent);
@@ -266,9 +265,9 @@ public class DistancePatch {
         return visibleActors;
     }
     
-    public List<LightSource> getVisibleLights(Camera curCam){
-        List<Entity> visibleEnts = getVisibleEntities(curCam);
-        List<LightSource> visibleLights = new ArrayList<>();
+    public ArrayList<LightSource> getVisibleLights(Camera curCam){
+        ArrayList<Entity> visibleEnts = getVisibleEntities(curCam);
+        ArrayList<LightSource> visibleLights = new ArrayList<>();
         for(Entity ent : visibleEnts){
             if(ent instanceof LightSource){
                 visibleLights.add((LightSource) ent);
@@ -277,7 +276,7 @@ public class DistancePatch {
         return visibleLights;
     }
     
-    public List<Entity> getVisibleEntities(Camera curCam){
+    public ArrayList<Entity> getVisibleEntities(Camera curCam){
         return getEntities();
     }
 }

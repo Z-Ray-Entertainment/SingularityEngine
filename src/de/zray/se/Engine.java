@@ -15,8 +15,6 @@ import de.zray.se.utils.TimeTaken;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Stack;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -47,7 +45,7 @@ public class Engine {
       } else {
           File assetDir = new File(EngineSettings.get().assetDirectory);
           SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Scanning Asset Directory: "+assetDir.getAbsolutePath()}, false);
-          LinkedList<String> dublicates = DataLibrary.get().scanAssetDirectory(assetDir);
+          ArrayList<String> dublicates = DataLibrary.get().scanAssetDirectory(assetDir);
           dublicates.forEach((s) -> {
             //SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.WARNING, new String[]{"Dublicate file: "+s}, true);
         });
@@ -94,40 +92,71 @@ public class Engine {
         }
         
         Thread loop = new Thread(() -> {
-            TimeTaken timeTaken;
+            TimeTaken loopTime = new TimeTaken();
+            TimeTaken actTime = new TimeTaken();
+            TimeTaken optimizeTime = new TimeTaken();
+            TimeTaken pollEventTime = new TimeTaken();
+            TimeTaken iterateInputTime = new TimeTaken();
+            TimeTaken renderTime = new TimeTaken();
+            
+            double messuredAct = 0;
+            double messuredOpti = 0;
+            double messuredPoll = 0;
+            double messuredIterateInput = 0;
+            double messuredRender = 0;
+            
             long ctcFPS = 0;
             double ctc = 0;
             while(!backend.closeRequested()){
-                timeTaken = new TimeTaken(true);
+                loopTime.start();
                 if(!backend.isInited()){
                     backend.init();
                     setGLFWInputCallbacks(backend.getWindow());
                 }
                 if(currentWorld != null){
+                    actTime.start();
                     currentWorld.act(getDeltaInSec());
+                    messuredAct = actTime.endInSec();
+                    
+                    optimizeTime.start();
                     currentWorld.optimizeScene();
+                    messuredOpti = optimizeTime.endInSec();
                 }
                 if(backend.isReady()){
                     backend.setCurrentWorld(currentWorld);
+                    pollEventTime.start();
                     glfwPollEvents();
+                    messuredPoll = pollEventTime.endInSec();
+                    
+                    iterateInputTime.start();
                     for(InputManager i : inputs){
                         i.invoke();
                     }
+                    messuredIterateInput = iterateInputTime.endInSec();
+                    
+                    renderTime.start();
                     backend.renderWorld(EngineSettings.get().debug.debugMode);
+                    messuredRender = renderTime.endInSec();
                 }
                 if(firstCycle){
-                    timeTaken = new TimeTaken(true);
+                    loopTime.start();
                     firstCycle = false;
                 }
-                delta = timeTaken.endInNano();
+                delta = loopTime.endInNano();
                 ctcFPS++;
                 ctc += getDeltaInSec();
                 if(ctc > 1){
-                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"FPS: "+fps}, firstCycle);
+                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"FPS: "+fps}, false);
+                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Act: "+messuredAct}, false);
+                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Iterate Inputs: "+messuredIterateInput}, false);
+                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Optimize: "+messuredOpti}, false);
+                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Poll: "+messuredPoll}, false);
+                  SELogger.get().dispatchMsg(Engine.class, SELogger.SELogType.INFO, new String[]{"Render: "+messuredRender}, false);
                   fps = ctcFPS;
                   ctc = 0;
                   ctcFPS = 0;
                 }
+                
             }
             shutdown();
         });

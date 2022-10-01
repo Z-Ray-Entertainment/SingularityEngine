@@ -7,7 +7,7 @@ package de.zray.se.graphics.modelloader;
 
 import de.zray.se.graphics.semesh.Mesh;
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,8 +15,8 @@ import java.util.List;
  * @author Vortex Acherontic
  */
 public class ModelManager {
-    private List<Mesh> models = new LinkedList<>();
-    private List<String> fileNames = new LinkedList<>();
+    private List<Mesh> models = new ArrayList<>();
+    private List<String> fileNames = new ArrayList<>();
     private Modelloader loader = new Modelloader();
     
     public int loadModel(File file){

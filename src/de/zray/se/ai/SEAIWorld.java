@@ -7,7 +7,7 @@ package de.zray.se.ai;
 
 import de.zray.se.world.Module;
 import de.zray.se.world.World;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +15,7 @@ import java.util.List;
  * @author vortex
  */
 public class SEAIWorld extends Module{
-    private List<SEAI> ais = new LinkedList<>();
+    private List<SEAI> ais = new ArrayList<>();
 
     public SEAIWorld(World parrent){
         super(parrent);

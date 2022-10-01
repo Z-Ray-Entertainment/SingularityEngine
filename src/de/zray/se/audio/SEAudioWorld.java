@@ -21,7 +21,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -56,7 +56,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  * @author Vortex Acherontic
  */
 public class SEAudioWorld extends Module{
-    private List<AudioSource> sources = new LinkedList<>();
+    private ArrayList<AudioSource> sources = new ArrayList<>();
     private static long audioDevice, context;
 
     public SEAudioWorld(World parrent) {

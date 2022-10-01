@@ -6,12 +6,10 @@
 package de.zray.se.world;
 
 import de.zray.se.ai.SEAI;
-import de.zray.se.graphics.Camera;
 import de.zray.se.graphics.semesh.BoundingBox;
 import de.zray.se.graphics.semesh.Mesh;
 import de.zray.se.physics.SEBulletObject;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -19,7 +17,7 @@ import java.util.List;
  */
 public class Actor extends Entity {
 
-    private List<Mesh> mesh = new LinkedList<Mesh>();
+    private ArrayList<Mesh> mesh = new ArrayList<Mesh>();
     private SEAI ai;
     private SEBulletObject bullet;
     private World parrentWorld;
@@ -33,8 +31,8 @@ public class Actor extends Entity {
         bBox = new BoundingBox(this);
     }
 
-    public List<Mesh> getRendableMeshes() {
-        List rMeshes = new LinkedList();
+    public ArrayList<Mesh> getRendableMeshes() {
+        ArrayList rMeshes = new ArrayList();
         for(Mesh m : mesh){
             Mesh tmp = m.getMeshOrLOD(parrentWorld.getCurrentCamera());
             if(tmp != null){
